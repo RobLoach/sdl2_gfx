@@ -36,6 +36,29 @@ Andreas Schiffler -- aschiffler at ferzkopp dot net
 #include "SDL2_rotozoom.h"
 #include "SDL2_gfxPrimitives_font.h"
 
+/* ---- Structures */
+
+/*!
+\brief The structure passed to the internal Bresenham iterator.
+*/
+typedef struct {
+	Sint16 x, y;
+	int dx, dy, s1, s2, swapdir, error;
+	Uint32 count;
+} SDL2_gfxBresenhamIterator;
+
+/*!
+\brief The structure passed to the internal Murphy iterator.
+*/
+typedef struct {
+	SDL_Renderer *renderer;
+	int u, v;		/* delta x , delta y */
+	int ku, kt, kv, kd;	/* loop constants */
+	int oct2;
+	int quad4;
+	Sint16 last1x, last1y, last2x, last2y, first1x, first1y, first2x, first2y, tempx, tempy;
+} SDL2_gfxMurphyIterator;
+
 /* ---- Pixel */
 
 /*!
@@ -2962,10 +2985,270 @@ int filledPolygonRGBA(SDL_Renderer * renderer, const Sint16 * vx, const Sint16 *
 	return filledPolygonRGBAMT(renderer, vx, vy, n, r, g, b, a, NULL, NULL);
 }
 
+/* ---- Textured Polygon */
+
+/*!
+\brief Internal function to draw a textured horizontal line.
+
+\param renderer The renderer to draw on.
+\param x1 X coordinate of the first point (i.e. left) of the line.
+\param x2 X coordinate of the second point (i.e. right) of the line.
+\param y Y coordinate of the points of the line.
+\param texture The texture to retrieve color information from.
+\param texture_w The width of the texture.
+\param texture_h The height of the texture.
+\param texture_dx The X offset for the texture lookup.
+\param texture_dy The Y offset for the textured lookup.
+
+\returns Returns 0 on success, -1 on failure.
+*/
+int _HLineTextured(SDL_Renderer *renderer, Sint16 x1, Sint16 x2, Sint16 y, SDL_Texture *texture, int texture_w, int texture_h, int texture_dx, int texture_dy)
+{
+	Sint16 left, right, top, bottom;
+	Sint16 w;
+	Sint16 xtmp;
+	int result = 0;
+	int texture_x_walker;    
+	int texture_y_start;    
+	SDL_Rect source_rect,dst_rect;
+	int pixels_written,write_width;
+
+	/*
+	* Swap x1, x2 if required to ensure x1<=x2
+	*/
+	if (x1 > x2) {
+		xtmp = x1;
+		x1 = x2;
+		x2 = xtmp;
+	}
+
+	/*
+	* Calculate width to draw
+	*/
+	w = x2 - x1 + 1;
+
+	/*
+	* Determine where in the texture we start drawing
+	*/
+	texture_x_walker =   (x1 - texture_dx)  % texture_w;
+	if (texture_x_walker < 0){
+		texture_x_walker = texture_w + texture_x_walker ;
+	}
+
+	texture_y_start = (y + texture_dy) % texture_h;
+	if (texture_y_start < 0){
+		texture_y_start = texture_h + texture_y_start;
+	}
+
+	// setup the source rectangle; we are only drawing one horizontal line
+	source_rect.y = texture_y_start;
+	source_rect.x = texture_x_walker;
+	source_rect.h = 1;
+
+	// we will draw to the current y
+	dst_rect.y = y;
+
+	// if there are enough pixels left in the current row of the texture
+	// draw it all at once
+	if (w <= texture_w -texture_x_walker){
+		source_rect.w = w;
+		source_rect.x = texture_x_walker;
+		dst_rect.x= x1;
+		result = (SDL_RenderCopy(renderer, texture, &source_rect ,&dst_rect) == 0);
+	} else { // we need to draw multiple times
+		// draw the first segment
+		pixels_written = texture_w  - texture_x_walker;
+		source_rect.w = pixels_written;
+		source_rect.x = texture_x_walker;
+		dst_rect.x= x1;
+		result |= (SDL_RenderCopy(renderer, texture, &source_rect , &dst_rect) == 0);
+		write_width = texture_w;
+
+		// now draw the rest
+		// set the source x to 0
+		source_rect.x = 0;
+		while (pixels_written < w){
+			if (write_width >= w - pixels_written) {
+				write_width =  w - pixels_written;
+			}
+			source_rect.w = write_width;
+			dst_rect.x = x1 + pixels_written;
+			result  |= (SDL_RenderCopy(renderer,texture,&source_rect , &dst_rect) == 0);
+			pixels_written += write_width;
+		}
+	}
+
+	return result;
+}
+
+/*!
+\brief Draws a polygon filled with the given texture (Multi-Threading Capable). 
+
+\param renderer The renderer to draw on.
+\param vx array of x vector components
+\param vy array of x vector components
+\param n the amount of vectors in the vx and vy array
+\param texture the sdl surface to use to fill the polygon
+\param texture_dx the offset of the texture relative to the screeen. If you move the polygon 10 pixels 
+to the left and want the texture to apear the same you need to increase the texture_dx value
+\param texture_dy see texture_dx
+\param polyInts Preallocated temp array storage for vertex sorting (used for multi-threaded operation)
+\param polyAllocated Flag indicating oif the temp array was allocated (used for multi-threaded operation)
+
+\returns Returns 0 on success, -1 on failure.
+*/
+int texturedPolygonMT(SDL_Renderer *renderer, const Sint16 * vx, const Sint16 * vy, int n, 
+	SDL_Surface * texture, int texture_dx, int texture_dy, int **polyInts, int *polyAllocated)
+{
+	int result;
+	int i;
+	int y, xa, xb;
+	int minx,maxx,miny, maxy;
+	int x1, y1;
+	int x2, y2;
+	int ind1, ind2;
+	int ints;
+	int *gfxPrimitivesPolyInts = NULL;
+	int gfxPrimitivesPolyAllocated = 0;
+	SDL_Texture *textureAsTexture;
+
+	/*
+	* Sanity check number of edges
+	*/
+	if (n < 3) {
+		return -1;
+	}
+
+	/*
+	* Map polygon cache  
+	*/
+	if ((polyInts==NULL) || (polyAllocated==NULL)) {
+		/* Use global cache */
+		gfxPrimitivesPolyInts = gfxPrimitivesPolyIntsGlobal;
+		gfxPrimitivesPolyAllocated = gfxPrimitivesPolyAllocatedGlobal;
+	} else {
+		/* Use local cache */
+		gfxPrimitivesPolyInts = *polyInts;
+		gfxPrimitivesPolyAllocated = *polyAllocated;
+	}
+
+	/*
+	* Allocate temp array, only grow array 
+	*/
+	if (!gfxPrimitivesPolyAllocated) {
+		gfxPrimitivesPolyInts = (int *) malloc(sizeof(int) * n);
+		gfxPrimitivesPolyAllocated = n;
+	} else {
+		if (gfxPrimitivesPolyAllocated < n) {
+			gfxPrimitivesPolyInts = (int *) realloc(gfxPrimitivesPolyInts, sizeof(int) * n);
+			gfxPrimitivesPolyAllocated = n;
+		}
+	}
+
+	/*
+	* Check temp array
+	*/
+	if (gfxPrimitivesPolyInts==NULL) {        
+		gfxPrimitivesPolyAllocated = 0;
+	}
+
+	/*
+	* Update cache variables
+	*/
+	if ((polyInts==NULL) || (polyAllocated==NULL)) { 
+		gfxPrimitivesPolyIntsGlobal =  gfxPrimitivesPolyInts;
+		gfxPrimitivesPolyAllocatedGlobal = gfxPrimitivesPolyAllocated;
+	} else {
+		*polyInts = gfxPrimitivesPolyInts;
+		*polyAllocated = gfxPrimitivesPolyAllocated;
+	}
+
+	/*
+	* Check temp array again
+	*/
+	if (gfxPrimitivesPolyInts==NULL) {        
+		return(-1);
+	}
+
+	/*
+	* Determine X,Y minima,maxima 
+	*/
+	miny = vy[0];
+	maxy = vy[0];
+	minx = vx[0];
+	maxx = vx[0];
+	for (i = 1; (i < n); i++) {
+		if (vy[i] < miny) {
+			miny = vy[i];
+		} else if (vy[i] > maxy) {
+			maxy = vy[i];
+		}
+		if (vx[i] < minx) {
+			minx = vx[i];
+		} else if (vx[i] > maxx) {
+			maxx = vx[i];
+		}
+	}
+
+	/*
+	* Draw, scanning y 
+	*/
+	result = 0;
+	for (y = miny; (y <= maxy); y++) {
+		ints = 0;
+		for (i = 0; (i < n); i++) {
+			if (!i) {
+				ind1 = n - 1;
+				ind2 = 0;
+			} else {
+				ind1 = i - 1;
+				ind2 = i;
+			}
+			y1 = vy[ind1];
+			y2 = vy[ind2];
+			if (y1 < y2) {
+				x1 = vx[ind1];
+				x2 = vx[ind2];
+			} else if (y1 > y2) {
+				y2 = vy[ind1];
+				y1 = vy[ind2];
+				x2 = vx[ind1];
+				x1 = vx[ind2];
+			} else {
+				continue;
+			}
+			if ( ((y >= y1) && (y < y2)) || ((y == maxy) && (y > y1) && (y <= y2)) ) {
+				gfxPrimitivesPolyInts[ints++] = ((65536 * (y - y1)) / (y2 - y1)) * (x2 - x1) + (65536 * x1);
+			} 
+		}
+
+		qsort(gfxPrimitivesPolyInts, ints, sizeof(int), _gfxPrimitivesCompareInt);
+
+		textureAsTexture = SDL_CreateTextureFromSurface(renderer, texture);
+		if (textureAsTexture == NULL)
+		{
+			return (-1);
+		}
+
+		for (i = 0; (i < ints); i += 2) {
+			xa = gfxPrimitivesPolyInts[i] + 1;
+			xa = (xa >> 16) + ((xa & 32768) >> 15);
+			xb = gfxPrimitivesPolyInts[i+1] - 1;
+			xb = (xb >> 16) + ((xb & 32768) >> 15);
+			result |= _HLineTextured(renderer, xa, xb, y, textureAsTexture, texture->w, texture->h, texture_dx, texture_dy);
+		}
+		SDL_DestroyTexture(textureAsTexture);
+	}
+
+	return (result);
+}
+
 /*!
 \brief Draws a polygon filled with the given texture. 
 
-\param renderer the destination renderer, 
+This standard version is calling multithreaded versions with NULL cache parameters.
+
+\param renderer The renderer to draw on.
 \param vx array of x vector components
 \param vy array of x vector components
 \param n the amount of vectors in the vx and vy array
@@ -2976,13 +3259,20 @@ to the left and want the texture to apear the same you need to increase the text
 
 \returns Returns 0 on success, -1 on failure.
 */
-int texturedPolygon(SDL_Renderer * renderer, const Sint16 * vx, const Sint16 * vy, int n, SDL_Texture *texture, int texture_dx, int texture_dy)
+int texturedPolygon(SDL_Renderer *renderer, const Sint16 * vx, const Sint16 * vy, int n, SDL_Surface *texture, int texture_dx, int texture_dy)
 {
-	// TODO
-	return 0;
+	/*
+	* Draw
+	*/
+	return (texturedPolygonMT(renderer, vx, vy, n, texture, texture_dx, texture_dy, NULL, NULL));
 }
 
 /* ---- Character */
+
+/*!
+\brief Global cache for NxM pixel font textures created at runtime.
+*/
+static SDL_Texture *gfxPrimitivesFont[256];
 
 /*!
 \brief Pointer to the current font data. Default is a 8x8 pixel internal font. 
@@ -3042,7 +3332,7 @@ void gfxPrimitivesSetFont(const void *fontdata, Uint32 cw, Uint32 ch)
 	int i;
 
 	if ((fontdata) && (cw) && (ch)) {
-		currentFontdata = fontdata;
+		currentFontdata = (unsigned char *)fontdata;
 		charWidth = cw;
 		charHeight = ch;
 	} else {
@@ -3064,6 +3354,14 @@ void gfxPrimitivesSetFont(const void *fontdata, Uint32 cw, Uint32 ch)
 	{
 		charWidthLocal = charWidth;
 		charHeightLocal = charHeight;
+	}
+
+	/* Clear character cache */
+	for (i = 0; i < 256; i++) {
+		if (gfxPrimitivesFont[i]) {
+			SDL_DestroyTexture(gfxPrimitivesFont[i]);
+			gfxPrimitivesFont[i] = NULL;
+		}
 	}
 }
 
@@ -3096,8 +3394,144 @@ void gfxPrimitivesSetFontRotation(Uint32 rotation)
 			charWidthLocal = charWidth;
 			charHeightLocal = charHeight;
 		}
+
+		/* Clear character cache */
+		for (i = 0; i < 256; i++) {
+			if (gfxPrimitivesFont[i]) {
+				SDL_DestroyTexture(gfxPrimitivesFont[i]);
+				gfxPrimitivesFont[i] = NULL;
+			}
+		}
 	}
 }
+
+/*!
+\brief Draw a character of the currently set font.
+
+\param dst The surface to draw on.
+\param x X (horizontal) coordinate of the upper left corner of the character.
+\param y Y (vertical) coordinate of the upper left corner of the character.
+\param c The character to draw.
+\param r The red value of the character to draw. 
+\param g The green value of the character to draw. 
+\param b The blue value of the character to draw. 
+\param a The alpha value of the character to draw.
+
+\returns Returns 0 on success, -1 on failure.
+*/
+int characterRGBA(SDL_Renderer *renderer, Sint16 x, Sint16 y, char c, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
+{
+	Sint16 left, right, top, bottom;
+	Sint16 x1, y1, x2, y2;
+	SDL_Rect srect;
+	SDL_Rect drect;
+	int result;
+	Uint32 ix, iy;
+	const unsigned char *charpos;
+	Uint8 *curpos;
+	int forced_redraw;
+	Uint8 patt, mask;
+	Uint8 *linepos;
+	Uint32 pitch;
+	SDL_Surface *character;
+	SDL_Surface *rotatedCharacter;
+	Uint32 ci;
+
+	/*
+	* Setup source rectangle
+	*/
+	srect.x = 0;
+	srect.y = 0;
+	srect.w = charWidthLocal;
+	srect.h = charHeightLocal;
+
+	/*
+	* Setup destination rectangle
+	*/
+	drect.x = x;
+	drect.y = y;
+	drect.w = charWidthLocal;
+	drect.h = charHeightLocal;
+
+	/* Character index in cache */
+	ci = (unsigned char) c;
+
+	/*
+	* Create new charWidth x charHeight bitmap surface if not already present.
+	* Might get rotated later.
+	*/
+	if (gfxPrimitivesFont[ci] == NULL) {
+		/*
+		* Redraw character into surface
+		*/
+		character =	SDL_CreateRGBSurface(SDL_SWSURFACE,
+			charWidth, charHeight, 32,
+			0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
+		if (character == NULL) {
+			return (-1);
+		}
+
+		charpos = currentFontdata + ci * charSize;
+				linepos = (Uint8 *)character->pixels;
+		pitch = character->pitch;
+
+		/*
+		* Drawing loop 
+		*/
+		patt = 0;
+		for (iy = 0; iy < charHeight; iy++) {
+			mask = 0x00;
+			curpos = linepos;
+			for (ix = 0; ix < charWidth; ix++) {
+				if (!(mask >>= 1)) {
+					patt = *charpos++;
+					mask = 0x80;
+				}
+				if (patt & mask) {
+					*(Uint32 *)curpos = 0xffffffff;
+				} else {
+					*(Uint32 *)curpos = 0;
+				}
+				curpos += 4;
+			}
+			linepos += pitch;
+		}
+
+		/* Maybe rotate and replace cached image */
+		if (charRotation>0)
+		{
+			rotatedCharacter = rotateSurface90Degrees(character, charRotation);
+			SDL_FreeSurface(character);
+			character = rotatedCharacter;
+		}
+
+		/* Convert temp surface into texture */
+		gfxPrimitivesFont[ci] = SDL_CreateTextureFromSurface(renderer, character);
+		SDL_FreeSurface(character);
+
+		/*
+		* Check pointer 
+		*/
+		if (gfxPrimitivesFont[ci] == NULL) {
+			return (-1);
+		}
+	}
+
+	/*
+	* Set color 
+	*/
+	result = 0;
+	result |= SDL_SetTextureColorMod(gfxPrimitivesFont[ci], r, g, b);
+	result |= SDL_SetTextureAlphaMod(gfxPrimitivesFont[ci], a);
+
+	/*
+	* Draw texture onto destination 
+	*/
+	result |= SDL_RenderCopy(renderer, gfxPrimitivesFont[ci], &srect, &drect);
+
+	return (result);
+}
+
 
 /*!
 \brief Draw a character of the currently set font.
@@ -3112,33 +3546,10 @@ void gfxPrimitivesSetFontRotation(Uint32 rotation)
 */
 int characterColor(SDL_Renderer * renderer, Sint16 x, Sint16 y, char c, Uint32 color)
 {
-
-	//// TODO
-	
-	return 0;
+	Uint8 *co = (Uint8 *)&color; 
+	return characterRGBA(renderer, x, y, c, co[0], co[1], co[2], co[3]);
 }
 
-/*!
-\brief Draw a character of the currently set font.
-
-\param renderer The renderer to draw on.
-\param x X (horizontal) coordinate of the upper left corner of the character.
-\param y Y (vertical) coordinate of the upper left corner of the character.
-\param c The character to draw.
-\param r The red value of the character to draw. 
-\param g The green value of the character to draw. 
-\param b The blue value of the character to draw. 
-\param a The alpha value of the character to draw.
-
-\returns Returns 0 on success, -1 on failure.
-*/
-int characterRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, char c, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
-{
-	/*
-	* Draw 
-	*/
-	return (characterColor(renderer, x, y, c, ((Uint32) r << 24) | ((Uint32) g << 16) | ((Uint32) b << 8) | (Uint32) a));
-}
 
 /*!
 \brief Draw a string in the currently set font.
@@ -3156,13 +3567,33 @@ of the character width of the current global font.
 */
 int stringColor(SDL_Renderer * renderer, Sint16 x, Sint16 y, const char *s, Uint32 color)
 {
+	Uint8 *c = (Uint8 *)&color; 
+	return stringRGBA(renderer, x, y, s, c[0], c[1], c[2], c[3]);
+}
+
+/*!
+\brief Draw a string in the currently set font.
+
+\param renderer The renderer to draw on.
+\param x X (horizontal) coordinate of the upper left corner of the string.
+\param y Y (vertical) coordinate of the upper left corner of the string.
+\param s The string to draw.
+\param r The red value of the string to draw. 
+\param g The green value of the string to draw. 
+\param b The blue value of the string to draw. 
+\param a The alpha value of the string to draw.
+
+\returns Returns 0 on success, -1 on failure.
+*/
+int stringRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, const char *s, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
+{
 	int result = 0;
 	Sint16 curx = x;
 	Sint16 cury = y;
 	const char *curchar = s;
 
 	while (*curchar && !result) {
-		result |= characterColor(renderer, curx, cury, *curchar, color);
+		result |= characterRGBA(renderer, curx, cury, *curchar, r, g, b, a);
 		switch (charRotation)
 		{
 		case 0:
@@ -3182,28 +3613,6 @@ int stringColor(SDL_Renderer * renderer, Sint16 x, Sint16 y, const char *s, Uint
 	}
 
 	return (result);
-}
-
-/*!
-\brief Draw a string in the currently set font.
-
-\param renderer The renderer to draw on.
-\param x X (horizontal) coordinate of the upper left corner of the string.
-\param y Y (vertical) coordinate of the upper left corner of the string.
-\param s The string to draw.
-\param r The red value of the string to draw. 
-\param g The green value of the string to draw. 
-\param b The blue value of the string to draw. 
-\param a The alpha value of the string to draw.
-
-\returns Returns 0 on success, -1 on failure.
-*/
-int stringRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, const char *s, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
-{
-	/*
-	* Draw 
-	*/
-	return (stringColor(renderer, x, y, s, ((Uint32) r << 24) | ((Uint32) g << 16) | ((Uint32) b << 8) | (Uint32) a));
 }
 
 /* ---- Bezier curve */
@@ -3364,10 +3773,481 @@ int bezierRGBA(SDL_Renderer * renderer, const Sint16 * vx, const Sint16 * vy, in
 }
 
 
+/* ---- Thick Line */
+
+/*!
+\brief Internal function to initialize the Bresenham line iterator.
+
+Example of use:
+SDL2_gfxBresenhamIterator b;
+_bresenhamInitialize (&b, x1, y1, x2, y2);
+do { 
+plot(b.x, b.y); 
+} while (_bresenhamIterate(&b)==0); 
+
+\param b Pointer to struct for bresenham line drawing state.
+\param x1 X coordinate of the first point of the line.
+\param y1 Y coordinate of the first point of the line.
+\param x2 X coordinate of the second point of the line.
+\param y2 Y coordinate of the second point of the line.
+
+\returns Returns 0 on success, -1 on failure.
+*/
+int _bresenhamInitialize(SDL2_gfxBresenhamIterator *b, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2)
+{
+	int temp;
+
+	if (b==NULL) {
+		return(-1);
+	}
+
+	b->x = x1;
+	b->y = y1;
+
+	/* dx = abs(x2-x1), s1 = sign(x2-x1) */
+	if ((b->dx = x2 - x1) != 0) {
+		if (b->dx < 0) {
+			b->dx = -b->dx;
+			b->s1 = -1;
+		} else {
+			b->s1 = 1;
+		}
+	} else {
+		b->s1 = 0;	
+	}
+
+	/* dy = abs(y2-y1), s2 = sign(y2-y1)    */
+	if ((b->dy = y2 - y1) != 0) {
+		if (b->dy < 0) {
+			b->dy = -b->dy;
+			b->s2 = -1;
+		} else {
+			b->s2 = 1;
+		}
+	} else {
+		b->s2 = 0;	
+	}
+
+	if (b->dy > b->dx) {
+		temp = b->dx;
+		b->dx = b->dy;
+		b->dy = temp;
+		b->swapdir = 1;
+	} else {
+		b->swapdir = 0;
+	}
+
+	b->count = (b->dx<0) ? 0 : (unsigned int)b->dx;
+	b->dy <<= 1;
+	b->error = b->dy - b->dx;
+	b->dx <<= 1;	
+
+	return(0);
+}
+
+
+/*!
+\brief Internal function to move Bresenham line iterator to the next position.
+
+Maybe updates the x and y coordinates of the iterator struct.
+
+\param b Pointer to struct for bresenham line drawing state.
+
+\returns Returns 0 on success, 1 if last point was reached, 2 if moving past end-of-line, -1 on failure.
+*/
+int _bresenhamIterate(SDL2_gfxBresenhamIterator *b)
+{	
+	if (b==NULL) {
+		return (-1);
+	}
+
+	/* last point check */
+	if (b->count==0) {
+		return (2);
+	}
+
+	while (b->error >= 0) {
+		if (b->swapdir) {
+			b->x += b->s1;
+		} else  {
+			b->y += b->s2;
+		}
+
+		b->error -= b->dx;
+	}
+
+	if (b->swapdir) {
+		b->y += b->s2;
+	} else {
+		b->x += b->s1;
+	}
+
+	b->error += b->dy;	
+	b->count--;		
+
+	/* count==0 indicates "end-of-line" */
+	return ((b->count) ? 0 : 1);
+}
+
+
+/*!
+\brief Internal function to to draw parallel lines with Murphy algorithm.
+
+\param m Pointer to struct for murphy iterator.
+\param x X coordinate of point.
+\param y Y coordinate of point.
+\param d1 Direction square/diagonal.
+*/
+void _murphyParaline(SDL2_gfxMurphyIterator *m, Sint16 x, Sint16 y, int d1)
+{
+	int p;
+	d1 = -d1;
+
+	for (p = 0; p <= m->u; p++) {
+
+		pixel(m->renderer, x, y);
+
+		if (d1 <= m->kt) {
+			if (m->oct2 == 0) {
+				x++;
+			} else {
+				if (m->quad4 == 0) {
+					y++;
+				} else {
+					y--;
+				}
+			}
+			d1 += m->kv;
+		} else {	
+			x++;
+			if (m->quad4 == 0) {
+				y++;
+			} else {
+				y--;
+			}
+			d1 += m->kd;
+		}
+	}
+
+	m->tempx = x;
+	m->tempy = y;
+}
+
+/*!
+\brief Internal function to to draw one iteration of the Murphy algorithm.
+
+\param m Pointer to struct for murphy iterator.
+\param miter Iteration count.
+\param ml1bx X coordinate of a point.
+\param ml1by Y coordinate of a point.
+\param ml2bx X coordinate of a point.
+\param ml2by Y coordinate of a point.
+\param ml1x X coordinate of a point.
+\param ml1y Y coordinate of a point.
+\param ml2x X coordinate of a point.
+\param ml2y Y coordinate of a point.
+
+*/
+void _murphyIteration(SDL2_gfxMurphyIterator *m, Uint8 miter, 
+	Uint16 ml1bx, Uint16 ml1by, Uint16 ml2bx, Uint16 ml2by, 
+	Uint16 ml1x, Uint16 ml1y, Uint16 ml2x, Uint16 ml2y)
+{
+	int atemp1, atemp2;
+	int ftmp1, ftmp2;
+	Uint16 m1x, m1y, m2x, m2y;	
+	Uint16 fix, fiy, lax, lay, curx, cury;
+	Sint16 px[4], py[4];
+	SDL2_gfxBresenhamIterator b;
+
+	if (miter > 1) {
+		if (m->first1x != -32768) {
+			fix = (m->first1x + m->first2x) / 2;
+			fiy = (m->first1y + m->first2y) / 2;
+			lax = (m->last1x + m->last2x) / 2;
+			lay = (m->last1y + m->last2y) / 2;
+			curx = (ml1x + ml2x) / 2;
+			cury = (ml1y + ml2y) / 2;
+
+			atemp1 = (fix - curx);
+			atemp2 = (fiy - cury);
+			ftmp1 = atemp1 * atemp1 + atemp2 * atemp2;
+			atemp1 = (lax - curx);
+			atemp2 = (lay - cury);
+			ftmp2 = atemp1 * atemp1 + atemp2 * atemp2;
+
+			if (ftmp1 <= ftmp2) {
+				m1x = m->first1x;
+				m1y = m->first1y;
+				m2x = m->first2x;
+				m2y = m->first2y;
+			} else {
+				m1x = m->last1x;
+				m1y = m->last1y;
+				m2x = m->last2x;
+				m2y = m->last2y;
+			}
+
+			atemp1 = (m2x - ml2x);
+			atemp2 = (m2y - ml2y);
+			ftmp1 = atemp1 * atemp1 + atemp2 * atemp2;
+			atemp1 = (m2x - ml2bx);
+			atemp2 = (m2y - ml2by);
+			ftmp2 = atemp1 * atemp1 + atemp2 * atemp2;
+
+			if (ftmp2 >= ftmp1) {
+				ftmp1 = ml2bx;
+				ftmp2 = ml2by;
+				ml2bx = ml2x;
+				ml2by = ml2y;
+				ml2x = ftmp1;
+				ml2y = ftmp2;
+				ftmp1 = ml1bx;
+				ftmp2 = ml1by;
+				ml1bx = ml1x;
+				ml1by = ml1y;
+				ml1x = ftmp1;
+				ml1y = ftmp2;
+			}
+
+			/*
+			* Lock the surface 
+			*/
+			_bresenhamInitialize(&b, m2x, m2y, m1x, m1y);
+			do {
+				pixel(m->renderer, b.x, b.y);
+			} while (_bresenhamIterate(&b)==0);
+
+			_bresenhamInitialize(&b, m1x, m1y, ml1bx, ml1by);
+			do {
+				pixel(m->renderer, b.x, b.y);
+			} while (_bresenhamIterate(&b)==0);
+
+			_bresenhamInitialize(&b, ml1bx, ml1by, ml2bx, ml2by);
+			do {
+				pixel(m->renderer, b.x, b.y);
+			} while (_bresenhamIterate(&b)==0);
+
+			_bresenhamInitialize(&b, ml2bx, ml2by, m2x, m2y);
+			do {
+				pixel(m->renderer, b.x, b.y);
+			} while (_bresenhamIterate(&b)==0);
+
+			px[0] = m1x;
+			px[1] = m2x;
+			px[2] = ml1bx;
+			px[3] = ml2bx;
+			py[0] = m1y;
+			py[1] = m2y;
+			py[2] = ml1by;
+			py[3] = ml2by;			
+			polygon(m->renderer, px, py, 4);						
+		}
+	}
+
+	m->last1x = ml1x;
+	m->last1y = ml1y;
+	m->last2x = ml2x;
+	m->last2y = ml2y;
+	m->first1x = ml1bx;
+	m->first1y = ml1by;
+	m->first2x = ml2bx;
+	m->first2y = ml2by;
+}
+
+
+#define HYPOT(x,y) sqrt((double)(x)*(double)(x)+(double)(y)*(double)(y)) 
+
+/*!
+\brief Internal function to to draw wide lines with Murphy algorithm.
+
+Draws lines parallel to ideal line.
+
+\param m Pointer to struct for murphy iterator.
+\param x1 X coordinate of first point.
+\param y1 Y coordinate of first point.
+\param x2 X coordinate of second point.
+\param y2 Y coordinate of second point.
+\param width Width of line.
+\param miter Iteration count.
+
+*/
+void _murphyWideline(SDL2_gfxMurphyIterator *m, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 width, Uint8 miter)
+{	
+	float offset = (float)width / 2.f;
+
+	Sint16 temp;
+	Sint16 ptx, pty, ptxx, ptxy, ml1x, ml1y, ml2x, ml2y, ml1bx, ml1by, ml2bx, ml2by;
+
+	int d0, d1;		/* difference terms d0=perpendicular to line, d1=along line */
+
+	int q;			/* pel counter,q=perpendicular to line */
+	int tmp;
+
+	int dd;			/* distance along line */
+	int tk;			/* thickness threshold */
+	double ang;		/* angle for initial point calculation */
+	double sang, cang;
+
+	/* Initialisation */
+	m->u = x2 - x1;	/* delta x */
+	m->v = y2 - y1;	/* delta y */
+
+	if (m->u < 0) {	/* swap to make sure we are in quadrants 1 or 4 */
+		temp = x1;
+		x1 = x2;
+		x2 = temp;
+		temp = y1;
+		y1 = y2;
+		y2 = temp;		
+		m->u *= -1;
+		m->v *= -1;
+	}
+
+	if (m->v < 0) {	/* swap to 1st quadrant and flag */
+		m->v *= -1;
+		m->quad4 = 1;
+	} else {
+		m->quad4 = 0;
+	}
+
+	if (m->v > m->u) {	/* swap things if in 2 octant */
+		tmp = m->u;
+		m->u = m->v;
+		m->v = tmp;
+		m->oct2 = 1;
+	} else {
+		m->oct2 = 0;
+	}
+
+	m->ku = m->u + m->u;	/* change in l for square shift */
+	m->kv = m->v + m->v;	/* change in d for square shift */
+	m->kd = m->kv - m->ku;	/* change in d for diagonal shift */
+	m->kt = m->u - m->kv;	/* diag/square decision threshold */
+
+	d0 = 0;
+	d1 = 0;
+	dd = 0;
+
+	ang = atan((double) m->v / (double) m->u);	/* calc new initial point - offset both sides of ideal */	
+	sang = sin(ang);
+	cang = cos(ang);
+
+	if (m->oct2 == 0) {
+		ptx = x1 + (Sint16)lrint(offset * sang);
+		if (m->quad4 == 0) {
+			pty = y1 - (Sint16)lrint(offset * cang);
+		} else {
+			pty = y1 + (Sint16)lrint(offset * cang);
+		}
+	} else {
+		ptx = x1 - (Sint16)lrint(offset * cang);
+		if (m->quad4 == 0) {
+			pty = y1 + (Sint16)lrint(offset * sang);
+		} else {
+			pty = y1 - (Sint16)lrint(offset * sang);
+		}
+	}
+
+	/* used here for constant thickness line */
+	tk = (int) (4. * HYPOT(ptx - x1, pty - y1) * HYPOT(m->u, m->v));
+
+	if (miter == 0) {
+		m->first1x = -32768;
+		m->first1y = -32768;
+		m->first2x = -32768;
+		m->first2y = -32768;
+		m->last1x = -32768;
+		m->last1y = -32768;
+		m->last2x = -32768;
+		m->last2y = -32768;
+	}
+	ptxx = ptx;
+	ptxy = pty;
+
+	for (q = 0; dd <= tk; q++) {	/* outer loop, stepping perpendicular to line */
+
+		_murphyParaline(m, ptx, pty, d1);	/* call to inner loop - right edge */
+		if (q == 0) {
+			ml1x = ptx;
+			ml1y = pty;
+			ml1bx = m->tempx;
+			ml1by = m->tempy;
+		} else {
+			ml2x = ptx;
+			ml2y = pty;
+			ml2bx = m->tempx;
+			ml2by = m->tempy;
+		}
+		if (d0 < m->kt) {	/* square move */
+			if (m->oct2 == 0) {
+				if (m->quad4 == 0) {
+					pty++;
+				} else {
+					pty--;
+				}
+			} else {
+				ptx++;
+			}
+		} else {	/* diagonal move */
+			dd += m->kv;
+			d0 -= m->ku;
+			if (d1 < m->kt) {	/* normal diagonal */
+				if (m->oct2 == 0) {
+					ptx--;
+					if (m->quad4 == 0) {
+						pty++;
+					} else {
+						pty--;
+					}
+				} else {
+					ptx++;
+					if (m->quad4 == 0) {
+						pty--;
+					} else {
+						pty++;
+					}
+				}
+				d1 += m->kv;
+			} else {	/* double square move, extra parallel line */
+				if (m->oct2 == 0) {
+					ptx--;
+				} else {
+					if (m->quad4 == 0) {
+						pty--;
+					} else {
+						pty++;
+					}
+				}
+				d1 += m->kd;
+				if (dd > tk) {
+					_murphyIteration(m, miter, ml1bx, ml1by, ml2bx, ml2by, ml1x, ml1y, ml2x, ml2y);
+					return;	/* breakout on the extra line */
+				}
+				_murphyParaline(m, ptx, pty, d1);
+				if (m->oct2 == 0) {
+					if (m->quad4 == 0) {
+						pty++;
+					} else {
+
+						pty--;
+					}
+				} else {
+					ptx++;
+				}
+			}
+		}
+		dd += m->ku;
+		d0 += m->kv;
+	}
+
+	_murphyIteration(m, miter, ml1bx, ml1by, ml2bx, ml2by, ml1x, ml1y, ml2x, ml2y);
+}
+
+
 /*!
 \brief Draw a thick line with alpha blending.
 
-\param renderer The renderer to draw on.
+\param dst The surface to draw on.
 \param x1 X coordinate of the first point of the line.
 \param y1 Y coordinate of the first point of the line.
 \param x2 X coordinate of the second point of the line.
@@ -3377,7 +4257,7 @@ int bezierRGBA(SDL_Renderer * renderer, const Sint16 * vx, const Sint16 * vy, in
 
 \returns Returns 0 on success, -1 on failure.
 */
-int thickLineColor(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 width, Uint32 color)
+int thickLineColor(SDL_Renderer *renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 width, Uint32 color)
 {	
 	Uint8 *c = (Uint8 *)&color; 
 	return thickLineRGBA(renderer, x1, y1, x2, y2, width, c[0], c[1], c[2], c[3]);
@@ -3386,7 +4266,7 @@ int thickLineColor(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sin
 /*!
 \brief Draw a thick line with alpha blending.
 
-\param renderer The renderer to draw on.
+\param dst The surface to draw on.
 \param x1 X coordinate of the first point of the line.
 \param y1 Y coordinate of the first point of the line.
 \param x2 X coordinate of the second point of the line.
@@ -3399,8 +4279,38 @@ int thickLineColor(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sin
 
 \returns Returns 0 on success, -1 on failure.
 */	
-int thickLineRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 width, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
+int thickLineRGBA(SDL_Renderer *renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 width, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
 {
-	// TODO
-	return -1;
+	int result;
+	int wh;
+	SDL2_gfxMurphyIterator m;
+
+	if (renderer == NULL) {
+		return -1;
+	}
+	if (width < 1) {
+		return -1;
+	}
+
+	/* Special case: thick "point" */
+	if ((x1 == x2) && (y1 == y2)) {
+		wh = width / 2;
+		return boxRGBA(renderer, x1 - wh, y1 - wh, x2 + width, y2 + width, r, g, b, a);		
+	}
+
+	/*
+	* Set color
+	*/
+	result = 0;
+	result |= SDL_SetRenderDrawBlendMode(renderer, (a == 255) ? SDL_BLENDMODE_NONE : SDL_BLENDMODE_BLEND);
+	result |= SDL_SetRenderDrawColor(renderer, r, g, b, a);
+
+	/* 
+	* Draw
+	*/
+	m.renderer = renderer;
+	_murphyWideline(&m, x1, y1, x2, y2, width, 0);
+	_murphyWideline(&m, x1, y1, x2, y2, width, 1);
+
+	return(0);
 }

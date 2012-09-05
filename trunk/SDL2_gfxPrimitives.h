@@ -2,7 +2,7 @@
 
 SDL2_gfxPrimitives.h: graphics primitives for SDL
 
-Copyright (C) 2001-2012  Andreas Schiffler
+Copyright (C) 2012  Andreas Schiffler
 
 This software is provided 'as-is', without any express or implied
 warranty. In no event will the authors be held liable for any damages
@@ -213,7 +213,10 @@ extern "C" {
 	SDL2_GFXPRIMITIVES_SCOPE int filledPolygonColor(SDL_Renderer * renderer, const Sint16 * vx, const Sint16 * vy, int n, Uint32 color);
 	SDL2_GFXPRIMITIVES_SCOPE int filledPolygonRGBA(SDL_Renderer * renderer, const Sint16 * vx,
 		const Sint16 * vy, int n, Uint8 r, Uint8 g, Uint8 b, Uint8 a);
-	SDL2_GFXPRIMITIVES_SCOPE int texturedPolygon(SDL_Renderer * renderer, const Sint16 * vx, const Sint16 * vy, int n, SDL_Texture * texture,int texture_dx,int texture_dy);
+
+	/* Textured Polygon */
+
+	SDL2_GFXPRIMITIVES_SCOPE int texturedPolygon(SDL_Renderer * renderer, const Sint16 * vx, const Sint16 * vy, int n, SDL_Surface * texture,int texture_dx,int texture_dy);
 
 	/* Bezier */
 
