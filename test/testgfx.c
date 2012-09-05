@@ -170,8 +170,8 @@ void ClearScreen(SDL_Renderer *renderer, char *title)
 	vlineRGBA(renderer, WIDTH/2, 20, HEIGHT, 255,255,255,255);
 	strncpy(titletext,"Current Primitive: ",256);
 	strncat(titletext,title,256);
-	strncat(titletext,"  -  Click to continue. Key to Quit.",256);
-	stringRGBA (renderer, WIDTH/2-4*strlen(titletext),10-4,titletext,255,255,255,255);
+	strncat(titletext,"  -  Space to continue. ESC to Quit.",256);
+	stringRGBA (renderer, WIDTH/2-4*strlen(titletext),10-4,titletext,255,255,0,255);
 	strncpy(titletext,"A=255 on Black",256);
 	stringRGBA (renderer, WIDTH/4-4*strlen(titletext),50-4,titletext,255,255,255,255);
 	strncpy(titletext,"A=0-254 on Black",256);
@@ -1100,6 +1100,119 @@ void TestFilledPie(SDL_Renderer *renderer)
 	/* Clear viewport */
 	ClearViewport(renderer);
 }
+
+void TestThickLine(SDL_Renderer *renderer)
+{
+	int i;
+	char r,g,b;
+
+	/* Create random points */
+	InitRandomPoints();
+
+	/* Draw A=255 */
+	SetViewport(renderer,0,60,WIDTH/2,60+(HEIGHT-80)/2);
+	for (i=0; i<NUM_RANDOM; i += 5) {
+		thickLineRGBA(renderer, rx[i], ry[i], rx[i+1], ry[i+1], lw[i], rr[i], rg[i], rb[i], 255);
+	}
+
+	/* Draw A=various */
+	SetViewport(renderer,WIDTH/2,60,WIDTH,60+(HEIGHT-80)/2);
+	for (i=0; i<NUM_RANDOM; i += 5) {
+		thickLineRGBA(renderer, rx[i], ry[i], rx[i+1], ry[i+1], lw[i], rr[i], rg[i], rb[i], ra[i]);
+	}
+
+	/* Draw A=various */
+	SetViewport(renderer,WIDTH/2,80+(HEIGHT-80)/2,WIDTH,HEIGHT);
+	for (i=0; i<NUM_RANDOM; i += 5) {
+		thickLineRGBA(renderer, rx[i], ry[i], rx[i+1], ry[i+1], lw[i], rr[i], rg[i], rb[i], ra[i]);
+	}
+
+	/* Draw Colortest */
+	SetViewport(renderer,0,80+(HEIGHT-80)/2,WIDTH/2,HEIGHT);
+	for (i=0; i<NUM_RANDOM; i += 5) {
+		if (rx[i] < (WIDTH/6))  {
+			r=255; g=0; b=0; 
+		} else if (rx[i] < (WIDTH/3) ) {
+			r=0; g=255; b=0; 
+		} else {
+			r=0; g=0; b=255; 
+		}
+		thickLineRGBA(renderer, rx[i], ry[i], rx[i]+rr1[i], ry[i]+rr2[i], lw[i], r, g, b, 255);
+	}
+
+	/* Clear viewport */
+	ClearViewport(renderer);
+}
+
+
+void TestTexturedPolygon(SDL_Renderer *renderer)
+{
+	int i;
+	Uint32 color;
+	SDL_Surface *texture;
+
+	/* Create random points */
+	InitRandomPoints();
+
+	/* Create texture */
+	texture = SDL_CreateRGBSurface(SDL_SWSURFACE,
+		2, 2, 32,
+		0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
+
+	/* Draw A=255 */
+	((Uint32 *)texture->pixels)[0] = 0xffffffff;
+	((Uint32 *)texture->pixels)[1] = 0xffff00ff;
+	((Uint32 *)texture->pixels)[2] = 0x00ffffff;
+	((Uint32 *)texture->pixels)[3] = 0xff00ffff;
+	SetViewport(renderer,0,60,WIDTH/2,60+(HEIGHT-80)/2);
+	for (i=0; i<NUM_RANDOM; i++) {
+		texturedPolygon(renderer, &tx1[i][0], &ty1[i][0], 3, texture, 0, 0);
+	}
+
+	/* Draw A=various */
+	SetViewport(renderer,WIDTH/2,60,WIDTH,60+(HEIGHT-80)/2);
+	for (i=0; i<NUM_RANDOM; i++) {
+		((Uint32 *)texture->pixels)[0] = 0xffffff00 | ra[i];
+		((Uint32 *)texture->pixels)[1] = 0xffff0000 | ra[i];
+		((Uint32 *)texture->pixels)[2] = 0x00ffff00 | ra[i];
+		((Uint32 *)texture->pixels)[3] = 0xff00ff00 | ra[i];
+		texturedPolygon(renderer, &tx1[i][0], &ty1[i][0], 3, texture, 0, 0);
+	}
+
+	/* Draw A=various */
+	SetViewport(renderer,WIDTH/2,80+(HEIGHT-80)/2,WIDTH,HEIGHT);
+	for (i=0; i<NUM_RANDOM; i++) {
+		((Uint32 *)texture->pixels)[0] = 0xffffff00 | ra[i];
+		((Uint32 *)texture->pixels)[1] = 0xffff0000 | ra[i];
+		((Uint32 *)texture->pixels)[2] = 0x00ffff00 | ra[i];
+		((Uint32 *)texture->pixels)[3] = 0xff00ff00 | ra[i];
+		texturedPolygon(renderer, &tx1[i][0], &ty1[i][0], 3, texture, 0, 0);
+	}
+
+	/* Draw Colortest */
+	SetViewport(renderer,0,80+(HEIGHT-80)/2,WIDTH/2,HEIGHT);
+	for (i=0; i<NUM_RANDOM; i++) {
+		if (rx[i] < (WIDTH/6))  {
+			color = 0xff0000ff;
+		} else if (rx[i] < (WIDTH/3) ) {
+			color = 0x00ff00ff;
+		} else {
+			color = 0x0000ffff;
+		}
+		((Uint32 *)texture->pixels)[0] = color;
+		((Uint32 *)texture->pixels)[1] = color;
+		((Uint32 *)texture->pixels)[2] = color;
+		((Uint32 *)texture->pixels)[3] = color;
+
+		texturedPolygon(renderer, &tx1[i][0], &ty1[i][0], 3, texture, 0, 0);
+	}
+
+	SDL_FreeSurface(texture);
+
+	/* Clear viewport */
+	ClearViewport(renderer);
+}
+
 /* ====== Main */
 
 int main(int argc, char *argv[])
@@ -1169,91 +1282,120 @@ int main(int argc, char *argv[])
 			for (i = 0; i < state->num_windows; ++i) {
 				SDL_Renderer *renderer = state->renderers[i];
 
-				ClearScreen(renderer, "testgfx");
-
-				switch (test % 21) {
+				switch (test % 23) {
 					case 0: {
+						ClearScreen(renderer, "Pixel");
 						TestPixel(renderer); 
 						break;
 					}
 					case 1: {
+						ClearScreen(renderer, "Hline");
 						TestHline(renderer);
 						break;
 					}
 					case 2: {
+						ClearScreen(renderer, "Vline");
 						TestVline(renderer);
 						break;
 					}
 					case 3: {
+						ClearScreen(renderer, "Rectangle");
 						TestRectangle(renderer);
 						break;
 					}
 					case 4: {
+						ClearScreen(renderer, "RoundedRectangle");
 						TestRoundedRectangle(renderer);
 						break;
 					}
 					case 5: {
+						ClearScreen(renderer, "Box");
 						TestBox(renderer);
 						break;
 					}
 					case 6: {
+						ClearScreen(renderer, "Line");
 						TestLine(renderer);
 						break;
 					}
 					case 7: {
+						ClearScreen(renderer, "Circle");
 						TestCircle(renderer);
 						break;
 					}
 					case 8: {
+						ClearScreen(renderer, "AACircle");
 						TestAACircle(renderer);
 						break;
 					}
 					case 9: {
+						ClearScreen(renderer, "FilledCircle");
 						TestFilledCircle(renderer);
 						break;
 					}
 					case 10: {
+						ClearScreen(renderer, "Ellipse");
 						TestEllipse(renderer);
 						break;
 					}
 					case 11: {
+						ClearScreen(renderer, "AAEllipse");
 						TestAAEllipse(renderer);
 						break;
 					}
 					case 12: {
+						ClearScreen(renderer, "FilledEllipse");
 						TestFilledEllipse(renderer);
 						break;
 					}
 					case 13: {
+						ClearScreen(renderer, "Bezier");
 						TestBezier(renderer);
 						break;
 					}
 					case 14: {
+						ClearScreen(renderer, "Polygon");
 						TestPolygon(renderer);
 						break;
 					}
 					case 15: {
+						ClearScreen(renderer, "AAPolygon");
 						TestAAPolygon(renderer);
 						break;
 					}
 					case 16: {
+						ClearScreen(renderer, "Polygon");
 						TestFilledPolygon(renderer);
 						break;
 					}
 					case 17: {
+						ClearScreen(renderer, "Trigon");
 						TestTrigon(renderer);
 						break;
 					}
 					case 18: {
+						ClearScreen(renderer, "Arc");
 						TestArc(renderer);
 						break;
 					}
 					case 19: {
+						ClearScreen(renderer, "Pie");
 						TestPie(renderer);
 						break;
 					}
 					case 20: {
+						ClearScreen(renderer, "FilledPie");
 						TestFilledPie(renderer);
+						break;
+					}
+					case 21: {
+						ClearScreen(renderer, "ThickLine");
+						TestThickLine(renderer);
+						break;
+					}
+					case 22: {
+						ClearScreen(renderer, "TexturedPolygon");
+						TestTexturedPolygon(renderer);
 						break;
 					}
 				}

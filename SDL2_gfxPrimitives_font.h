@@ -1,7 +1,7 @@
 
 /* ---- 8x8 font definition ---- */
 
-/*  ZLIB (c) A. Schiffler 2001-2012 */
+/*  ZLIB (c) A. Schiffler 2012 */
 
 #define GFX_FONTDATAMAX (8*256)
 
