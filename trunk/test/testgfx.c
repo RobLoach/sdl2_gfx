@@ -142,7 +142,6 @@ void ClearScreen(SDL_Renderer *renderer, char *title)
 	int x,y;
 	float stepx, stepy, fx, fy, fxy;
 	char titletext[257];
-	Uint32 color;
 
 	/* Clear the screen */
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -1220,6 +1219,7 @@ int main(int argc, char *argv[])
     int i, done, drawn, test;
     SDL_Event event;
     Uint32 then, now, frames;
+	int numTests;
 
     /* Initialize test framework */
     state = CommonCreateState(argv, SDL_INIT_VIDEO);
@@ -1268,7 +1268,25 @@ int main(int argc, char *argv[])
 				case SDL_KEYDOWN: {
 					switch (event.key.keysym.sym) {
 						case SDLK_SPACE: {
+							/* Switch to next test */
 							test++;
+							drawn = 0;
+							break;
+						}
+					}
+					break;
+				}
+				case SDL_MOUSEBUTTONDOWN: {
+					switch (event.button.button) {
+						case SDL_BUTTON_LEFT: {
+							/* Switch to next test */
+							test++;
+							drawn = 0;
+							break;
+						}
+						case SDL_BUTTON_RIGHT: {
+							/* Switch to prev test */
+							test--;
 							drawn = 0;
 							break;
 						}
@@ -1279,10 +1297,19 @@ int main(int argc, char *argv[])
         }
 
 		if (!drawn) {
+			/* Set test range */
+			numTests = 22;
+			if (test<0) { 
+				test = (numTests - 1); 
+			} else {
+				test = test % (numTests + 1);
+			}
+
+			/* Draw */
 			for (i = 0; i < state->num_windows; ++i) {
 				SDL_Renderer *renderer = state->renderers[i];
 
-				switch (test % 23) {
+				switch (test) {
 					case 0: {
 						ClearScreen(renderer, "Pixel");
 						TestPixel(renderer); 
@@ -1398,12 +1425,19 @@ int main(int argc, char *argv[])
 						TestTexturedPolygon(renderer);
 						break;
 					}
+					default: {
+						ClearScreen(renderer, "Unknown Test");
+						break;
+					}
 				}
 
 				SDL_RenderPresent(renderer);
 			}
 			drawn = 1;
 		}
+
+		/* Adjust framerate */
+
     }
 
     CommonQuit(state);
