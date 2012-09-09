@@ -282,7 +282,6 @@ int rectangleRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sint
 {
 	int result;
 	Sint16 tmp;
-	Sint16 w,h;
 	SDL_Rect rect;
 
 	/*
@@ -667,7 +666,6 @@ int boxRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2,
 {
 	int result;
 	Sint16 tmp;
-	Sint16 w,h;
 	SDL_Rect rect;
 
 	/*
@@ -1131,9 +1129,7 @@ int arcColor(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, Sint16 sta
 */
 int arcRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, Sint16 start, Sint16 end, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
 {
-	Sint16 left, right, top, bottom;
 	int result;
-	Sint16 x1, y1, x2, y2;
 	Sint16 cx = 0;
 	Sint16 cy = rad;
 	Sint16 df = 1 - rad;
@@ -1141,7 +1137,6 @@ int arcRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, Sint16 star
 	Sint16 d_se = -2 * rad + 5;
 	Sint16 xpcx, xmcx, xpcy, xmcy;
 	Sint16 ypcy, ymcy, ypcx, ymcx;
-	Uint8 *colorptr;
 	Uint8 drawoct;
 	int startoct, endoct, oct, stopval_start = 0, stopval_end = 0;
 	double dstart, dend, temp = 0.;
@@ -1429,8 +1424,6 @@ int filledCircleColor(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, U
 int filledCircleRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
 {
 	int result;
-	Sint16 left, right, top, bottom;
-	Sint16 x1, y1, x2, y2;
 	Sint16 cx = 0;
 	Sint16 cy = rad;
 	Sint16 ocx = (Sint16) 0xffff;
@@ -1552,8 +1545,6 @@ int ellipseColor(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rx, Sint16 
 int ellipseRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
 {
 	int result;
-	Sint16 left, right, top, bottom;
-	Sint16 x1, y1, x2, y2;
 	int ix, iy;
 	int h, i, j, k;
 	int oh, oi, oj, ok;
@@ -1561,7 +1552,6 @@ int ellipseRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rx, Sint16 r
 	int xmi, xpi, ymj, ypj;
 	int xmj, xpj, ymi, ypi;
 	int xmk, xpk, ymh, yph;
-	Uint8 *colorptr;
 
 	/*
 	* Sanity check radii 
@@ -1771,8 +1761,6 @@ int aaellipseColor(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rx, Sint1
 int aaellipseRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
 {
 	int result;
-	Sint16 left, right, top, bottom;
-	Sint16 x1,y1,x2,y2;
 	int i;
 	int a2, b2, ds, dt, dxt, t, s, d;
 	Sint16 xp, yp, xs, ys, dyt, od, xx, yy, xc2, yc2;
@@ -1986,9 +1974,7 @@ int filledEllipseColor(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rx, S
 */
 int filledEllipseRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
 {
-	Sint16 left, right, top, bottom;
 	int result;
-	Sint16 x1, y1, x2, y2;
 	int ix, iy;
 	int h, i, j, k;
 	int oh, oi, oj, ok;
@@ -2131,8 +2117,6 @@ Note: Determines vertex array and uses polygon or filledPolygon drawing routines
 */
 int _pieRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, Sint16 start, Sint16 end,  Uint8 r, Uint8 g, Uint8 b, Uint8 a, Uint8 filled)
 {
-	Sint16 left, right, top, bottom;
-	Sint16 x1, y1, x2, y2;
 	int result;
 	double angle, start_angle, end_angle;
 	double deltaAngle;
@@ -2556,7 +2540,7 @@ int polygon(SDL_Renderer * renderer, const Sint16 * vx, const Sint16 * vy, int n
 	*/
 	int result;
 	int i, nn;
-	const Sint16 *x1, *y1, *x2, *y2;
+	SDL_Point* points;
 
 	/*
 	* Vertex array NULL check 
@@ -2579,7 +2563,7 @@ int polygon(SDL_Renderer * renderer, const Sint16 * vx, const Sint16 * vy, int n
 	* Create array of points
 	*/
 	nn = n + 1;
-	SDL_Point* points = (SDL_Point*)malloc(sizeof(SDL_Point) * nn);
+	points = (SDL_Point*)malloc(sizeof(SDL_Point) * nn);
 	if (points == NULL)
 	{
 		return -1;
@@ -2621,7 +2605,6 @@ int polygonRGBA(SDL_Renderer * renderer, const Sint16 * vx, const Sint16 * vy, i
 	* Draw 
 	*/
 	int result;
-	int i;
 	const Sint16 *x1, *y1, *x2, *y2;
 
 	/*
@@ -3004,7 +2987,6 @@ int filledPolygonRGBA(SDL_Renderer * renderer, const Sint16 * vx, const Sint16 *
 */
 int _HLineTextured(SDL_Renderer *renderer, Sint16 x1, Sint16 x2, Sint16 y, SDL_Texture *texture, int texture_w, int texture_h, int texture_dx, int texture_dy)
 {
-	Sint16 left, right, top, bottom;
 	Sint16 w;
 	Sint16 xtmp;
 	int result = 0;
@@ -3421,15 +3403,12 @@ void gfxPrimitivesSetFontRotation(Uint32 rotation)
 */
 int characterRGBA(SDL_Renderer *renderer, Sint16 x, Sint16 y, char c, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
 {
-	Sint16 left, right, top, bottom;
-	Sint16 x1, y1, x2, y2;
 	SDL_Rect srect;
 	SDL_Rect drect;
 	int result;
 	Uint32 ix, iy;
 	const unsigned char *charpos;
 	Uint8 *curpos;
-	int forced_redraw;
 	Uint8 patt, mask;
 	Uint8 *linepos;
 	Uint32 pitch;

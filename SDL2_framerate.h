@@ -70,15 +70,15 @@ extern "C" {
 	/* ---- Function Prototypes */
 
 #ifdef _MSC_VER
-#  if defined(DLL_EXPORT) && !defined(LIBSDL_GFX_DLL_IMPORT)
+#  if defined(DLL_EXPORT) && !defined(LIBSDL2_GFX_DLL_IMPORT)
 #    define SDL2_FRAMERATE_SCOPE __declspec(dllexport)
 #  else
-#    ifdef LIBSDL_GFX_DLL_IMPORT
+#    ifdef LIBSDL2_GFX_DLL_IMPORT
 #      define SDL2_FRAMERATE_SCOPE __declspec(dllimport)
 #    endif
 #  endif
 #endif
-#ifndef SDL_FRAMERATE_SCOPE
+#ifndef SDL2_FRAMERATE_SCOPE
 #  define SDL2_FRAMERATE_SCOPE extern
 #endif
 
