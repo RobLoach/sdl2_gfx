@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2012 Andreas Schiffler
+  Copyright (C) 2012-2013 Andreas Schiffler
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages

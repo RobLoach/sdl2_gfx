@@ -11,8 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{AE22EFD3-6F6D-48C0-AF3D-EF190406BEDC}</ProjectGuid>
-    <RootNamespace>TestGfx</RootNamespace>
+    <ProjectGuid>{AE22EFD3-6F6D-48C0-CCCA-EF190406BEDC}</ProjectGuid>
+    <RootNamespace>TestImageFilter</RootNamespace>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -121,11 +121,7 @@ copy /y "..\$(Platform)\$(Configuration)\SDL2_gfx.dll" "$(TargetDir)\SDL2_gfx.dl
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="common.c" />
-    <ClCompile Include="TestGfx.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="common.h" />
+    <ClCompile Include="testimagefilter.c" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SDL2_gfx.vcxproj">
