@@ -58,7 +58,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>SDL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\SDL\VisualC\SDL\Win32\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -73,7 +73,7 @@
       <Command>
 if not exist "$(SolutionDir)Test\$(Platform)\$(Configuration)\" mkdir "$(SolutionDir)Test\$(Platform)\$(Configuration)\"
 copy /Y "$(TargetPath)" "$(SolutionDir)Test\$(Platform)\$(Configuration)\"
-copy /Y "$(ProjectDir)..\SDL\VisualC\SDL\$(Platform)\$(Configuration)\SDL.dll" "$(SolutionDir)Test\$(Platform)\$(Configuration)"
+copy /Y "$(ProjectDir)..\SDL\VisualC\SDL\$(Platform)\$(Configuration)\SDL2.dll" "$(SolutionDir)Test\$(Platform)\$(Configuration)"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -90,24 +90,33 @@ copy /Y "$(ProjectDir)..\SDL\VisualC\SDL\$(Platform)\$(Configuration)\SDL.dll" "
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>SDL.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
+    <PostBuildEvent>
+      <Command>
+if not exist "$(SolutionDir)Test\$(Platform)\$(Configuration)\" mkdir "$(SolutionDir)Test\$(Platform)\$(Configuration)\"
+copy /Y "$(TargetPath)" "$(SolutionDir)Test\$(Platform)\$(Configuration)\"
+copy /Y "$(ProjectDir)..\SDL\VisualC\SDL\$(Platform)\$(Configuration)\SDL2.dll" "$(SolutionDir)Test\$(Platform)\$(Configuration)"
+</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="SDL2_framerate.c" />
     <ClCompile Include="SDL2_gfxPrimitives.c" />
     <ClCompile Include="SDL2_rotozoom.c" />
+    <ClCompile Include="SDL2_imageFilter.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SDL2_framerate.h" />
     <ClInclude Include="SDL2_gfxPrimitives.h" />
     <ClInclude Include="SDL2_gfxPrimitives_font.h" />
     <ClInclude Include="SDL2_rotozoom.h" />
+    <ClInclude Include="SDL2_imageFilter.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuildStep Include="ChangeLog">

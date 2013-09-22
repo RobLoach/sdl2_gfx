@@ -9,6 +9,8 @@ LIBS	= @LIBS@
 
 TARGETS = \
 	testgfx$(EXE) \
+	testrotozoom$(EXE) \
+	testimagefilter$(EXE) \
 
 all: Makefile $(TARGETS)
 
@@ -18,12 +20,22 @@ Makefile: $(srcdir)/Makefile.in
 testgfx$(EXE): $(srcdir)/testgfx.c $(srcdir)/common.c
 	$(CC) -o $@ $(srcdir)/common.c $(srcdir)/testgfx.c $(CFLAGS) $(LIBS)
 
+testrotozoom$(EXE): $(srcdir)/testrotozoom.c $(srcdir)/common.c
+	$(CC) -o $@ $(srcdir)/common.c $(srcdir)/testrotozoom.c $(CFLAGS) $(LIBS)
+
+testimagefilter$(EXE): $(srcdir)/testimagefilter.c
+	$(CC) -o $@ $< $(CFLAGS) $(LIBS)
+
 clean:
 	rm -f $(TARGETS)
 	rm -f *~
 	rm -f *.user
+	rm -f *.stackdump
 
 distclean: clean
 	rm -f Makefile
 	rm -f config.status config.cache config.log
 	rm -rf $(srcdir)/autom4te*
+	rm -rf TestGfx TestRotozoom TestImageFilter Win32
+	
+
