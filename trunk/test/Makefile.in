@@ -18,13 +18,13 @@ Makefile: $(srcdir)/Makefile.in
 	$(SHELL) config.status $@
 
 testgfx$(EXE): $(srcdir)/testgfx.c $(srcdir)/common.c
-	$(CC) -o $@ $(srcdir)/common.c $(srcdir)/testgfx.c $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $(srcdir)/common.c $(srcdir)/testgfx.c $(CFLAGS) $(LIBS) @MATHLIB@
 
 testrotozoom$(EXE): $(srcdir)/testrotozoom.c $(srcdir)/common.c
-	$(CC) -o $@ $(srcdir)/common.c $(srcdir)/testrotozoom.c $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $(srcdir)/common.c $(srcdir)/testrotozoom.c $(CFLAGS) $(LIBS) @MATHLIB@
 
 testimagefilter$(EXE): $(srcdir)/testimagefilter.c
-	$(CC) -o $@ $< $(CFLAGS) $(LIBS)
+	$(CC) -o $@ $< $(CFLAGS) $(LIBS) @MATHLIB@
 
 clean:
 	rm -f $(TARGETS)
