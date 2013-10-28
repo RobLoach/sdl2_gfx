@@ -800,7 +800,7 @@ fixed-point arithmetic by A. Schiffler. The endpoint control allows the
 supression to draw the last pixel useful for rendering continous aa-lines
 with alpha<255.
 
-\param dst The surface to draw on.
+\param renderer The renderer to draw on.
 \param x1 X coordinate of the first point of the aa-line.
 \param y1 Y coordinate of the first point of the aa-line.
 \param x2 X coordinate of the second point of the aa-line.
@@ -2111,7 +2111,10 @@ Note: Determines vertex array and uses polygon or filledPolygon drawing routines
 \param rad Radius in pixels of the pie.
 \param start Starting radius in degrees of the pie.
 \param end Ending radius in degrees of the pie.
-\param color The color value of the pie to draw (0xRRGGBBAA). 
+\param r The red value of the pie to draw. 
+\param g The green value of the pie to draw. 
+\param b The blue value of the pie to draw. 
+\param a The alpha value of the pie to draw.
 \param filled Flag indicating if the pie should be filled (=1) or not (=0).
 
 \returns Returns 0 on success, -1 on failure.
@@ -2527,10 +2530,6 @@ int polygonColor(SDL_Renderer * renderer, const Sint16 * vx, const Sint16 * vy, 
 \param vx Vertex array containing X coordinates of the points of the polygon.
 \param vy Vertex array containing Y coordinates of the points of the polygon.
 \param n Number of points in the vertex array. Minimum number is 3.
-\param r The red value of the polygon to draw. 
-\param g The green value of the polygon to draw. 
-\param b The blue value of the polygon to draw. 
-\param a The alpha value of the polygon to draw.
 
 \returns Returns 0 on success, -1 on failure.
 */
@@ -2763,7 +2762,7 @@ static int gfxPrimitivesPolyAllocatedGlobal = 0;
 
 Note: The last two parameters are optional; but are required for multithreaded operation.  
 
-\param dst The surface to draw on.
+\param renderer The renderer to draw on.
 \param vx Vertex array containing X coordinates of the points of the filled polygon.
 \param vy Vertex array containing Y coordinates of the points of the filled polygon.
 \param n Number of points in the vertex array. Minimum number is 3.
@@ -3391,7 +3390,7 @@ void gfxPrimitivesSetFontRotation(Uint32 rotation)
 /*!
 \brief Draw a character of the currently set font.
 
-\param dst The surface to draw on.
+\param renderer The Renderer to draw on.
 \param x X (horizontal) coordinate of the upper left corner of the character.
 \param y Y (vertical) coordinate of the upper left corner of the character.
 \param c The character to draw.
@@ -4227,7 +4226,7 @@ void _murphyWideline(SDL2_gfxMurphyIterator *m, Sint16 x1, Sint16 y1, Sint16 x2,
 /*!
 \brief Draw a thick line with alpha blending.
 
-\param dst The surface to draw on.
+\param renderer The renderer to draw on.
 \param x1 X coordinate of the first point of the line.
 \param y1 Y coordinate of the first point of the line.
 \param x2 X coordinate of the second point of the line.
@@ -4246,7 +4245,7 @@ int thickLineColor(SDL_Renderer *renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sint
 /*!
 \brief Draw a thick line with alpha blending.
 
-\param dst The surface to draw on.
+\param renderer The renderer to draw on.
 \param x1 X coordinate of the first point of the line.
 \param y1 Y coordinate of the first point of the line.
 \param x2 X coordinate of the second point of the line.
