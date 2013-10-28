@@ -830,7 +830,7 @@ int _aalineRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sint16
 	yy1 = y2;
 
 	/*
-	* Reorder points if required 
+	* Reorder points to make dy positive 
 	*/
 	if (yy0 > yy1) {
 		tmp = yy0;
@@ -848,6 +848,16 @@ int _aalineRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sint16
 	dy = yy1 - yy0;
 
 	/*
+	* Adjust for negative dx and set xdir 
+	*/
+	if (dx >= 0) {
+		xdir = 1;
+	} else {
+		xdir = -1;
+		dx = (-dx);
+	}
+	
+	/*
 	* Check for special cases 
 	*/
 	if (dx == 0) {
@@ -858,7 +868,7 @@ int _aalineRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sint16
 		{
 			return (vlineRGBA(renderer, x1, y1, y2, r, g, b, a));
 		} else {
-			if (dy>0) {
+			if (dy > 0) {
 				return (vlineRGBA(renderer, x1, yy0, yy0+dy, r, g, b, a));
 			} else {
 				return (pixelRGBA(renderer, x1, y1, r, g, b, a));
@@ -872,7 +882,7 @@ int _aalineRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sint16
 		{
 			return (hlineRGBA(renderer, x1, x2, y1, r, g, b, a));
 		} else {
-			if (dx>0) {
+			if (dx > 0) {
 				return (hlineRGBA(renderer, xx0, xx0+dx, y1, r, g, b, a));
 			} else {
 				return (pixelRGBA(renderer, x1, y1, r, g, b, a));
@@ -885,15 +895,6 @@ int _aalineRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sint16
 		return (lineRGBA(renderer, x1, y1, x2, y2,  r, g, b, a));
 	}
 
-	/*
-	* Adjust for negative dx and set xdir 
-	*/
-	if (dx >= 0) {
-		xdir = 1;
-	} else {
-		xdir = -1;
-		dx = (-dx);
-	}
 
 	/*
 	* Line is not horizontal, vertical or diagonal (with endpoint)
