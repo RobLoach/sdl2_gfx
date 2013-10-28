@@ -20,12 +20,10 @@
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>NotSet</CharacterSet>
     <WholeProgramOptimization>false</WholeProgramOptimization>
-    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -45,6 +43,7 @@
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(TargetName)\$(Platform)\$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(TargetName)\$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</LinkIncremental>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">TestGfx</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -79,8 +78,8 @@
     </Link>
     <PostBuildEvent>
       <Command>
-copy /y "..\..\SDL\VisualC\SDL\$(Platform)\$(Configuration)\SDL2.dll" "$(TargetName)\$(Platform)\$(Configuration)\SDL2.dll"
-copy /y "..\$(Platform)\$(Configuration)\SDL2_gfx.dll" "$(TargetName)\$(Platform)\$(Configuration)\SDL2_gfx.dll"
+copy /y "..\..\SDL\VisualC\SDL\$(Platform)\$(Configuration)\SDL2.dll" "$(TargetDir)\SDL2.dll"
+copy /y "..\$(Platform)\$(Configuration)\SDL2_gfx.dll" "$(TargetDir)\SDL2_gfx.dll"
       </Command>
       <Message>Copy SDL2 and SDL2_gfx DLLs</Message>
     </PostBuildEvent>
@@ -116,8 +115,8 @@ copy /y "..\$(Platform)\$(Configuration)\SDL2_gfx.dll" "$(TargetName)\$(Platform
     </Link>
     <PostBuildEvent>
       <Command>
-copy /y "..\..\SDL\VisualC\SDL\$(Platform)\$(Configuration)\SDL2.dll" "$(TargetName)\$(Platform)\$(Configuration)\SDL2.dll"
-copy /y "..\$(Platform)\$(Configuration)\SDL2_gfx.dll" "$(TargetName)\$(Platform)\$(Configuration)\SDL2_gfx.dll"
+copy /y "..\..\SDL\VisualC\SDL\$(Platform)\$(Configuration)\SDL2.dll" "$(TargetDir)\SDL2.dll"
+copy /y "..\$(Platform)\$(Configuration)\SDL2_gfx.dll" "$(TargetDir)\SDL2_gfx.dll"
       </Command>
       <Message>Copy SDL2 and SDL2_gfx DLLs</Message>
     </PostBuildEvent>
