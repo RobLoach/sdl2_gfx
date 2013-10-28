@@ -1,13 +1,13 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SDL2_gfx", "SDL2_gfx.vcxproj", "{AE22EFD3-6E6D-48C0-AF3D-EF190406BEDC}"
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SDL2_gfx", "SDL2_gfx-VS2010.vcxproj", "{AE22EFD3-6E6D-48C0-AF3D-EF190406BEDC}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestGfx", "test\TestGfx.vcxproj", "{AE22EFD3-6F6D-48C0-AF3D-EF190406BEDC}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestGfx", "test\TestGfx-VS2010.vcxproj", "{AE22EFD3-6F6D-48C0-AF3D-EF190406BEDC}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestImageFilter", "test\TestImageFilter.vcxproj", "{AE22EFD3-6F6D-48C0-CCCA-EF190406BEDC}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestImageFilter", "test\TestImageFilter-VS2010.vcxproj", "{AE22EFD3-6F6D-48C0-CCCA-EF190406BEDC}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestRotozoom", "test\TestRotozoom.vcxproj", "{AE22EFD3-CCCA-48C0-AF3D-EF190406BEDC}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestRotozoom", "test\TestRotozoom-VS2010.vcxproj", "{AE22EFD3-CCCA-48C0-AF3D-EF190406BEDC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
