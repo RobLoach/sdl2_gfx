@@ -198,7 +198,7 @@ int main(int argc, char *argv[])
 		Uint32 start;
 		int i;
 		char call[1024];
-		sprintf(call, "BitNegation");
+		SDL_snprintf(call, 1024, "BitNegation");
 		
 		setup_src(src1, src2);
 		
@@ -251,7 +251,7 @@ int main(int argc, char *argv[])
 			Uint32 start;
 			int i;
 			char call[1024];
-			sprintf(call, "%s(%u)", funcs[k].name, funcs[k].arg);
+			SDL_snprintf(call, 1024, "%s(%u)", funcs[k].name, funcs[k].arg);
 			
 			setup_src(src1, src2);
 
@@ -297,7 +297,7 @@ int main(int argc, char *argv[])
 			Uint32 start;
 			int i;
 			char call[1024];
-			sprintf(call, "%s(%u,%u)", funcs[k].name, funcs[k].arg1, funcs[k].arg2);
+			SDL_snprintf(call, 1024, "%s(%u,%u)", funcs[k].name, funcs[k].arg1, funcs[k].arg2);
 			
 			setup_src(src1, src2);
 
@@ -329,7 +329,7 @@ int main(int argc, char *argv[])
 		Uint32 start;
 		int i;
 		char call[1024];
-		sprintf(call, "NormalizeLinear(0,33,0,255)");
+		SDL_snprintf(call, 1024, "NormalizeLinear(0,33,0,255)");
 		
 		setup_src(src1, src2);
 		
@@ -376,7 +376,7 @@ int main(int argc, char *argv[])
 			Uint32 start;
 			int i;
 			char call[1024];
-			sprintf(call, "%s(%u)", funcs[k].name, funcs[k].arg);
+			SDL_snprintf(call, 1024, "%s(%u)", funcs[k].name, funcs[k].arg);
 			
 			setup_src(src1, src2);
 
