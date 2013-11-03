@@ -102,7 +102,7 @@ copy /y ".\sample*.bmp" "$(TargetDir)
       <OmitDefaultLibName>false</OmitDefaultLibName>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>SDL.lib;SDLmain.lib;SDL2_gfx.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_gfx.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\sdl2gfx\$(Platform)\$(Configuration);..\..\SDL2_gfx\$(Platform)\$(Configuration);..\..\SDL\VisualC\SDLmain\$(Platform)\$(Configuration);..\..\SDL\VisualC\SDL\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>

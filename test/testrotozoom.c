@@ -408,39 +408,39 @@ void Draw (int start, int end)
 		}
 
 		if (start <= 1) {
-			sprintf(messageText, "1.  rotozoom: Rotating and zooming");
+			SDL_snprintf(messageText, 1024, "1.  rotozoom: Rotating and zooming");
 			RotatePicture(picture,ROTATE_ON,FLIP_OFF,SMOOTHING_OFF,POSITION_CENTER);
 		}
 		if (end == 1) goto done8bit;
 
 		if (start <= 2) {
-			sprintf(messageText, "2.  rotozoom: Just zooming (angle=0)");
+			SDL_snprintf(messageText, 1024, "2.  rotozoom: Just zooming (angle=0)");
 			RotatePicture(picture,ROTATE_OFF,FLIP_OFF,SMOOTHING_OFF,POSITION_CENTER);
 			RotatePicture(picture,ROTATE_OFF,FLIP_OFF,SMOOTHING_OFF,POSITION_BOTTOMRIGHT);
 		}
 		if (end == 2) goto done8bit;
 
 		if (start <= 3) {
-			sprintf(messageText, "3.  zoom: Just zooming");
+			SDL_snprintf(messageText, 1024, "3.  zoom: Just zooming");
 			ZoomPicture(picture,SMOOTHING_OFF);
 		}
 		if (end == 3) goto done8bit;
 
 		if (start <= 4) {
-			sprintf(messageText, "4.  rotozoom: Rotating and zooming, interpolation on but unused");
+			SDL_snprintf(messageText, 1024, "4.  rotozoom: Rotating and zooming, interpolation on but unused");
 			RotatePicture(picture,ROTATE_ON,FLIP_OFF,SMOOTHING_ON,POSITION_CENTER);
 		}
 		if (end == 4) goto done8bit;
 
 		if (start <= 5) {
-			sprintf(messageText, "5.  rotozoom: Just zooming (angle=0), interpolation on but unused");
+			SDL_snprintf(messageText, 1024, "5.  rotozoom: Just zooming (angle=0), interpolation on but unused");
 			RotatePicture(picture,ROTATE_OFF,FLIP_OFF,SMOOTHING_ON,POSITION_CENTER);
 			RotatePicture(picture,ROTATE_OFF,FLIP_OFF,SMOOTHING_ON,POSITION_BOTTOMRIGHT);
 		}
 		if (end == 5) goto done8bit;
 
 		if (start <= 6) {
-			sprintf(messageText, "6.  zoom: Just zooming, interpolation on but unused");
+			SDL_snprintf(messageText, 1024, "6.  zoom: Just zooming, interpolation on but unused");
 			ZoomPicture(picture,SMOOTHING_ON);
 		}
 		if (end == 6) goto done8bit;
@@ -473,53 +473,53 @@ done8bit:
 		rectangleColor(renderer, 0, 0, picture->w-1, picture->h-1, 0xffffffff);
 
 		if (start <= 7) {
-			sprintf(messageText, "7.  rotozoom: Rotating and zooming, no interpolation");
+			SDL_snprintf(messageText, 1024, "7.  rotozoom: Rotating and zooming, no interpolation");
 			RotatePicture(picture,ROTATE_ON,FLIP_OFF,SMOOTHING_OFF,POSITION_CENTER);
 		}
 		if (end == 7) goto done24bit;
 
 		if (start <= 8) {
-			sprintf(messageText, "8a.  rotozoom: Just zooming (angle=0), no interpolation, centered");
+			SDL_snprintf(messageText, 1024, "8a.  rotozoom: Just zooming (angle=0), no interpolation, centered");
 			RotatePicture(picture,ROTATE_OFF,FLIP_OFF,SMOOTHING_OFF,POSITION_CENTER);
-			sprintf(messageText, "8b.  rotozoom: Just zooming (angle=0), no interpolation, corner");
+			SDL_snprintf(messageText, 1024, "8b.  rotozoom: Just zooming (angle=0), no interpolation, corner");
 			RotatePicture(picture,ROTATE_OFF,FLIP_OFF,SMOOTHING_OFF,POSITION_BOTTOMRIGHT);
-			sprintf(messageText, "8c.  rotozoom: Just zooming (angle=0), X flip, no interpolation, centered");
+			SDL_snprintf(messageText, 1024, "8c.  rotozoom: Just zooming (angle=0), X flip, no interpolation, centered");
 			RotatePicture(picture,ROTATE_OFF,FLIP_X,SMOOTHING_OFF,POSITION_CENTER);
-			sprintf(messageText, "8d.  rotozoom: Just zooming (angle=0), Y flip, no interpolation, centered");
+			SDL_snprintf(messageText, 1024, "8d.  rotozoom: Just zooming (angle=0), Y flip, no interpolation, centered");
 			RotatePicture(picture,ROTATE_OFF,FLIP_Y,SMOOTHING_OFF,POSITION_CENTER);
-			sprintf(messageText, "8e.  rotozoom: Just zooming (angle=0), XY flip, no interpolation, centered");
+			SDL_snprintf(messageText, 1024, "8e.  rotozoom: Just zooming (angle=0), XY flip, no interpolation, centered");
 			RotatePicture(picture,ROTATE_OFF,FLIP_XY,SMOOTHING_OFF,POSITION_CENTER);
 		}
 		if (end == 8) goto done24bit;
 
 		if (start <= 9) {
-			sprintf(messageText, "9.  zoom: Just zooming, no interpolation");
+			SDL_snprintf(messageText, 1024, "9.  zoom: Just zooming, no interpolation");
 			ZoomPicture(picture,SMOOTHING_OFF);
 		}
 		if (end == 9) goto done24bit;
 
 		if (start <= 10) {
-			sprintf(messageText, "10. rotozoom: Rotating and zooming, with interpolation");
+			SDL_snprintf(messageText, 1024, "10. rotozoom: Rotating and zooming, with interpolation");
 			RotatePicture(picture,ROTATE_ON,FLIP_OFF,SMOOTHING_ON,POSITION_CENTER);
 		}
 		if (end == 10) goto done24bit;
 
 		if (start <= 11) {
-			sprintf(messageText, "11a. rotozoom: Just zooming (angle=0), with interpolation, centered");
+			SDL_snprintf(messageText, 1024, "11a. rotozoom: Just zooming (angle=0), with interpolation, centered");
 			RotatePicture(picture,ROTATE_OFF,FLIP_OFF,SMOOTHING_ON,POSITION_CENTER);
-			sprintf(messageText, "11b. rotozoom: Just zooming (angle=0), with interpolation, corner");
+			SDL_snprintf(messageText, 1024, "11b. rotozoom: Just zooming (angle=0), with interpolation, corner");
 			RotatePicture(picture,ROTATE_OFF,FLIP_OFF,SMOOTHING_ON,POSITION_BOTTOMRIGHT);
-			sprintf(messageText, "11c. rotozoom: Just zooming (angle=0), X flip, with interpolation, corner");
+			SDL_snprintf(messageText, 1024, "11c. rotozoom: Just zooming (angle=0), X flip, with interpolation, corner");
 			RotatePicture(picture,ROTATE_OFF,FLIP_X,SMOOTHING_ON,POSITION_CENTER);
-			sprintf(messageText, "11d. rotozoom: Just zooming (angle=0), Y flip, with interpolation, corner");
+			SDL_snprintf(messageText, 1024, "11d. rotozoom: Just zooming (angle=0), Y flip, with interpolation, corner");
 			RotatePicture(picture,ROTATE_OFF,FLIP_Y,SMOOTHING_ON,POSITION_CENTER);
-			sprintf(messageText, "11e. rotozoom: Just zooming (angle=0), XY flip, with interpolation, corner");
+			SDL_snprintf(messageText, 1024, "11e. rotozoom: Just zooming (angle=0), XY flip, with interpolation, corner");
 			RotatePicture(picture,ROTATE_OFF,FLIP_XY,SMOOTHING_ON,POSITION_CENTER);
 		}
 		if (end == 11) goto done24bit;
 
 		if (start <= 12) {
-			sprintf(messageText, "12. zoom: Just zooming, with interpolation");
+			SDL_snprintf(messageText, 1024, "12. zoom: Just zooming, with interpolation");
 			ZoomPicture(picture,SMOOTHING_ON);
 		}
 		if (end == 12) goto done24bit;
@@ -556,13 +556,13 @@ done24bit:
 		SDL_BlitSurface(picture,NULL,picture_again,NULL);
 
 		if (start <= 13) {
-			sprintf(messageText, "13. Rotating and zooming, with interpolation (RGBA source)");
+			SDL_snprintf(messageText, 1024, "13. Rotating and zooming, with interpolation (RGBA source)");
 			RotatePicture(picture_again,ROTATE_ON,FLIP_OFF,SMOOTHING_ON,POSITION_CENTER);
 		}
 		if (end == 13) goto done32bit;
 
 		if (start <= 14) {
-			sprintf(messageText, "14. Just zooming (angle=0), with interpolation (RGBA source)");
+			SDL_snprintf(messageText, 1024, "14. Just zooming (angle=0), with interpolation (RGBA source)");
 			RotatePicture(picture_again,ROTATE_OFF,FLIP_OFF,SMOOTHING_ON,POSITION_CENTER);
 			RotatePicture(picture_again,ROTATE_OFF,FLIP_OFF,SMOOTHING_ON,POSITION_BOTTOMRIGHT);
 		}
@@ -579,13 +579,13 @@ done24bit:
 		SDL_BlitSurface(picture,NULL,picture_again,NULL);
 
 		if (start <= 14) {
-			sprintf(messageText, "15. Rotating and zooming, with interpolation (ABGR source)");
+			SDL_snprintf(messageText, 1024, "15. Rotating and zooming, with interpolation (ABGR source)");
 			RotatePicture(picture_again,ROTATE_ON,FLIP_OFF,SMOOTHING_ON,POSITION_CENTER);
 		}
 		if (end == 14) goto done32bit;
 
 		if (start <= 14) {
-			sprintf(messageText, "16. Just zooming (angle=0), with interpolation (ABGR source)");
+			SDL_snprintf(messageText, 1024, "16. Just zooming (angle=0), with interpolation (ABGR source)");
 			RotatePicture(picture_again,ROTATE_OFF,FLIP_OFF,SMOOTHING_ON,POSITION_CENTER);
 			RotatePicture(picture_again,ROTATE_OFF,FLIP_OFF,SMOOTHING_ON,POSITION_BOTTOMRIGHT);
 		}
@@ -624,37 +624,37 @@ done32bit:
 		SDL_BlitSurface(picture,NULL,picture_again,NULL);
 
 		if (start <= 17) {
-			sprintf(messageText, "17. Rotating with x-flip, no interpolation (RGBA source)");
+			SDL_snprintf(messageText, 1024, "17. Rotating with x-flip, no interpolation (RGBA source)");
 			RotatePicture(picture_again,ROTATE_ON,FLIP_X,SMOOTHING_OFF,POSITION_CENTER);
 		}
 		if (end == 17) goto doneflip;
 
 		if (start <= 18) {
-			sprintf(messageText, "18. Rotating with y-flip, no interpolation");
+			SDL_snprintf(messageText, 1024, "18. Rotating with y-flip, no interpolation");
 			RotatePicture(picture_again,ROTATE_ON,FLIP_Y,SMOOTHING_OFF,POSITION_CENTER);
 		}
 		if (end == 18) goto doneflip;
 
 		if (start <= 19) {
-			sprintf(messageText, "19. Rotating with xy-flip, no interpolation");
+			SDL_snprintf(messageText, 1024, "19. Rotating with xy-flip, no interpolation");
 			RotatePicture(picture_again,ROTATE_ON,FLIP_XY,SMOOTHING_OFF,POSITION_CENTER);
 		}
 		if (end == 19) goto doneflip;
 
 		if (start <= 20) {
-			sprintf(messageText, "20. Rotating with x-flip, with interpolation");
+			SDL_snprintf(messageText, 1024, "20. Rotating with x-flip, with interpolation");
 			RotatePicture(picture_again,ROTATE_ON,FLIP_X,SMOOTHING_ON,POSITION_CENTER);
 		}
 		if (end == 20) goto doneflip;
 
 		if (start <= 21) {
-			sprintf(messageText, "21. Rotating with y-flip, with interpolation");
+			SDL_snprintf(messageText, 1024, "21. Rotating with y-flip, with interpolation");
 			RotatePicture(picture_again,ROTATE_ON,FLIP_Y,SMOOTHING_ON,POSITION_CENTER);
 		}
 		if (end == 21) goto doneflip;
 
 		if (start <= 22) {
-			sprintf(messageText, "22. Rotating with xy-flip, with interpolation");
+			SDL_snprintf(messageText, 1024, "22. Rotating with xy-flip, with interpolation");
 			RotatePicture(picture_again,ROTATE_ON,FLIP_XY,SMOOTHING_ON,POSITION_CENTER);
 		}
 		if (end == 22) goto doneflip;
@@ -687,7 +687,7 @@ doneflip:
 		picture_again = SDL_CreateRGBSurface(SDL_SWSURFACE, picture->w, picture->h, 32, rmask, gmask, bmask, amask);
 		SDL_BlitSurface(picture,NULL,picture_again,NULL);
 
-		sprintf(messageText, "23. CustomTest, values from commandline (32bit)");
+		SDL_snprintf(messageText, 1024, "23. CustomTest, values from commandline (32bit)");
 		CustomTest(picture_again, custom_angle, custom_fx, custom_fy, custom_smooth);
 
 		SDL_FreeSurface(picture_again);
@@ -707,7 +707,7 @@ doneflip:
 			return;
 		}
 
-		sprintf(messageText, "24. CustomTest, values from commandline (8bit)");
+		SDL_snprintf(messageText, 1024, "24. CustomTest, values from commandline (8bit)");
 		CustomTest(picture, custom_angle, custom_fx, custom_fy, custom_smooth);
 
 		/* Free the picture */
@@ -737,7 +737,7 @@ doneflip:
 		SDL_BlitSurface(picture,NULL,picture_again,NULL);
 
 		/* Excercise rotate90 function on 32bit RGBA */
-		sprintf(messageText, "25.  rotate90: Rotate 90 degrees clockwise (32bit)");
+		SDL_snprintf(messageText, 1024, "25.  rotate90: Rotate 90 degrees clockwise (32bit)");
 		RotatePicture90Degrees(picture_again);
 
 donerotate90:
@@ -795,6 +795,9 @@ int main(int argc, char *argv[])
 
 	/* Create common message buffer */
 	messageText = (char *)SDL_malloc(1024);
+	if (messageText == NULL) {
+		return -1;
+	}
 
 	/* Main render loop */
 	frames = 0;
