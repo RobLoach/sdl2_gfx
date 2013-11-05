@@ -30,7 +30,7 @@ static CommonState *state;
 /* viewport border */
 #define BORDER	10
 
-#define NUM_RANDOM	512
+#define NUM_RANDOM	4096
 
 /* Coordinates */
 static Sint16 rx[NUM_RANDOM], rx[NUM_RANDOM], ry[NUM_RANDOM], ry[NUM_RANDOM];
