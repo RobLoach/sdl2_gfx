@@ -1,5 +1,9 @@
 SDL2_gfx ChangeLog
 
+Sun, Feb 02, 2014 12:00:00 PM
+- fixed and optimized rotateSurface90Degrees
+- updated testrotozoom to allow specification of test range
+
 Sun, Nov 03, 2013 10:11:16 AM
 - updated testgfx program for benchmarking primitive rendering performance
 - updated test programs based on VS warnings

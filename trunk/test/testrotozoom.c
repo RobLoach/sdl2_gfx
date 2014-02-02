@@ -112,6 +112,8 @@ void RotatePicture (SDL_Surface *picture, int rotate, int flip, int smooth, int 
 				}				
 				SDL_RenderCopy(renderer, rotozoom_texture, NULL, &dest);				
 				SDL_DestroyTexture(rotozoom_texture);
+			} else {
+				SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't rotozoom image\n");
 			}
 		} else {
 			angle=framecount*rotate;
@@ -141,6 +143,8 @@ void RotatePicture (SDL_Surface *picture, int rotate, int flip, int smooth, int 
 				}				
 				SDL_RenderCopy(renderer, rotozoom_texture, NULL, &dest);				
 				SDL_DestroyTexture(rotozoom_texture);
+			} else {
+				SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't rotozoom image\n");
 			}
 		}
 
@@ -176,6 +180,8 @@ void RotatePicture (SDL_Surface *picture, int rotate, int flip, int smooth, int 
 				}				
 				SDL_RenderCopy(renderer, rotozoom_texture, NULL, &dest);				
 				SDL_DestroyTexture(rotozoom_texture);
+			} else {
+				SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't rotozoom image\n");
 			}		
 		} else {
 			if ((rotozoom_picture=rotozoomSurface (picture, 0.01, zoomf, smooth))!=NULL) {
@@ -193,6 +199,8 @@ void RotatePicture (SDL_Surface *picture, int rotate, int flip, int smooth, int 
 				}				
 				SDL_RenderCopy(renderer, rotozoom_texture, NULL, &dest);				
 				SDL_DestroyTexture(rotozoom_texture);
+			} else {
+				SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't rotozoom image\n");
 			}		
 		}
 
@@ -251,6 +259,8 @@ void ZoomPicture (SDL_Surface *picture, int smooth)
 			}				
 			SDL_RenderCopy(renderer, rotozoom_texture, NULL, &dest);				
 			SDL_DestroyTexture(rotozoom_texture);
+		} else {
+			SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't zoom image\n");
 		}
 
 		stringRGBA(renderer, 8, 8, messageText, 255, 255, 255, 255);
@@ -288,8 +298,8 @@ void RotatePicture90Degrees (SDL_Surface *picture)
 		while (SDL_PollEvent(&event)) CommonEvent(state, &event, &done);
 		SDL_SetRenderDrawColor(renderer, 0xA0, 0xA0, 0xA0, 0xFF);
 		SDL_RenderClear(renderer);
-		printf ("  Frame: %i   Rotate90: %i clockwise turns\n",framecount,numClockwiseTurns+4);
-		if ((rotozoom_picture=rotateSurface90Degrees(picture, numClockwiseTurns))!=NULL) {
+		printf ("  Frame: %i   Rotate90: %i clockwise turns\n",framecount,numClockwiseTurns);
+		if ((rotozoom_picture = rotateSurface90Degrees(picture, numClockwiseTurns))!=NULL) {
 			dest.x = (DEFAULT_WINDOW_WIDTH - rotozoom_picture->w)/2;;
 			dest.y = (DEFAULT_WINDOW_HEIGHT - rotozoom_picture->h)/2;
 			dest.w = rotozoom_picture->w;
@@ -304,6 +314,8 @@ void RotatePicture90Degrees (SDL_Surface *picture)
 			}				
 			SDL_RenderCopy(renderer, rotozoom_texture, NULL, &dest);				
 			SDL_DestroyTexture(rotozoom_texture);
+		} else {
+			SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't rotate image: %s\n", SDL_GetError());
 		}
 
 		stringRGBA(renderer, 8, 8, messageText, 255, 255, 255, 255);
@@ -312,7 +324,7 @@ void RotatePicture90Degrees (SDL_Surface *picture)
 		SDL_RenderPresent(renderer);
 
 		/* Always delay */
-		SDL_Delay(333);
+		SDL_Delay(500);
 		if (delay>0) {
 			SDL_Delay(delay);
 		}
@@ -358,6 +370,8 @@ void CustomTest(SDL_Surface *picture, double a, double x, double y, int smooth){
 		}				
 		SDL_RenderCopy(renderer, rotozoom_texture, NULL, &dest);				
 		SDL_DestroyTexture(rotozoom_texture);
+	} else {
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't rotozoom image\n");
 	}
 
 	/* Display */
@@ -757,7 +771,9 @@ donerotate90:
 
 int main(int argc, char *argv[])
 {
-	int i, drawn, test;
+	int i;
+	int testStart = 0;
+	int testEnd = 25;
 	SDL_Event event;
 	Uint32 then, now, frames;
 
@@ -771,9 +787,27 @@ int main(int argc, char *argv[])
 		int consumed;
 
 		consumed = CommonArg(state, i);
+		if (consumed == 0) {
+                   consumed = -1;
+                   if (SDL_strcasecmp(argv[i], "--start") == 0) {
+                      if (argv[i + 1]) {
+                         testStart = SDL_atoi(argv[i + 1]);
+                         if (testStart < 0) testStart = 0;
+                         consumed = 2;
+                      }
+                   }
+                   else if (SDL_strcasecmp(argv[i], "--end") == 0) {
+                      if (argv[i + 1]) {
+                         testEnd = SDL_atoi(argv[i + 1]);
+                         if (testEnd < 0) testEnd = 0;
+                         consumed = 2;
+                      }
+                   }
+                }
+                
 		if (consumed < 0) {
 			fprintf(stderr,
-				"Usage: %s %s\n",
+				"Usage: %s %s [--start #] [--end #]\n",
 				argv[0], CommonUsage(state));
 			return 1;
 		}
@@ -803,51 +837,15 @@ int main(int argc, char *argv[])
 	frames = 0;
 	then = SDL_GetTicks();
 	done = 0;
-	drawn = 0;
-	test = 0;
 	while (!done) {
 		/* Check for events */
 		++frames;
-		while (SDL_PollEvent(&event)) {
+		while (SDL_PollEvent(&event) && !done) {
 			CommonEvent(state, &event, &done);
-			switch (event.type) {
-			case SDL_KEYDOWN: {
-				switch (event.key.keysym.sym) {
-				case SDLK_SPACE: {
-					/* Switch to next test */
-					test++;
-					drawn = 0;
-					break;
-								 }
-				}
-				break;
-							  }
-			case SDL_MOUSEBUTTONDOWN: {
-				switch (event.button.button) {
-				case SDL_BUTTON_LEFT: {
-					/* Switch to next test */
-					test++;
-					drawn = 0;
-					break;
-									  }
-				case SDL_BUTTON_RIGHT: {
-					/* Switch to prev test */
-					test--;
-					drawn = 0;
-					break;
-									   }
-				}
-				break;
-									  }
-			}
 		}
 
-		if (!drawn) {
-			/* Do all the drawing work */ 
-			Draw(0, 25);
-			drawn = 1;
-		}
-
+        /* Do all the drawing work */ 
+        Draw(testStart, testEnd);
 	}
 
 	CommonQuit(state);
