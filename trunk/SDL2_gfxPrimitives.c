@@ -706,8 +706,8 @@ int boxRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2,
 	*/	
 	rect.x = x1;
 	rect.y = y1;
-	rect.w = x2 - x1;
-	rect.h = y2 - y1;
+	rect.w = x2 - x1 + 1;
+	rect.h = y2 - y1 + 1;
 	
 	/*
 	* Draw
