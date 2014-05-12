@@ -1,5 +1,8 @@
 SDL2_gfx ChangeLog
 
+Mon, May 12, 2014  7:29:24 AM
+- fixed BoxRGBA size-off-by-1 error (thanks Stefan for reporting)
+
 Sun, Feb 02, 2014 12:00:00 PM
 - fixed and optimized rotateSurface90Degrees
 - updated testrotozoom to allow specification of test range
