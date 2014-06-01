@@ -140,6 +140,7 @@ OBJCFLAGS=$CFLAGS
 # Finally create all the generated files
 AC_OUTPUT([
 Makefile
+SDL2_gfx.pc
 ])
 
 echo

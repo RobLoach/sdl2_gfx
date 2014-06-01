@@ -30,6 +30,9 @@ libSDL2_gfx_la_LDFLAGS = 	\
 # Rule to build tar-gzipped distribution package
 $(PACKAGE)-$(VERSION).tar.gz: distcheck
 
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = SDL2_gfx.pc
+
 # Additional cleanup rules
 DISTCLEANFILES =		\
 	SDL2_gfx.sdf		\
@@ -38,4 +41,3 @@ DISTCLEANFILES =		\
 	autom4te.cache/*	\
 	Win32/Debug/*		\
 	Win32/Release/*
-		
