@@ -1,5 +1,5 @@
 /*
-  Copyright (C) 2012-2013 Andreas Schiffler
+  Copyright (C) 2012-2014 Andreas Schiffler
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -465,6 +465,49 @@ int TestBox(SDL_Renderer *renderer)
 			r=0; g=0; b=255; 
 		}
 		boxRGBA(renderer, rx[i], ry[i], rx[i]+rr1[i], ry[i]+rr2[i], r, g, b, 255);
+	}
+
+	/* Clear viewport */
+	ClearViewport(renderer);
+
+	return (4 * NUM_RANDOM) / step;
+}
+
+int TestRoundedBox(SDL_Renderer *renderer)
+{
+	int i;
+	char r,g,b;
+	int step = 2;
+
+	/* Draw A=255 */
+	SetViewport(renderer,0,60,WIDTH/2,60+(HEIGHT-80)/2);
+	for (i=0; i<NUM_RANDOM; i += step) {
+		roundedBoxRGBA(renderer, rx[i], ry[i], rx[i+1], ry[i+1], 4, rr[i], rg[i], rb[i], 255);
+	}
+
+	/* Draw A=various */
+	SetViewport(renderer,WIDTH/2,60,WIDTH,60+(HEIGHT-80)/2);
+	for (i=0; i<NUM_RANDOM; i += step) {
+		roundedBoxRGBA(renderer, rx[i], ry[i], rx[i+1], ry[i+1], 4, rr[i], rg[i], rb[i], ra[i]);
+	}
+
+	/* Draw A=various */
+	SetViewport(renderer,WIDTH/2,80+(HEIGHT-80)/2,WIDTH,HEIGHT);
+	for (i=0; i<NUM_RANDOM; i += step) {
+		roundedBoxRGBA(renderer, rx[i], ry[i], rx[i+1], ry[i+1], 4, rr[i], rg[i], rb[i], ra[i]);
+	}
+
+	/* Draw Colortest */
+	SetViewport(renderer,0,80+(HEIGHT-80)/2,WIDTH/2,HEIGHT);
+	for (i=0; i<NUM_RANDOM; i += step) {
+		if (rx[i] < (WIDTH/6))  {
+			r=255; g=0; b=0; 
+		} else if (rx[i] < (WIDTH/3) ) {
+			r=0; g=255; b=0; 
+		} else {
+			r=0; g=0; b=255; 
+		}
+		roundedBoxRGBA(renderer, rx[i], ry[i], rx[i]+rr1[i], ry[i]+rr2[i], 4, r, g, b, 255);
 	}
 
 	/* Clear viewport */
@@ -1335,7 +1378,7 @@ int main(int argc, char *argv[])
 
 		if (!drawn) {
 			/* Set test range */
-			numTests = 22;
+			numTests = 23;
 			if (test<0) { 
 				test = (numTests - 1); 
 			} else {
@@ -1442,6 +1485,10 @@ int main(int argc, char *argv[])
 						ExecuteTest(renderer, TestTexturedPolygon, "TexturedPolygon");
 						break;
 					}
+					case 23: {
+						ExecuteTest(renderer, TestRoundedBox, "RoundedBox");
+						break;
+					}					
 					default: {
 						ClearScreen(renderer, "Unknown Test");
 						break;
