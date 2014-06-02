@@ -1339,7 +1339,7 @@ int main(int argc, char *argv[])
         SDL_Renderer *renderer = state->renderers[i];
         SDL_RendererInfo info;
         SDL_GetRendererInfo(state->renderers[i], &info);
-		SDL_Log("Renderer %i: %s %s", i, info.name, (info.flags | SDL_RENDERER_ACCELERATED) ? "(Accelerated)" : "");
+        SDL_Log("Renderer %i: %s %s", i, info.name, (info.flags | SDL_RENDERER_ACCELERATED) ? "(Accelerated)" : "");
         SDL_SetRenderDrawColor(renderer, 0xA0, 0xA0, 0xA0, 0xFF);
         SDL_RenderClear(renderer);
     }
