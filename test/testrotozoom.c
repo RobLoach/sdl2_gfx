@@ -17,12 +17,12 @@ freely.
 #include <math.h>
 #include <time.h>
 
-#include "common.h"
+#include "SDL_test_common.h"
 
 #include "SDL2_gfxPrimitives.h"
 #include "SDL2_rotozoom.h"
 
-static CommonState *state;
+static SDLTest_CommonState *state;
 
 /* Screen size */
 #define WIDTH	DEFAULT_WINDOW_WIDTH
@@ -65,7 +65,7 @@ void RotatePicture (SDL_Surface *picture, int rotate, int flip, int smooth, int 
 	framemax=4*360; 
 	frameinc=1;
 	for (framecount=-360; framecount<framemax && !done; framecount += frameinc) {
-		while (SDL_PollEvent(&event)) CommonEvent(state, &event, &done);
+		while (SDL_PollEvent(&event)) SDLTest_CommonEvent(state, &event, &done);
 		if ((framecount % 360)==0) frameinc++;
 		SDL_SetRenderDrawColor(renderer, 0xA0, 0xA0, 0xA0, 0xFF);
 		SDL_RenderClear(renderer);
@@ -234,7 +234,7 @@ void ZoomPicture (SDL_Surface *picture, int smooth)
 	/* Zoom and display the picture */
 	framemax=4*360; frameinc=1;
 	for (framecount=360; framecount<framemax && !done; framecount += frameinc) {
-		while (SDL_PollEvent(&event)) CommonEvent(state, &event, &done);
+		while (SDL_PollEvent(&event)) SDLTest_CommonEvent(state, &event, &done);
 		if ((framecount % 360)==0) frameinc++;
 		SDL_SetRenderDrawColor(renderer, 0xA0, 0xA0, 0xA0, 0xFF);
 		SDL_RenderClear(renderer);
@@ -295,7 +295,7 @@ void RotatePicture90Degrees (SDL_Surface *picture)
 	frameinc = 1;
 	numClockwiseTurns = -4;
 	for (framecount=0; framecount<framemax && !done; framecount += frameinc) {
-		while (SDL_PollEvent(&event)) CommonEvent(state, &event, &done);
+		while (SDL_PollEvent(&event)) SDLTest_CommonEvent(state, &event, &done);
 		SDL_SetRenderDrawColor(renderer, 0xA0, 0xA0, 0xA0, 0xFF);
 		SDL_RenderClear(renderer);
 		printf ("  Frame: %i   Rotate90: %i clockwise turns\n",framecount,numClockwiseTurns);
@@ -778,7 +778,7 @@ int main(int argc, char *argv[])
 	Uint32 then, now, frames;
 
 	/* Initialize test framework */
-	state = CommonCreateState(argv, SDL_INIT_VIDEO);
+	state = SDLTest_CommonCreateState(argv, SDL_INIT_VIDEO);
 	if (!state) {
 		return 1;
 	}
@@ -786,7 +786,7 @@ int main(int argc, char *argv[])
 	for (i = 1; i < argc;) {
 		int consumed;
 
-		consumed = CommonArg(state, i);
+		consumed = SDLTest_CommonArg(state, i);
 		if (consumed == 0) {
                    consumed = -1;
                    if (SDL_strcasecmp(argv[i], "--start") == 0) {
@@ -808,12 +808,12 @@ int main(int argc, char *argv[])
 		if (consumed < 0) {
 			fprintf(stderr,
 				"Usage: %s %s [--start #] [--end #]\n",
-				argv[0], CommonUsage(state));
+				argv[0], SDLTest_CommonUsage(state));
 			return 1;
 		}
 		i += consumed;
 	}
-	if (!CommonInit(state)) {
+	if (!SDLTest_CommonInit(state)) {
 		return 2;
 	}
 
@@ -841,14 +841,14 @@ int main(int argc, char *argv[])
 		/* Check for events */
 		++frames;
 		while (SDL_PollEvent(&event) && !done) {
-			CommonEvent(state, &event, &done);
+			SDLTest_CommonEvent(state, &event, &done);
 		}
 
         /* Do all the drawing work */ 
         Draw(testStart, testEnd);
 	}
 
-	CommonQuit(state);
+	SDLTest_CommonQuit(state);
 
 	/* Print out some timing information */
 	now = SDL_GetTicks();
