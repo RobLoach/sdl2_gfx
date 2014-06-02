@@ -4,7 +4,7 @@ srcdir  = @srcdir@
 
 CC      = @CC@
 EXE	= @EXE@
-CFLAGS  = @CFLAGS@
+CFLAGS  = @CFLAGS@ -g
 LIBS	= @LIBS@ 
 
 TARGETS = \
@@ -17,14 +17,14 @@ all: Makefile $(TARGETS)
 Makefile: $(srcdir)/Makefile.in
 	$(SHELL) config.status $@
 
-testgfx$(EXE): $(srcdir)/testgfx.c $(srcdir)/common.c
-	$(CC) -o $@ $(srcdir)/common.c $(srcdir)/testgfx.c $(CFLAGS) $(LIBS) @MATHLIB@
+testgfx$(EXE): $(srcdir)/testgfx.c
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS) @MATHLIB@
 
-testrotozoom$(EXE): $(srcdir)/testrotozoom.c $(srcdir)/common.c
-	$(CC) -o $@ $(srcdir)/common.c $(srcdir)/testrotozoom.c $(CFLAGS) $(LIBS) @MATHLIB@
+testrotozoom$(EXE): $(srcdir)/testrotozoom.c
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS) @MATHLIB@
 
 testimagefilter$(EXE): $(srcdir)/testimagefilter.c
-	$(CC) -o $@ $< $(CFLAGS) $(LIBS) @MATHLIB@
+	$(CC) -o $@ $^ $(CFLAGS) $(LIBS) @MATHLIB@
 
 clean:
 	rm -f $(TARGETS)

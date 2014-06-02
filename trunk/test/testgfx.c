@@ -17,11 +17,11 @@
 #include <math.h>
 #include <time.h>
 
-#include "common.h"
+#include "SDL_test_common.h"
 
 #include "SDL2_gfxPrimitives.h"
 
-static CommonState *state;
+static SDLTest_CommonState *state;
 
 /* Screen size */
 #define WIDTH	DEFAULT_WINDOW_WIDTH
@@ -1293,33 +1293,44 @@ int TestTexturedPolygon(SDL_Renderer *renderer)
 
 int main(int argc, char *argv[])
 {
-    int i, done, drawn, test;
+    int i, done, drawn, test = 0;
     SDL_Event event;
     Uint32 then, now, frames;
-	int numTests;
+    int numTests;
 
     /* Initialize test framework */
-    state = CommonCreateState(argv, SDL_INIT_VIDEO);
+    state = SDLTest_CommonCreateState(argv, SDL_INIT_VIDEO);
     if (!state) {
         return 1;
     }
 
-	SDL_Log("SDL2_gfx %i.%i.%i: testgfx", SDL2_GFXPRIMITIVES_MAJOR, SDL2_GFXPRIMITIVES_MINOR, SDL2_GFXPRIMITIVES_MICRO);
-	SDL_Log("Platform: %s", SDL_GetPlatform());
+    SDL_Log("SDL2_gfx %i.%i.%i: testgfx", SDL2_GFXPRIMITIVES_MAJOR, SDL2_GFXPRIMITIVES_MINOR, SDL2_GFXPRIMITIVES_MICRO);
+    SDL_Log("Platform: %s", SDL_GetPlatform());
 
     for (i = 1; i < argc;) {
         int consumed;
-
-        consumed = CommonArg(state, i);
+        consumed = SDLTest_CommonArg(state, i);
+        if (consumed == 0) {
+           consumed = -1;
+           if (SDL_strcasecmp(argv[i], "--test") == 0) {
+              if (argv[i + 1]) {
+                 test = SDL_atoi(argv[i + 1]);
+                 consumed = 2;
+               }
+            }
+        }
+                 
+           
         if (consumed < 0) {
             fprintf(stderr,
-                    "Usage: %s %s\n",
-                    argv[0], CommonUsage(state));
+                    "Usage: %s %s [--test N]\n",
+                    argv[0], SDLTest_CommonUsage(state));
             return 1;
         }
         i += consumed;
     }
-    if (!CommonInit(state)) {
+    
+    if (!SDLTest_CommonInit(state)) {
         return 2;
     }
 
@@ -1337,13 +1348,12 @@ int main(int argc, char *argv[])
     frames = 0;
     then = SDL_GetTicks();
     done = 0;
-	drawn = 0;
-	test = 0;
+    drawn = 0;
     while (!done) {
         /* Check for events */
         ++frames;
         while (SDL_PollEvent(&event)) {
-            CommonEvent(state, &event, &done);
+            SDLTest_CommonEvent(state, &event, &done);
 			switch (event.type) {
 				case SDL_KEYDOWN: {
 					switch (event.key.keysym.sym) {
@@ -1504,7 +1514,7 @@ int main(int argc, char *argv[])
 		SDL_Delay(25);
     }
 
-    CommonQuit(state);
+    SDLTest_CommonQuit(state);
 
     /* Print out some timing information */
     now = SDL_GetTicks();
