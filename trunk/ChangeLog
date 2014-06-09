@@ -1,5 +1,13 @@
 SDL2_gfx ChangeLog
 
+Mon, Jun 09, 2014  8:48:50 AM
+- removed VS2010 solution files; updated VS2012 solution files for SDL2 updates
+
+Mon, Jun 02, 2014  7:36:24 AM
+- add patch for pkg-config support (thanks Sylvain)
+- update tests to use SDLTest library
+- fix commandline parsing in testgfx
+
 Mon, May 12, 2014  7:29:24 AM
 - fixed BoxRGBA size-off-by-1 error (thanks Stefan for reporting)
 

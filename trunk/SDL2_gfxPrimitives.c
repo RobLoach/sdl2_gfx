@@ -521,7 +521,8 @@ int roundedBoxRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2,
 	Sint16 y2, Sint16 rad, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
 {
 	int result = 0;
-	Sint16 w, h, tmp;
+	Sint16 w, h, r2, tmp;
+	Sint16 xr1, xr2, yr1, yr2;
 	Sint16 xx1, xx2, yy1, yy2;
 
 	/* 
@@ -542,7 +543,7 @@ int roundedBoxRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2,
 	/*
 	* Special case - no rounding
 	*/
-	if (rad == 0) {
+	if (rad <= 1) {
 		return rectangleRGBA(renderer, x1, y1, x2, y2, r, g, b, a);
 	}
 
@@ -582,17 +583,19 @@ int roundedBoxRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2,
 	/*
 	* Calculate width&height 
 	*/
-	w = x2 - x1;
-	h = y2 - y1;
+	w = x2 - x1 + 1;
+	h = y2 - y1 + 1;
 
 	/*
 	* Maybe adjust radius
 	*/
-	if ((rad * 2) > w)  
+	r2 = rad + rad;
+	if (r2 > w)  
 	{
 		rad = w / 2;
+		r2 = rad + rad;
 	}
-	if ((rad * 2) > h)
+	if (r2 > h)
 	{
 		rad = h / 2;
 	}
@@ -600,28 +603,29 @@ int roundedBoxRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2,
 	/*
 	* Draw corners
 	*/
-	xx1 = x1 + rad;
-	xx2 = x2 - rad;
-	yy1 = y1 + rad;
-	yy2 = y2 - rad;
-	result |= filledPieRGBA(renderer, xx1, yy1, rad, 180, 270, r, g, b, a);
-	result |= filledPieRGBA(renderer, xx2, yy1, rad, 270, 360, r, g, b, a);
-	result |= filledPieRGBA(renderer, xx1, yy2, rad,  90, 180, r, g, b, a);
-	result |= filledPieRGBA(renderer, xx2, yy2, rad,   0,  90, r, g, b, a);
+	rad--;
+	xr1 = x1 + rad;
+	xr2 = x2 - rad;
+	yr1 = y1 + rad;
+	yr2 = y2 - rad;
+	result |= filledPieRGBA(renderer, xr1, yr1, rad, 180, 270, r, g, b, a);
+	result |= filledPieRGBA(renderer, xr2, yr1, rad, 270, 360, r, g, b, a);
+	result |= filledPieRGBA(renderer, xr1, yr2, rad,  90, 180, r, g, b, a);
+	result |= filledPieRGBA(renderer, xr2, yr2, rad,   0,  90, r, g, b, a);
 
 	/*
 	* Draw body
 	*/
-	xx1++;
-	xx2--;
-	yy1++;
-	yy2--;
+	xx1 = xr1 + 1;
+	xx2 = xr2 - 1;
+	yy1 = xr1 + 1;
+	yy2 = yr2 - 1;
 	if (xx1 <= xx2) {
 		result |= boxRGBA(renderer, xx1, y1, xx2, y2, r, g, b, a);
 	}
 	if (yy1 <= yy2) {
-		result |= boxRGBA(renderer, x1, yy1, xx1-1, yy2, r, g, b, a);
-		result |= boxRGBA(renderer, xx2+1, yy1, x2, yy2, r, g, b, a);
+		result |= boxRGBA(renderer, x1, yy1, xr1, yy2, r, g, b, a);
+		result |= boxRGBA(renderer, xr2, yy1, x2, yy2, r, g, b, a);
 	}
 
 	return result;
