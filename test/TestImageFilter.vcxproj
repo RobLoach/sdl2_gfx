@@ -67,7 +67,7 @@
     <Link>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_gfx.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>..\..\sdl2gfx\$(Platform)\$(Configuration);..\..\SDL2_gfx\$(Platform)\$(Configuration);..\..\SDL\VisualC\SDLmain\$(Platform)\$(Configuration);..\..\SDL\VisualC\SDL\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\sdl2gfx\$(Platform)\$(Configuration);..\..\SDL2_gfx\$(Platform)\$(Configuration);..\..\SDL\VisualC\$(Platform)\$(Configuration);..\..\SDL\VisualC\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(TargetDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -79,7 +79,7 @@
     </Link>
     <PostBuildEvent>
       <Command>
-copy /y "..\..\SDL\VisualC\SDL\$(Platform)\$(Configuration)\SDL2.dll" "$(TargetName)\$(Platform)\$(Configuration)\SDL2.dll"
+copy /y "..\..\SDL\VisualC\$(Platform)\$(Configuration)\SDL2.dll" "$(TargetName)\$(Platform)\$(Configuration)\SDL2.dll"
 copy /y "..\$(Platform)\$(Configuration)\SDL2_gfx.dll" "$(TargetName)\$(Platform)\$(Configuration)\SDL2_gfx.dll"
       </Command>
       <Message>Copy SDL2 and SDL2_gfx DLLs</Message>
@@ -102,7 +102,7 @@ copy /y "..\$(Platform)\$(Configuration)\SDL2_gfx.dll" "$(TargetName)\$(Platform
     </ClCompile>
     <Link>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_gfx.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\sdl2gfx\$(Platform)\$(Configuration);..\..\SDL2_gfx\$(Platform)\$(Configuration);..\..\SDL\VisualC\SDLmain\$(Platform)\$(Configuration);..\..\SDL\VisualC\SDL\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\sdl2gfx\$(Platform)\$(Configuration);..\..\SDL2_gfx\$(Platform)\$(Configuration);..\..\SDL\VisualC\$(Platform)\$(Configuration);..\..\SDL\VisualC\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -116,7 +116,7 @@ copy /y "..\$(Platform)\$(Configuration)\SDL2_gfx.dll" "$(TargetName)\$(Platform
     </Link>
     <PostBuildEvent>
       <Command>
-copy /y "..\..\SDL\VisualC\SDL\$(Platform)\$(Configuration)\SDL2.dll" "$(TargetName)\$(Platform)\$(Configuration)\SDL2.dll"
+copy /y "..\..\SDL\VisualC\$(Platform)\$(Configuration)\SDL2.dll" "$(TargetName)\$(Platform)\$(Configuration)\SDL2.dll"
 copy /y "..\$(Platform)\$(Configuration)\SDL2_gfx.dll" "$(TargetName)\$(Platform)\$(Configuration)\SDL2_gfx.dll"
       </Command>
       <Message>Copy SDL2 and SDL2_gfx DLLs</Message>

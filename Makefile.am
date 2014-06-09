@@ -35,6 +35,7 @@ pkgconfig_DATA = SDL2_gfx.pc
 
 # Additional cleanup rules
 DISTCLEANFILES =		\
+	*~			\
 	SDL2_gfx.sdf		\
 	SDL2_gfx.suo		\
 	SDL2_gfx.vcxproj.user	\

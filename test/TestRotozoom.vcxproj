@@ -65,9 +65,9 @@
       <CompileAs>Default</CompileAs>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_gfx.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;SDL2_gfx.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>..\..\sdl2gfx\$(Platform)\$(Configuration);..\..\SDL2_gfx\$(Platform)\$(Configuration);..\..\SDL\VisualC\SDLmain\$(Platform)\$(Configuration);..\..\SDL\VisualC\SDL\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\sdl2gfx\$(Platform)\$(Configuration);..\..\SDL2_gfx\$(Platform)\$(Configuration);..\..\SDL\VisualC\$(Platform)\$(Configuration);..\..\SDL\VisualC\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(TargetDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -79,7 +79,7 @@
     </Link>
     <PostBuildEvent>
       <Command>
-copy /y "..\..\SDL\VisualC\SDL\$(Platform)\$(Configuration)\SDL2.dll" "$(TargetName)\$(Platform)\$(Configuration)\SDL2.dll"
+copy /y "..\..\SDL\VisualC\$(Platform)\$(Configuration)\SDL2.dll" "$(TargetName)\$(Platform)\$(Configuration)\SDL2.dll"
 copy /y "..\$(Platform)\$(Configuration)\SDL2_gfx.dll" "$(TargetName)\$(Platform)\$(Configuration)\SDL2_gfx.dll"
 copy /y ".\sample*.bmp" "$(TargetDir)
       </Command>
@@ -102,8 +102,8 @@ copy /y ".\sample*.bmp" "$(TargetDir)
       <OmitDefaultLibName>false</OmitDefaultLibName>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_gfx.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\sdl2gfx\$(Platform)\$(Configuration);..\..\SDL2_gfx\$(Platform)\$(Configuration);..\..\SDL\VisualC\SDLmain\$(Platform)\$(Configuration);..\..\SDL\VisualC\SDL\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;SDL2_gfx.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\sdl2gfx\$(Platform)\$(Configuration);..\..\SDL2_gfx\$(Platform)\$(Configuration);..\..\SDL\VisualC\$(Platform)\$(Configuration);..\..\SDL\VisualC\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -117,7 +117,7 @@ copy /y ".\sample*.bmp" "$(TargetDir)
     </Link>
     <PostBuildEvent>
       <Command>
-copy /y "..\..\SDL\VisualC\SDL\$(Platform)\$(Configuration)\SDL2.dll" "$(TargetName)\$(Platform)\$(Configuration)\SDL2.dll"
+copy /y "..\..\SDL\VisualC\$(Platform)\$(Configuration)\SDL2.dll" "$(TargetName)\$(Platform)\$(Configuration)\SDL2.dll"
 copy /y "..\$(Platform)\$(Configuration)\SDL2_gfx.dll" "$(TargetName)\$(Platform)\$(Configuration)\SDL2_gfx.dll"
 copy /y ".\sample*.bmp" "$(TargetDir)
       </Command>
@@ -125,11 +125,7 @@ copy /y ".\sample*.bmp" "$(TargetDir)
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="common.c" />
     <ClCompile Include="TestRotozoom.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="common.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SDL2_gfx.vcxproj">

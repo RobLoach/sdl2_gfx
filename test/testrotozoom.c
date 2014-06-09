@@ -744,6 +744,7 @@ doneflip:
 		/* Excercise flipping functions on 32bit RGBA */
 		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION,"Converting 24bit image into 32bit RGBA surface ...\n");
 		picture_again = SDL_CreateRGBSurface(SDL_SWSURFACE, picture->w, picture->h, 32, rmask, gmask, bmask, amask);
+		if (picture_again == NULL) goto donecustom32bit;
 		SDL_BlitSurface(picture,NULL,picture_again,NULL);
 
 		SDL_snprintf(messageText, 1024, "23. CustomTest, values from commandline (32bit)");
@@ -763,15 +764,13 @@ donecustom32bit:
 		bmpfile = "sample8.bmp";
 		SDL_Log("Loading picture: %s\n", bmpfile);
 		picture = SDL_LoadBMP(bmpfile);
-		if ( picture == NULL ) {
+		if (picture == NULL) {
 			SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't load %s: %s\n", bmpfile, SDL_GetError());
 			return;
 		}
 
 		SDL_snprintf(messageText, 1024, "24. CustomTest, values from commandline (8bit)");
 		CustomTest(picture, custom_angle, custom_fx, custom_fy, custom_smooth);
-
-donecustom8bit:
 
 		/* Free the picture */
 		SDL_FreeSurface(picture);
