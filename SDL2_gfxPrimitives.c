@@ -517,6 +517,7 @@ int roundedBoxColor(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2, Si
 
 \returns Returns 0 on success, -1 on failure.
 */
+/* TODO: fix algorithm; off-by one causes missing lines */
 int roundedBoxRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2,
 	Sint16 y2, Sint16 rad, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
 {
@@ -1132,6 +1133,7 @@ int arcColor(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, Sint16 sta
 
 \returns Returns 0 on success, -1 on failure.
 */
+/* TODO: rewrite algorithm; arc endpoints are not always drawn */
 int arcRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, Sint16 start, Sint16 end, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
 {
 	int result;
@@ -1222,7 +1224,7 @@ int arcRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, Sint16 star
 				break;
 			}
 			temp *= rad;
-			stopval_start = (int)temp; // always round down.
+			stopval_start = (int)temp; // always round down
 
 			// This isn't arbitrary, but requires graph paper to explain well.
 			// The basic idea is that we're always changing drawoct after we draw, so we
@@ -2123,6 +2125,7 @@ Note: Determines vertex array and uses polygon or filledPolygon drawing routines
 
 \returns Returns 0 on success, -1 on failure.
 */
+/* TODO: rewrite algorithm; pie is not accurate */
 int _pieRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, Sint16 start, Sint16 end,  Uint8 r, Uint8 g, Uint8 b, Uint8 a, Uint8 filled)
 {
 	int result;
@@ -3083,6 +3086,7 @@ to the left and want the texture to apear the same you need to increase the text
 
 \returns Returns 0 on success, -1 on failure.
 */
+/* TODO: fix algorithm */
 int texturedPolygonMT(SDL_Renderer *renderer, const Sint16 * vx, const Sint16 * vy, int n, 
 	SDL_Surface * texture, int texture_dx, int texture_dy, int **polyInts, int *polyAllocated)
 {
