@@ -398,7 +398,7 @@ int roundedRectangleRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x
 	/*
 	* Special case - no rounding
 	*/
-	if (rad == 0) {
+	if (rad <= 1) {
 		return rectangleRGBA(renderer, x1, y1, x2, y2, r, g, b, a);
 	}
 
@@ -517,14 +517,21 @@ int roundedBoxColor(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2, Si
 
 \returns Returns 0 on success, -1 on failure.
 */
-/* TODO: fix algorithm; off-by one causes missing lines */
 int roundedBoxRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2,
 	Sint16 y2, Sint16 rad, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
 {
-	int result = 0;
+	int result;
 	Sint16 w, h, r2, tmp;
-	Sint16 xr1, xr2, yr1, yr2;
-	Sint16 xx1, xx2, yy1, yy2;
+	Sint16 cx = 0;
+	Sint16 cy = rad;
+	Sint16 ocx = (Sint16) 0xffff;
+	Sint16 ocy = (Sint16) 0xffff;
+	Sint16 df = 1 - rad;
+	Sint16 d_e = 3;
+	Sint16 d_se = -2 * rad + 5;
+	Sint16 xpcx, xmcx, xpcy, xmcy;
+	Sint16 ypcy, ymcy, ypcx, ymcx;
+	Sint16 x, y, dx, dy;
 
 	/* 
 	* Check destination renderer 
@@ -601,35 +608,74 @@ int roundedBoxRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2,
 		rad = h / 2;
 	}
 
+	/* Setup filled circle drawing for corners */
+	x = x1 + rad;
+	y = y1 + rad;
+	dx = x2 - x1 - rad - rad;
+	dy = y2 - y1 - rad - rad;
+
+	/*
+	* Set color
+	*/
+	result = 0;
+	result |= SDL_SetRenderDrawBlendMode(renderer, (a == 255) ? SDL_BLENDMODE_NONE : SDL_BLENDMODE_BLEND);
+	result |= SDL_SetRenderDrawColor(renderer, r, g, b, a);
+
 	/*
 	* Draw corners
 	*/
-	rad--;
-	xr1 = x1 + rad;
-	xr2 = x2 - rad;
-	yr1 = y1 + rad;
-	yr2 = y2 - rad;
-	result |= filledPieRGBA(renderer, xr1, yr1, rad, 180, 270, r, g, b, a);
-	result |= filledPieRGBA(renderer, xr2, yr1, rad, 270, 360, r, g, b, a);
-	result |= filledPieRGBA(renderer, xr1, yr2, rad,  90, 180, r, g, b, a);
-	result |= filledPieRGBA(renderer, xr2, yr2, rad,   0,  90, r, g, b, a);
+	do {
+		xpcx = x + cx;
+		xmcx = x - cx;
+		xpcy = x + cy;
+		xmcy = x - cy;
+		if (ocy != cy) {
+			if (cy > 0) {
+				ypcy = y + cy;
+				ymcy = y - cy;
+				result |= hline(renderer, xmcx, xpcx + dx, ypcy + dy);
+				result |= hline(renderer, xmcx, xpcx + dx, ymcy);
+			} else {
+				result |= hline(renderer, xmcx, xpcx + dx, y);
+			}
+			ocy = cy;
+		}
+		if (ocx != cx) {
+			if (cx != cy) {
+				if (cx > 0) {
+					ypcx = y + cx;
+					ymcx = y - cx;
+					result |= hline(renderer, xmcy, xpcy + dx, ymcx);
+					result |= hline(renderer, xmcy, xpcy + dx, ypcx + dy);
+				} else {
+					result |= hline(renderer, xmcy, xpcy + dx, y);
+				}
+			}
+			ocx = cx;
+		}
 
-	/*
-	* Draw body
-	*/
-	xx1 = xr1 + 1;
-	xx2 = xr2 - 1;
-	yy1 = xr1 + 1;
-	yy2 = yr2 - 1;
-	if (xx1 <= xx2) {
-		result |= boxRGBA(renderer, xx1, y1, xx2, y2, r, g, b, a);
-	}
-	if (yy1 <= yy2) {
-		result |= boxRGBA(renderer, x1, yy1, xr1, yy2, r, g, b, a);
-		result |= boxRGBA(renderer, xr2, yy1, x2, yy2, r, g, b, a);
+		/*
+		* Update 
+		*/
+		if (df < 0) {
+			df += d_e;
+			d_e += 2;
+			d_se += 2;
+		} else {
+			df += d_se;
+			d_e += 2;
+			d_se += 4;
+			cy--;
+		}
+		cx++;
+	} while (cx <= cy);
+
+	/* Inside */
+	if (dx > 0 && dy > 0) {
+		result |= boxRGBA(renderer, x1, y1 + rad + 1, x2, y2 - rad, r, g, b, a);
 	}
 
-	return result;
+	return (result);
 }
 
 /* ---- Box */
@@ -2125,7 +2171,7 @@ Note: Determines vertex array and uses polygon or filledPolygon drawing routines
 
 \returns Returns 0 on success, -1 on failure.
 */
-/* TODO: rewrite algorithm; pie is not accurate */
+/* TODO: rewrite algorithm; pie is not always accurate */
 int _pieRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, Sint16 start, Sint16 end,  Uint8 r, Uint8 g, Uint8 b, Uint8 a, Uint8 filled)
 {
 	int result;
@@ -3036,6 +3082,7 @@ int _HLineTextured(SDL_Renderer *renderer, Sint16 x1, Sint16 x2, Sint16 y, SDL_T
 
 	// we will draw to the current y
 	dst_rect.y = y;
+	dst_rect.h = 1;
 
 	// if there are enough pixels left in the current row of the texture
 	// draw it all at once
@@ -3043,14 +3090,17 @@ int _HLineTextured(SDL_Renderer *renderer, Sint16 x1, Sint16 x2, Sint16 y, SDL_T
 		source_rect.w = w;
 		source_rect.x = texture_x_walker;
 		dst_rect.x= x1;
-		result = (SDL_RenderCopy(renderer, texture, &source_rect ,&dst_rect) == 0);
-	} else { // we need to draw multiple times
+		dst_rect.w = source_rect.w;
+		result = (SDL_RenderCopy(renderer, texture, &source_rect, &dst_rect) == 0);
+	} else { 
+		// we need to draw multiple times
 		// draw the first segment
 		pixels_written = texture_w  - texture_x_walker;
 		source_rect.w = pixels_written;
 		source_rect.x = texture_x_walker;
 		dst_rect.x= x1;
-		result |= (SDL_RenderCopy(renderer, texture, &source_rect , &dst_rect) == 0);
+		dst_rect.w = source_rect.w;
+		result |= (SDL_RenderCopy(renderer, texture, &source_rect, &dst_rect) == 0);
 		write_width = texture_w;
 
 		// now draw the rest
@@ -3062,7 +3112,8 @@ int _HLineTextured(SDL_Renderer *renderer, Sint16 x1, Sint16 x2, Sint16 y, SDL_T
 			}
 			source_rect.w = write_width;
 			dst_rect.x = x1 + pixels_written;
-			result  |= (SDL_RenderCopy(renderer,texture,&source_rect , &dst_rect) == 0);
+			dst_rect.w = source_rect.w;
+			result |= (SDL_RenderCopy(renderer, texture, &source_rect, &dst_rect) == 0);
 			pixels_written += write_width;
 		}
 	}
@@ -3086,7 +3137,6 @@ to the left and want the texture to apear the same you need to increase the text
 
 \returns Returns 0 on success, -1 on failure.
 */
-/* TODO: fix algorithm */
 int texturedPolygonMT(SDL_Renderer *renderer, const Sint16 * vx, const Sint16 * vy, int n, 
 	SDL_Surface * texture, int texture_dx, int texture_dy, int **polyInts, int *polyAllocated)
 {
@@ -3100,7 +3150,7 @@ int texturedPolygonMT(SDL_Renderer *renderer, const Sint16 * vx, const Sint16 * 
 	int ints;
 	int *gfxPrimitivesPolyInts = NULL;
 	int gfxPrimitivesPolyAllocated = 0;
-	SDL_Texture *textureAsTexture;
+	SDL_Texture *textureAsTexture = NULL;
 
 	/*
 	* Sanity check number of edges
@@ -3180,6 +3230,14 @@ int texturedPolygonMT(SDL_Renderer *renderer, const Sint16 * vx, const Sint16 * 
 		}
 	}
 
+    /* Create texture for drawing */
+	textureAsTexture = SDL_CreateTextureFromSurface(renderer, texture);
+	if (textureAsTexture == NULL)
+	{
+		return -1;
+	}
+	SDL_SetTextureBlendMode(textureAsTexture, SDL_BLENDMODE_BLEND);
+	
 	/*
 	* Draw, scanning y 
 	*/
@@ -3214,12 +3272,6 @@ int texturedPolygonMT(SDL_Renderer *renderer, const Sint16 * vx, const Sint16 * 
 
 		qsort(gfxPrimitivesPolyInts, ints, sizeof(int), _gfxPrimitivesCompareInt);
 
-		textureAsTexture = SDL_CreateTextureFromSurface(renderer, texture);
-		if (textureAsTexture == NULL)
-		{
-			return (-1);
-		}
-
 		for (i = 0; (i < ints); i += 2) {
 			xa = gfxPrimitivesPolyInts[i] + 1;
 			xa = (xa >> 16) + ((xa & 32768) >> 15);
@@ -3227,8 +3279,10 @@ int texturedPolygonMT(SDL_Renderer *renderer, const Sint16 * vx, const Sint16 * 
 			xb = (xb >> 16) + ((xb & 32768) >> 15);
 			result |= _HLineTextured(renderer, xa, xb, y, textureAsTexture, texture->w, texture->h, texture_dx, texture_dy);
 		}
-		SDL_DestroyTexture(textureAsTexture);
 	}
+
+	SDL_RenderPresent(renderer);
+	SDL_DestroyTexture(textureAsTexture);
 
 	return (result);
 }

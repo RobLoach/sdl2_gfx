@@ -25,6 +25,53 @@ The current components of the SDL2_gfx library are:
 
 Note that SDL2_gfx is compatible with SDL version 2.0 (not SDL 1.2).
 
+\section install_sec Installation
+
+\subsection unix Unix/Linux
+
+Use the standard autoconf/automake sequence to compile and install the library. 
+\verbatim
+        ./autogen.sh    # (optional, recommended)
+        ./configure
+        make
+        make install
+\endverbatim
+
+\\subsubsection nommx Linker Configuration
+
+The default location for the installation is /usr/local/lib and /usr/local/include. 
+This libary path may need to be added to the file the linker configuration file:
+\verbatim
+        vi /etc/ld.so.conf
+        ldconfig
+\endverbatim
+
+\\subsubsection nommx Non-MMX Platforms
+
+To build without MMX code enabled (i.e. ARM, PPC, AMD64 architectures):
+\verbatim
+        ./configure --disable-mmx
+        make
+        make install
+\endverbatim
+
+\subsection visualstudio Windows (VC10, VS2012)
+
+Open SDL_gfx_VS2010.sln solution file and review README.
+
+\section test_sec Test Programs
+
+Change to the ./test directory and run
+\verbatim
+        ./autogen.sh
+        ./configure
+        make
+\endverbatim
+to create several test programs for the libraries functions. This requires
+the SDL2_gfx library to be previously compiled and installed.
+
+See the source in the test/*.c files for some sample code and implementation hints.
+
 \section documentation_sec Documentation
 
 Please refer to the Doxygen-generated API documentation found in the
