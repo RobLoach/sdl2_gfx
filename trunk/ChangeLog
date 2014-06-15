@@ -1,5 +1,11 @@
 SDL2_gfx ChangeLog
 
+Sun, Jun 15, 2014  3:12:31 PM
+- fixed roundedBox by rewriting algorithm and base it on filledCircle
+- fixed textured polygon algorithm
+- updated testgfx extensively (visual accuracy tests, updated tests for textured polygon)
+- updated README
+
 Mon, Jun 09, 2014  8:48:50 AM
 - removed VS2010 solution files; updated VS2012 solution files for SDL2 updates
 

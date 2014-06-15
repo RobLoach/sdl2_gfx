@@ -561,8 +561,8 @@ int TestRoundedBox(SDL_Renderer *renderer)
 	ClearViewport(renderer);
 
 	/* Accuracy test */
-	ClearCenter(renderer, "20x10-r5 box");
-	roundedBoxRGBA(renderer, WIDTH/2 - 10, HEIGHT/2, WIDTH/2 + 10, HEIGHT/2 + 10, 5, 255, 255, 255, 255);
+	ClearCenter(renderer, "20x15-r5 box");
+	roundedBoxRGBA(renderer, WIDTH/2 - 10, HEIGHT/2-5, WIDTH/2 + 10, HEIGHT/2 + 10, 5, 255, 255, 255, 255);
 
 	return (4 * NUM_RANDOM) / step;
 }
@@ -1353,62 +1353,74 @@ int TestThickLine(SDL_Renderer *renderer)
 
 int TestTexturedPolygon(SDL_Renderer *renderer)
 {
+	/* Define masking bytes */
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+	Uint32 rmask = 0xff000000; 
+	Uint32 gmask = 0x00ff0000;
+	Uint32 bmask = 0x0000ff00; 
+	Uint32 amask = 0x000000ff;
+#else
+	Uint32 amask = 0xff000000; 
+	Uint32 bmask = 0x00ff0000;
+	Uint32 gmask = 0x0000ff00; 
+	Uint32 rmask = 0x000000ff;
+#endif
 	int i;
-	Uint32 color;
-	SDL_Surface *texture;
-	int step = 1;
+	int step = 3;
+	char *bmpfile;
+	SDL_Surface *picture, *picture_again;
 
-	/* Create texture */
-	texture = SDL_CreateRGBSurface(SDL_SWSURFACE,
-		2, 2, 32,
-		0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
+	/* Load an image into a surface */
+	bmpfile = "sample24.bmp";
+	picture = SDL_LoadBMP(bmpfile);
+	if ( picture == NULL ) {
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't load %s: %s\n", bmpfile, SDL_GetError());
+		return -1; 
+	}
+
+	// Convert 24bit image into 32bit RGBA surface
+	picture_again = SDL_CreateRGBSurface(SDL_SWSURFACE, picture->w, picture->h, 32, rmask, gmask, bmask, amask);
+	if (picture_again == NULL) {
+		SDL_FreeSurface(picture);
+		return -1;
+	}
 
 	/* Draw A=255 */
-	((Uint32 *)texture->pixels)[0] = 0xffffffff;
-	((Uint32 *)texture->pixels)[1] = 0xffff00ff;
-	((Uint32 *)texture->pixels)[2] = 0x00ffffff;
-	((Uint32 *)texture->pixels)[3] = 0xff00ffff;
 	SetViewport(renderer,0,60,WIDTH/2,60+(HEIGHT-80)/2);
 	for (i=0; i<NUM_RANDOM; i += step) {
-		texturedPolygon(renderer, &tx1[i][0], &ty1[i][0], 3, texture, 0, 0);
+		SDL_SetSurfaceColorMod(picture, rr[i], rg[i], rb[i]);
+		SDL_BlitSurface(picture, NULL, picture_again, NULL);
+		texturedPolygon(renderer, &rx[i], &ry[i], 3, picture_again, 0, 0);
 	}
 
 	/* Draw A=various */
 	SetViewport(renderer,WIDTH/2,60,WIDTH,60+(HEIGHT-80)/2);
 	for (i=0; i<NUM_RANDOM; i += step) {
-		((Uint32 *)texture->pixels)[0] = 0xffffff00 | ra[i];
-		((Uint32 *)texture->pixels)[1] = 0xffff0000 | ra[i];
-		((Uint32 *)texture->pixels)[2] = 0x00ffff00 | ra[i];
-		((Uint32 *)texture->pixels)[3] = 0xff00ff00 | ra[i];
-		texturedPolygon(renderer, &tx1[i][0], &ty1[i][0], 3, texture, 0, 0);
+		SDL_SetSurfaceColorMod(picture, rr[i], rg[i], rb[i]);
+		SDL_BlitSurface(picture, NULL, picture_again, NULL);
+		texturedPolygon(renderer, &rx[i], &ry[i], 3, picture_again, 0, 0);
 	}
 
 	/* Draw A=various */
 	SetViewport(renderer,WIDTH/2,80+(HEIGHT-80)/2,WIDTH,HEIGHT);
 	for (i=0; i<NUM_RANDOM; i += step) {
-		((Uint32 *)texture->pixels)[0] = 0xffffff00 | ra[i];
-		((Uint32 *)texture->pixels)[1] = 0xffff0000 | ra[i];
-		((Uint32 *)texture->pixels)[2] = 0x00ffff00 | ra[i];
-		((Uint32 *)texture->pixels)[3] = 0xff00ff00 | ra[i];
-		texturedPolygon(renderer, &tx1[i][0], &ty1[i][0], 3, texture, 0, 0);
+		SDL_SetSurfaceColorMod(picture, rr[i], rg[i], rb[i]);
+		SDL_BlitSurface(picture, NULL, picture_again, NULL);
+		texturedPolygon(renderer, &rx[i], &ry[i], 3, picture_again, 0, 0);
 	}
 
 	/* Draw Colortest */
 	SetViewport(renderer,0,80+(HEIGHT-80)/2,WIDTH/2,HEIGHT);
 	for (i=0; i<NUM_RANDOM; i += step) {
 		if (rx[i] < (WIDTH/6))  {
-			color = 0xff0000ff;
+			SDL_FillRect(picture_again, NULL, SDL_MapRGB(picture_again->format, 255, 0, 0));
 		} else if (rx[i] < (WIDTH/3) ) {
-			color = 0x00ff00ff;
+			SDL_FillRect(picture_again, NULL, SDL_MapRGB(picture_again->format, 0, 255, 0));
 		} else {
-			color = 0x0000ffff;
+			SDL_FillRect(picture_again, NULL, SDL_MapRGB(picture_again->format, 0, 0, 255));
 		}
-		((Uint32 *)texture->pixels)[0] = color;
-		((Uint32 *)texture->pixels)[1] = color;
-		((Uint32 *)texture->pixels)[2] = color;
-		((Uint32 *)texture->pixels)[3] = color;
 
-		texturedPolygon(renderer, &tx1[i][0], &ty1[i][0], 3, texture, 0, 0);
+		texturedPolygon(renderer, &rx[i], &ry[i], 3, picture_again, 0, 0);
 	}
 
 	/* Clear viewport */
@@ -1419,9 +1431,10 @@ int TestTexturedPolygon(SDL_Renderer *renderer)
 	rx[0] = WIDTH/2; ry[0] = HEIGHT/2;
 	rx[1] = rx[0] + 5; 	ry[1] = ry[0] + 5;
 	rx[2] = rx[0] + 10; ry[2] = ry[0] - 5;
-	texturedPolygon(renderer, rx, ry, 3, texture, 0, 0);
+	texturedPolygon(renderer, rx, ry, 3, picture_again, 0, 0);
 
-	SDL_FreeSurface(texture);
+	SDL_FreeSurface(picture);
+	SDL_FreeSurface(picture_again);
 
 	return (4 * NUM_RANDOM) / step;
 }
