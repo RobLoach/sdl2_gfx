@@ -1366,7 +1366,7 @@ int TestTexturedPolygon(SDL_Renderer *renderer)
 	Uint32 rmask = 0x000000ff;
 #endif
 	int i;
-	int step = 3;
+	int step = 6;
 	char *bmpfile;
 	SDL_Surface *picture, *picture_again;
 
