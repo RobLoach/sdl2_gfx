@@ -67,7 +67,7 @@
     <Link>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;SDL2_gfx.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
-      <AdditionalLibraryDirectories>..\..\sdl2gfx\$(Platform)\$(Configuration);..\..\SDL2_gfx\$(Platform)\$(Configuration);..\..\SDL\VisualC\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\$(Platform)\$(Configuration);..\..\sdl2gfx\$(Platform)\$(Configuration);..\..\SDL2_gfx\$(Platform)\$(Configuration);..\..\SDL\VisualC\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(TargetDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -102,7 +102,7 @@ copy /y "..\$(Platform)\$(Configuration)\SDL2_gfx.dll" "$(TargetName)\$(Platform
     </ClCompile>
     <Link>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2test.lib;SDL2_gfx.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\..\sdl2gfx\$(Platform)\$(Configuration);..\..\SDL2_gfx\$(Platform)\$(Configuration);..\..\SDL\VisualC\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\$(Platform)\$(Configuration);..\..\sdl2gfx\$(Platform)\$(Configuration);..\..\SDL2_gfx\$(Platform)\$(Configuration);..\..\SDL\VisualC\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
