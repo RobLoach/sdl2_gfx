@@ -891,7 +891,7 @@ int TestFilledEllipse(SDL_Renderer *renderer)
 
 	/* Accuracy test */
 	ClearCenter(renderer, "r10r5 F ellipse");
-	ellipseRGBA(renderer, WIDTH/2, HEIGHT/2, 10, 5, 255, 255, 255, 255);
+	filledEllipseRGBA(renderer, WIDTH/2, HEIGHT/2, 10, 5, 255, 255, 255, 255);
 
 	return (4 * NUM_RANDOM) / step;
 }
@@ -1105,7 +1105,7 @@ int TestFilledPolygon(SDL_Renderer *renderer)
 	/* Accuracy test */
 	ClearCenter(renderer, "3pt F poly");
 	rx[0] = WIDTH/2; ry[0] = HEIGHT/2;
-	rx[1] = rx[0] + 1; 	ry[1] = ry[0] + 5;
+	rx[1] = rx[0] + 5; 	ry[1] = ry[0] + 5;
 	rx[2] = rx[0] + 10; ry[2] = ry[0] - 5;
 	filledPolygonRGBA(renderer, rx, ry, 3, 255, 255, 255, 255);
 

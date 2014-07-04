@@ -1,5 +1,11 @@
 SDL2_gfx ChangeLog
 
+Fri, Jul 04, 2014  4:00:21 PM
+- rewrote ellipse algorithm used by non-AA line/filled circle/ellipse functions:
+  integer midpoint algorithm with 4x overscan for visual accuracy
+- fix bugs in TestGfx
+- add screenshot image
+
 Sun, Jun 15, 2014  3:12:31 PM
 - fixed roundedBox by rewriting algorithm and base it on filledCircle
 - fixed textured polygon algorithm
