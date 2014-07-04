@@ -204,6 +204,21 @@ int hlineRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 x2, Sint16 y, Uint8 r, 
 /* ---- Vline */
 
 /*!
+\brief Draw vertical line in currently set color
+
+\param renderer The renderer to draw on.
+\param x X coordinate of points of the line.
+\param y1 Y coordinate of the first point (i.e. top) of the line.
+\param y2 Y coordinate of the second point (i.e. bottom) of the line.
+
+\returns Returns 0 on success, -1 on failure.
+*/
+int vline(SDL_Renderer * renderer, Sint16 x, Sint16 y1, Sint16 y2)
+{
+	return SDL_RenderDrawLine(renderer, x, y1, x, y2);;
+}
+
+/*!
 \brief Draw vertical line with blending.
 
 \param renderer The renderer to draw on.
@@ -1441,6 +1456,243 @@ int aacircleRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, Uint8 
 	return aaellipseRGBA(renderer, x, y, rad, rad, r, g, b, a);
 }
 
+/* ----- Ellipse */
+
+/*!
+\brief Internal function to draw pixels or lines in 4 quadrants.
+
+\param renderer The renderer to draw on.
+\param x X coordinate of the center of the quadrant.
+\param y Y coordinate of the center of the quadrant.
+\param dx X offset in pixels of the corners of the quadrant.
+\param dy Y offset in pixels of the corners of the quadrant.
+\param f Flag indicating if the quadrant should be filled (1) or not (0).
+
+\returns Returns 0 on success, -1 on failure.
+*/
+int _drawQuadrants(SDL_Renderer * renderer,  Sint16 x, Sint16 y, Sint16 dx, Sint16 dy, Sint32 f)
+{
+	int result;
+	Sint16 xpdx, xmdx;
+	Sint16 ypdy, ymdy;
+
+	if (dx == 0) {
+		if (dy == 0) {
+			result |= pixel(renderer, x, y);
+		} else {
+			ypdy = y + dy;
+			ymdy = y - dy;
+			if (f) {
+				result |= vline(renderer, x, ymdy, ypdy);
+			} else {
+				result |= pixel(renderer, x, ypdy);
+				result |= pixel(renderer, x, ymdy);
+			}
+		}
+	} else {	
+		xpdx = x + dx;
+		xmdx = x - dx;
+		ypdy = y + dy;
+		ymdy = y - dy;
+		if (f) {
+				result |= vline(renderer, xpdx, ymdy, ypdy);
+				result |= vline(renderer, xmdx, ymdy, ypdy);
+		} else {
+				result |= pixel(renderer, xpdx, ypdy);
+				result |= pixel(renderer, xmdx, ypdy);
+				result |= pixel(renderer, xpdx, ymdy);
+				result |= pixel(renderer, xmdx, ymdy);
+		}
+	}
+
+	return result;
+}
+
+/*!
+\brief Internal function to draw ellipse or filled ellipse with blending.
+
+\param renderer The renderer to draw on.
+\param x X coordinate of the center of the ellipse.
+\param y Y coordinate of the center of the ellipse.
+\param rx Horizontal radius in pixels of the ellipse.
+\param ry Vertical radius in pixels of the ellipse.
+\param r The red value of the ellipse to draw. 
+\param g The green value of the ellipse to draw. 
+\param b The blue value of the ellipse to draw. 
+\param a The alpha value of the ellipse to draw.
+\param f Flag indicating if the ellipse should be filled (1) or not (0).
+
+\returns Returns 0 on success, -1 on failure.
+*/
+#define ELLIPSE_OVERSCAN	4
+int _ellipseRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint8 r, Uint8 g, Uint8 b, Uint8 a, Sint32 f)
+{
+	int result;
+	Sint32 rx2, ry2, rx22, ry22; 
+    Sint32 error;
+    Sint32 curX, curY, curXp1, curYm1;
+	Sint32 scrX, scrY, oldX, oldY;
+    Sint32 deltaX, deltaY;
+
+	/*
+	* Sanity check radii 
+	*/
+	if ((rx < 0) || (ry < 0)) {
+		return (-1);
+	}
+
+	/*
+	* Set color
+	*/
+	result = 0;
+	result |= SDL_SetRenderDrawBlendMode(renderer, (a == 255) ? SDL_BLENDMODE_NONE : SDL_BLENDMODE_BLEND);
+	result |= SDL_SetRenderDrawColor(renderer, r, g, b, a);
+
+	/*
+	* Special cases for rx=0 and/or ry=0: draw a hline/vline/pixel 
+	*/
+	if (rx == 0) {
+		if (ry == 0) {
+			return (pixel(renderer, x, y));
+		} else {
+			return (vline(renderer, x, y - ry, y + ry));
+		}
+	} else {
+		if (ry == 0) {
+			return (hline(renderer, x - rx, x + rx, y));
+		}
+	}
+
+	/*
+	 * Top/bottom center points.
+	 */
+	oldX = scrX = 0;
+	oldY = scrY = ry;
+	result |= _drawQuadrants(renderer, x, y, 0, ry, f);
+
+	/* Midpoint ellipse algorithm with overdraw */
+	rx *= ELLIPSE_OVERSCAN;
+	ry *= ELLIPSE_OVERSCAN;
+	rx2 = rx * rx;
+	rx22 = rx2 + rx2;
+    ry2 = ry * ry;
+	ry22 = ry2 + ry2;
+    curX = 0;
+    curY = ry;
+    deltaX = 0;
+    deltaY = rx22 * curY;
+ 
+	/* Points in segment 1 */ 
+    error = ry2 - rx2 * ry + rx2 / 4;
+    while (deltaX <= deltaY)
+    {
+          curX++;
+          deltaX += ry22;
+ 
+          error +=  deltaX + ry2; 
+          if (error >= 0)
+          {
+               curY--;
+               deltaY -= rx22; 
+               error -= deltaY;
+          }
+
+		  scrX = curX/ELLIPSE_OVERSCAN;
+		  scrY = curY/ELLIPSE_OVERSCAN;
+		  if ((scrX != oldX && scrY == oldY) || (scrX != oldX && scrY != oldY)) {
+			result |= _drawQuadrants(renderer, x, y, scrX, scrY, f);
+			oldX = scrX;
+			oldY = scrY;
+		  }
+    }
+
+	/* Points in segment 2 */
+	if (curY > 0) 
+	{
+		curXp1 = curX + 1;
+		curYm1 = curY - 1;
+		error = ry2 * curX * curXp1 + ((ry2 + 3) / 4) + rx2 * curYm1 * curYm1 - rx2 * ry2;
+		while (curY > 0)
+		{
+			curY--;
+			deltaY -= rx22;
+
+			error += rx2;
+			error -= deltaY;
+ 
+			if (error <= 0) 
+			{
+               curX++;
+               deltaX += ry22;
+               error += deltaX;
+			}
+
+		    scrX = curX/ELLIPSE_OVERSCAN;
+		    scrY = curY/ELLIPSE_OVERSCAN;
+		    if ((scrX != oldX && scrY == oldY) || (scrX != oldX && scrY != oldY)) {
+				oldY--;
+				for (;oldY >= scrY; oldY--) {
+					result |= _drawQuadrants(renderer, x, y, scrX, oldY, f);
+					/* prevent overdraw */
+					if (f) {
+						oldY = scrY - 1;
+					}
+				}
+  				oldX = scrX;
+				oldY = scrY;
+		    }		
+		}
+
+		/* Remaining points in vertical */
+		if (!f) {
+			oldY--;
+			for (;oldY >= 0; oldY--) {
+				result |= _drawQuadrants(renderer, x, y, scrX, oldY, f);
+			}
+		}
+	}
+
+	return (result);
+}
+
+/*!
+\brief Draw ellipse with blending.
+
+\param renderer The renderer to draw on.
+\param x X coordinate of the center of the ellipse.
+\param y Y coordinate of the center of the ellipse.
+\param rx Horizontal radius in pixels of the ellipse.
+\param ry Vertical radius in pixels of the ellipse.
+\param color The color value of the ellipse to draw (0xRRGGBBAA). 
+
+\returns Returns 0 on success, -1 on failure.
+*/
+int ellipseColor(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint32 color)
+{
+	Uint8 *c = (Uint8 *)&color; 
+	return _ellipseRGBA(renderer, x, y, rx, ry, c[0], c[1], c[2], c[3], 0);
+}
+
+/*!
+\brief Draw ellipse with blending.
+
+\param renderer The renderer to draw on.
+\param x X coordinate of the center of the ellipse.
+\param y Y coordinate of the center of the ellipse.
+\param rx Horizontal radius in pixels of the ellipse.
+\param ry Vertical radius in pixels of the ellipse.
+\param r The red value of the ellipse to draw. 
+\param g The green value of the ellipse to draw. 
+\param b The blue value of the ellipse to draw. 
+\param a The alpha value of the ellipse to draw.
+
+\returns Returns 0 on success, -1 on failure.
+*/
+int ellipseRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
+{
+	return _ellipseRGBA(renderer, x, y, rx, ry, r, g, b, a, 0);
+}
+
 /* ----- Filled Circle */
 
 /*!
@@ -1476,265 +1728,9 @@ int filledCircleColor(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, U
 */
 int filledCircleRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
 {
-	int result;
-	Sint16 cx = 0;
-	Sint16 cy = rad;
-	Sint16 ocx = (Sint16) 0xffff;
-	Sint16 ocy = (Sint16) 0xffff;
-	Sint16 df = 1 - rad;
-	Sint16 d_e = 3;
-	Sint16 d_se = -2 * rad + 5;
-	Sint16 xpcx, xmcx, xpcy, xmcy;
-	Sint16 ypcy, ymcy, ypcx, ymcx;
-
-	/*
-	* Sanity check radius 
-	*/
-	if (rad < 0) {
-		return (-1);
-	}
-
-	/*
-	* Special case for rad=0 - draw a point 
-	*/
-	if (rad == 0) {
-		return (pixelRGBA(renderer, x, y, r, g, b, a));
-	}
-
-	/*
-	* Set color
-	*/
-	result = 0;
-	result |= SDL_SetRenderDrawBlendMode(renderer, (a == 255) ? SDL_BLENDMODE_NONE : SDL_BLENDMODE_BLEND);
-	result |= SDL_SetRenderDrawColor(renderer, r, g, b, a);
-
-	/*
-	* Draw 
-	*/
-	do {
-		xpcx = x + cx;
-		xmcx = x - cx;
-		xpcy = x + cy;
-		xmcy = x - cy;
-		if (ocy != cy) {
-			if (cy > 0) {
-				ypcy = y + cy;
-				ymcy = y - cy;
-				result |= hline(renderer, xmcx, xpcx, ypcy);
-				result |= hline(renderer, xmcx, xpcx, ymcy);
-			} else {
-				result |= hline(renderer, xmcx, xpcx, y);
-			}
-			ocy = cy;
-		}
-		if (ocx != cx) {
-			if (cx != cy) {
-				if (cx > 0) {
-					ypcx = y + cx;
-					ymcx = y - cx;
-					result |= hline(renderer, xmcy, xpcy, ymcx);
-					result |= hline(renderer, xmcy, xpcy, ypcx);
-				} else {
-					result |= hline(renderer, xmcy, xpcy, y);
-				}
-			}
-			ocx = cx;
-		}
-
-		/*
-		* Update 
-		*/
-		if (df < 0) {
-			df += d_e;
-			d_e += 2;
-			d_se += 2;
-		} else {
-			df += d_se;
-			d_e += 2;
-			d_se += 4;
-			cy--;
-		}
-		cx++;
-	} while (cx <= cy);
-
-	return (result);
+	return _ellipseRGBA(renderer, x, y, rad, rad, r, g ,b, a, 1);
 }
 
-/* ----- Ellipse */
-
-/*!
-\brief Draw ellipse with blending.
-
-\param renderer The renderer to draw on.
-\param x X coordinate of the center of the ellipse.
-\param y Y coordinate of the center of the ellipse.
-\param rx Horizontal radius in pixels of the ellipse.
-\param ry Vertical radius in pixels of the ellipse.
-\param color The color value of the ellipse to draw (0xRRGGBBAA). 
-
-\returns Returns 0 on success, -1 on failure.
-*/
-int ellipseColor(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint32 color)
-{
-	Uint8 *c = (Uint8 *)&color; 
-	return ellipseRGBA(renderer, x, y, rx, ry, c[0], c[1], c[2], c[3]);
-}
-
-/*!
-\brief Draw ellipse with blending.
-
-\param renderer The renderer to draw on.
-\param x X coordinate of the center of the ellipse.
-\param y Y coordinate of the center of the ellipse.
-\param rx Horizontal radius in pixels of the ellipse.
-\param ry Vertical radius in pixels of the ellipse.
-\param r The red value of the ellipse to draw. 
-\param g The green value of the ellipse to draw. 
-\param b The blue value of the ellipse to draw. 
-\param a The alpha value of the ellipse to draw.
-
-\returns Returns 0 on success, -1 on failure.
-*/
-int ellipseRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
-{
-	int result;
-	int ix, iy;
-	int h, i, j, k;
-	int oh, oi, oj, ok;
-	int xmh, xph, ypk, ymk;
-	int xmi, xpi, ymj, ypj;
-	int xmj, xpj, ymi, ypi;
-	int xmk, xpk, ymh, yph;
-
-	/*
-	* Sanity check radii 
-	*/
-	if ((rx < 0) || (ry < 0)) {
-		return (-1);
-	}
-
-	/*
-	* Special case for rx=0 - draw a vline 
-	*/
-	if (rx == 0) {
-		return (vlineRGBA(renderer, x, y - ry, y + ry, r, g, b, a));
-	}
-	/*
-	* Special case for ry=0 - draw a hline 
-	*/
-	if (ry == 0) {
-		return (hlineRGBA(renderer, x - rx, x + rx, y, r, g, b, a));
-	}
-
-	/*
-	* Set color
-	*/
-	result = 0;
-	result |= SDL_SetRenderDrawBlendMode(renderer, (a == 255) ? SDL_BLENDMODE_NONE : SDL_BLENDMODE_BLEND);
-	result |= SDL_SetRenderDrawColor(renderer, r, g, b, a);
-
-	/*
-	* Init vars 
-	*/
-	oh = oi = oj = ok = 0xFFFF;
-
-	/*
-	* Draw 
-	*/
-	if (rx > ry) {
-		ix = 0;
-		iy = rx * 64;
-
-		do {
-			h = (ix + 32) >> 6;
-			i = (iy + 32) >> 6;
-			j = (h * ry) / rx;
-			k = (i * ry) / rx;
-
-			if (((ok != k) && (oj != k)) || ((oj != j) && (ok != j)) || (k != j)) {
-				xph = x + h;
-				xmh = x - h;
-				if (k > 0) {
-					ypk = y + k;
-					ymk = y - k;
-					result |= pixel(renderer, xmh, ypk);
-					result |= pixel(renderer, xph, ypk);
-					result |= pixel(renderer, xmh, ymk);
-					result |= pixel(renderer, xph, ymk);
-				} else {
-					result |= pixel(renderer, xmh, y);
-					result |= pixel(renderer, xph, y);
-				}
-				ok = k;
-				xpi = x + i;
-				xmi = x - i;
-				if (j > 0) {
-					ypj = y + j;
-					ymj = y - j;
-					result |= pixel(renderer, xmi, ypj);
-					result |= pixel(renderer, xpi, ypj);
-					result |= pixel(renderer, xmi, ymj);
-					result |= pixel(renderer, xpi, ymj);
-				} else {
-					result |= pixel(renderer, xmi, y);
-					result |= pixel(renderer, xpi, y);
-				}
-				oj = j;
-			}
-
-			ix = ix + iy / rx;
-			iy = iy - ix / rx;
-
-		} while (i > h);
-	} else {
-		ix = 0;
-		iy = ry * 64;
-
-		do {
-			h = (ix + 32) >> 6;
-			i = (iy + 32) >> 6;
-			j = (h * rx) / ry;
-			k = (i * rx) / ry;
-
-			if (((oi != i) && (oh != i)) || ((oh != h) && (oi != h) && (i != h))) {
-				xmj = x - j;
-				xpj = x + j;
-				if (i > 0) {
-					ypi = y + i;
-					ymi = y - i;
-					result |= pixel(renderer, xmj, ypi);
-					result |= pixel(renderer, xpj, ypi);
-					result |= pixel(renderer, xmj, ymi);
-					result |= pixel(renderer, xpj, ymi);
-				} else {
-					result |= pixel(renderer, xmj, y);
-					result |= pixel(renderer, xpj, y);
-				}
-				oi = i;
-				xmk = x - k;
-				xpk = x + k;
-				if (h > 0) {
-					yph = y + h;
-					ymh = y - h;
-					result |= pixel(renderer, xmk, yph);
-					result |= pixel(renderer, xpk, yph);
-					result |= pixel(renderer, xmk, ymh);
-					result |= pixel(renderer, xpk, ymh);
-				} else {
-					result |= pixel(renderer, xmk, y);
-					result |= pixel(renderer, xpk, y);
-				}
-				oh = h;
-			}
-
-			ix = ix + iy / ry;
-			iy = iy - ix / ry;
-
-		} while (i > h);
-	}
-
-	return (result);
-}
 
 /* ----- AA Ellipse */
 
@@ -1829,16 +1825,18 @@ int aaellipseRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rx, Sint16
 	}
 
 	/*
-	* Special case for rx=0 - draw a vline 
+	* Special cases for rx=0 and/or ry=0: draw a hline/vline/pixel 
 	*/
 	if (rx == 0) {
-		return (vlineRGBA(renderer, x, y - ry, y + ry, r, g, b, a));
-	}
-	/*
-	* Special case for ry=0 - draw an hline 
-	*/
-	if (ry == 0) {
-		return (hlineRGBA(renderer, x - rx, x + rx, y, r, g, b, a));
+		if (ry == 0) {
+			return (pixelRGBA(renderer, x, y, r, g, b, a));
+		} else {
+			return (vlineRGBA(renderer, x, y - ry, y + ry, r, g, b, a));
+		}
+	} else {
+		if (ry == 0) {
+			return (hlineRGBA(renderer, x - rx, x + rx, y, r, g, b, a));
+		}
 	}
 
 	/* Variable setup */
@@ -2007,7 +2005,7 @@ int aaellipseRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rx, Sint16
 int filledEllipseColor(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint32 color)
 {
 	Uint8 *c = (Uint8 *)&color; 
-	return filledEllipseRGBA(renderer, x, y, rx, ry, c[0], c[1], c[2], c[3]);
+	return _ellipseRGBA(renderer, x, y, rx, ry, c[0], c[1], c[2], c[3], 1);
 }
 
 /*!
@@ -2027,127 +2025,7 @@ int filledEllipseColor(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rx, S
 */
 int filledEllipseRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
 {
-	int result;
-	int ix, iy;
-	int h, i, j, k;
-	int oh, oi, oj, ok;
-	int xmh, xph;
-	int xmi, xpi;
-	int xmj, xpj;
-	int xmk, xpk;
-
-	/*
-	* Sanity check radii 
-	*/
-	if ((rx < 0) || (ry < 0)) {
-		return (-1);
-	}
-
-	/*
-	* Special case for rx=0 - draw a vline 
-	*/
-	if (rx == 0) {
-		return (vlineRGBA(renderer, x, y - ry, y + ry, r, g, b, a));
-	}
-	/*
-	* Special case for ry=0 - draw a hline 
-	*/
-	if (ry == 0) {
-		return (hlineRGBA(renderer, x - rx, x + rx, y, r, g, b, a));
-	}
-
-	/*
-	* Set color
-	*/
-	result = 0;
-	result |= SDL_SetRenderDrawBlendMode(renderer, (a == 255) ? SDL_BLENDMODE_NONE : SDL_BLENDMODE_BLEND);
-	result |= SDL_SetRenderDrawColor(renderer, r, g, b, a);
-
-	/*
-	* Init vars 
-	*/
-	oh = oi = oj = ok = 0xFFFF;
-
-	/*
-	* Draw 
-	*/
-	if (rx > ry) {
-		ix = 0;
-		iy = rx * 64;
-
-		do {
-			h = (ix + 32) >> 6;
-			i = (iy + 32) >> 6;
-			j = (h * ry) / rx;
-			k = (i * ry) / rx;
-
-			if ((ok != k) && (oj != k)) {
-				xph = x + h;
-				xmh = x - h;
-				if (k > 0) {
-					result |= hline(renderer, xmh, xph, y + k);
-					result |= hline(renderer, xmh, xph, y - k);
-				} else {
-					result |= hline(renderer, xmh, xph, y);
-				}
-				ok = k;
-			}
-			if ((oj != j) && (ok != j) && (k != j)) {
-				xmi = x - i;
-				xpi = x + i;
-				if (j > 0) {
-					result |= hline(renderer, xmi, xpi, y + j);
-					result |= hline(renderer, xmi, xpi, y - j);
-				} else {
-					result |= hline(renderer, xmi, xpi, y);
-				}
-				oj = j;
-			}
-
-			ix = ix + iy / rx;
-			iy = iy - ix / rx;
-
-		} while (i > h);
-	} else {
-		ix = 0;
-		iy = ry * 64;
-
-		do {
-			h = (ix + 32) >> 6;
-			i = (iy + 32) >> 6;
-			j = (h * rx) / ry;
-			k = (i * rx) / ry;
-
-			if ((oi != i) && (oh != i)) {
-				xmj = x - j;
-				xpj = x + j;
-				if (i > 0) {
-					result |= hline(renderer, xmj, xpj, y + i);
-					result |= hline(renderer, xmj, xpj, y - i);
-				} else {
-					result |= hline(renderer, xmj, xpj, y);
-				}
-				oi = i;
-			}
-			if ((oh != h) && (oi != h) && (i != h)) {
-				xmk = x - k;
-				xpk = x + k;
-				if (h > 0) {
-					result |= hline(renderer, xmk, xpk, y + h);
-					result |= hline(renderer, xmk, xpk, y - h);
-				} else {
-					result |= hline(renderer, xmk, xpk, y);
-				}
-				oh = h;
-			}
-
-			ix = ix + iy / ry;
-			iy = iy - ix / ry;
-
-		} while (i > h);
-	}
-
-	return (result);
+	return _ellipseRGBA(renderer, x, y, rx, ry, r, g, b, a, 1);
 }
 
 /* ----- Pie */

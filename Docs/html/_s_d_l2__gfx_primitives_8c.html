@@ -23,7 +23,7 @@
   
   <td style="padding-left: 0.5em;">
    <div id="projectname">SDL2_gfx
-   &#160;<span id="projectnumber">1.0.1</span>
+   &#160;<span id="projectnumber">1.0.2</span>
    </div>
    <div id="projectbrief">GraphicsprimitivesandsurfacefunctionsforSDL2</div>
   </td>
@@ -79,6 +79,8 @@ Data Structures</h2></td></tr>
 Defines</h2></td></tr>
 <tr class="memitem:a519bc2d4d753c51da1b956d6c200bff1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_s_d_l2__gfx_primitives_8c.html#a519bc2d4d753c51da1b956d6c200bff1">AAlevels</a>&#160;&#160;&#160;256</td></tr>
 <tr class="memitem:a2e16571bedf7a97c6fc02d86b48994eb"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_s_d_l2__gfx_primitives_8c.html#a2e16571bedf7a97c6fc02d86b48994eb">AAbits</a>&#160;&#160;&#160;8</td></tr>
+<tr class="memitem:ad85430a4b196fcd131a3706d3233f5f1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_s_d_l2__gfx_primitives_8c.html#ad85430a4b196fcd131a3706d3233f5f1">ELLIPSE_OVERSCAN</a>&#160;&#160;&#160;4</td></tr>
+<tr class="memdesc:ad85430a4b196fcd131a3706d3233f5f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function to draw ellipse or filled ellipse with blending.  <a href="#ad85430a4b196fcd131a3706d3233f5f1"></a><br/></td></tr>
 <tr class="memitem:a764ddb925da0921f024fadb4c12d7382"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_s_d_l2__gfx_primitives_8c.html#a764ddb925da0921f024fadb4c12d7382">HYPOT</a>(x, y)&#160;&#160;&#160;sqrt((double)(x)*(double)(x)+(double)(y)*(double)(y))</td></tr>
 <tr><td colspan="2"><h2><a name="func-members"></a>
 Functions</h2></td></tr>
@@ -96,6 +98,8 @@ Functions</h2></td></tr>
 <tr class="memdesc:a7db92d9e3d357e5a81ae1eee59a6d44a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw horizontal line with blending.  <a href="#a7db92d9e3d357e5a81ae1eee59a6d44a"></a><br/></td></tr>
 <tr class="memitem:a6a0d6ec83f217988a463f65f7c58cabe"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_s_d_l2__gfx_primitives_8c.html#a6a0d6ec83f217988a463f65f7c58cabe">hlineRGBA</a> (SDL_Renderer *renderer, Sint16 x1, Sint16 x2, Sint16 y, Uint8 r, Uint8 g, Uint8 b, Uint8 a)</td></tr>
 <tr class="memdesc:a6a0d6ec83f217988a463f65f7c58cabe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw horizontal line with blending.  <a href="#a6a0d6ec83f217988a463f65f7c58cabe"></a><br/></td></tr>
+<tr class="memitem:a72ae51d6540b149b76e8b01db6f06b07"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_s_d_l2__gfx_primitives_8c.html#a72ae51d6540b149b76e8b01db6f06b07">vline</a> (SDL_Renderer *renderer, Sint16 x, Sint16 y1, Sint16 y2)</td></tr>
+<tr class="memdesc:a72ae51d6540b149b76e8b01db6f06b07"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw vertical line in currently set color.  <a href="#a72ae51d6540b149b76e8b01db6f06b07"></a><br/></td></tr>
 <tr class="memitem:a743ef67a072a56f575e555feaf1eeb58"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_s_d_l2__gfx_primitives_8c.html#a743ef67a072a56f575e555feaf1eeb58">vlineColor</a> (SDL_Renderer *renderer, Sint16 x, Sint16 y1, Sint16 y2, Uint32 color)</td></tr>
 <tr class="memdesc:a743ef67a072a56f575e555feaf1eeb58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw vertical line with blending.  <a href="#a743ef67a072a56f575e555feaf1eeb58"></a><br/></td></tr>
 <tr class="memitem:a7a8eff7484a2b663bde190caa02acd27"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_s_d_l2__gfx_primitives_8c.html#a7a8eff7484a2b663bde190caa02acd27">vlineRGBA</a> (SDL_Renderer *renderer, Sint16 x, Sint16 y1, Sint16 y2, Uint8 r, Uint8 g, Uint8 b, Uint8 a)</td></tr>
@@ -140,14 +144,17 @@ Functions</h2></td></tr>
 <tr class="memdesc:ae36b22e71441985957ab7ec46724f64a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw anti-aliased circle with blending.  <a href="#ae36b22e71441985957ab7ec46724f64a"></a><br/></td></tr>
 <tr class="memitem:a77939c678e5948e97d231618893ec4a6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_s_d_l2__gfx_primitives_8c.html#a77939c678e5948e97d231618893ec4a6">aacircleRGBA</a> (SDL_Renderer *renderer, Sint16 x, Sint16 y, Sint16 rad, Uint8 r, Uint8 g, Uint8 b, Uint8 a)</td></tr>
 <tr class="memdesc:a77939c678e5948e97d231618893ec4a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw anti-aliased circle with blending.  <a href="#a77939c678e5948e97d231618893ec4a6"></a><br/></td></tr>
-<tr class="memitem:ac517d328d433a563793f3d51ed4e3080"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_s_d_l2__gfx_primitives_8c.html#ac517d328d433a563793f3d51ed4e3080">filledCircleColor</a> (SDL_Renderer *renderer, Sint16 x, Sint16 y, Sint16 rad, Uint32 color)</td></tr>
-<tr class="memdesc:ac517d328d433a563793f3d51ed4e3080"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw filled circle with blending.  <a href="#ac517d328d433a563793f3d51ed4e3080"></a><br/></td></tr>
-<tr class="memitem:a84a0671e43b049dd1f43ff5b1b031c21"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_s_d_l2__gfx_primitives_8c.html#a84a0671e43b049dd1f43ff5b1b031c21">filledCircleRGBA</a> (SDL_Renderer *renderer, Sint16 x, Sint16 y, Sint16 rad, Uint8 r, Uint8 g, Uint8 b, Uint8 a)</td></tr>
-<tr class="memdesc:a84a0671e43b049dd1f43ff5b1b031c21"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw filled circle with blending.  <a href="#a84a0671e43b049dd1f43ff5b1b031c21"></a><br/></td></tr>
+<tr class="memitem:a765df02367c97642d0d79fc873e08bf6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_s_d_l2__gfx_primitives_8c.html#a765df02367c97642d0d79fc873e08bf6">_drawQuadrants</a> (SDL_Renderer *renderer, Sint16 x, Sint16 y, Sint16 dx, Sint16 dy, Sint32 f)</td></tr>
+<tr class="memdesc:a765df02367c97642d0d79fc873e08bf6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal function to draw pixels or lines in 4 quadrants.  <a href="#a765df02367c97642d0d79fc873e08bf6"></a><br/></td></tr>
+<tr class="memitem:a230b510a8e7f09c8c31ffcfac53e0a5d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_s_d_l2__gfx_primitives_8c.html#a230b510a8e7f09c8c31ffcfac53e0a5d">_ellipseRGBA</a> (SDL_Renderer *renderer, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint8 r, Uint8 g, Uint8 b, Uint8 a, Sint32 f)</td></tr>
 <tr class="memitem:a9518a381e2b09c6b4e45109e68ee0b64"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_s_d_l2__gfx_primitives_8c.html#a9518a381e2b09c6b4e45109e68ee0b64">ellipseColor</a> (SDL_Renderer *renderer, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint32 color)</td></tr>
 <tr class="memdesc:a9518a381e2b09c6b4e45109e68ee0b64"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw ellipse with blending.  <a href="#a9518a381e2b09c6b4e45109e68ee0b64"></a><br/></td></tr>
 <tr class="memitem:a15eed0329a3aa0642cc0b743262cacb3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_s_d_l2__gfx_primitives_8c.html#a15eed0329a3aa0642cc0b743262cacb3">ellipseRGBA</a> (SDL_Renderer *renderer, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint8 r, Uint8 g, Uint8 b, Uint8 a)</td></tr>
 <tr class="memdesc:a15eed0329a3aa0642cc0b743262cacb3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw ellipse with blending.  <a href="#a15eed0329a3aa0642cc0b743262cacb3"></a><br/></td></tr>
+<tr class="memitem:ac517d328d433a563793f3d51ed4e3080"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_s_d_l2__gfx_primitives_8c.html#ac517d328d433a563793f3d51ed4e3080">filledCircleColor</a> (SDL_Renderer *renderer, Sint16 x, Sint16 y, Sint16 rad, Uint32 color)</td></tr>
+<tr class="memdesc:ac517d328d433a563793f3d51ed4e3080"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw filled circle with blending.  <a href="#ac517d328d433a563793f3d51ed4e3080"></a><br/></td></tr>
+<tr class="memitem:a84a0671e43b049dd1f43ff5b1b031c21"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_s_d_l2__gfx_primitives_8c.html#a84a0671e43b049dd1f43ff5b1b031c21">filledCircleRGBA</a> (SDL_Renderer *renderer, Sint16 x, Sint16 y, Sint16 rad, Uint8 r, Uint8 g, Uint8 b, Uint8 a)</td></tr>
+<tr class="memdesc:a84a0671e43b049dd1f43ff5b1b031c21"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw filled circle with blending.  <a href="#a84a0671e43b049dd1f43ff5b1b031c21"></a><br/></td></tr>
 <tr class="memitem:afbbdafd41beaa591c90f5e936d6765a7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_s_d_l2__gfx_primitives_8c.html#afbbdafd41beaa591c90f5e936d6765a7">aaellipseColor</a> (SDL_Renderer *renderer, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint32 color)</td></tr>
 <tr class="memdesc:afbbdafd41beaa591c90f5e936d6765a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draw anti-aliased ellipse with blending.  <a href="#afbbdafd41beaa591c90f5e936d6765a7"></a><br/></td></tr>
 <tr class="memitem:ac5714e2b6a067371ae94ee47b834e36a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_s_d_l2__gfx_primitives_8c.html#ac5714e2b6a067371ae94ee47b834e36a">aaellipseRGBA</a> (SDL_Renderer *renderer, Sint16 x, Sint16 y, Sint16 rx, Sint16 ry, Uint8 r, Uint8 g, Uint8 b, Uint8 a)</td></tr>
@@ -247,7 +254,7 @@ Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00842">842</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00857">857</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -262,7 +269,40 @@ Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00841">841</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00856">856</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="ad85430a4b196fcd131a3706d3233f5f1"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define <a class="el" href="_s_d_l2__gfx_primitives_8c.html#ad85430a4b196fcd131a3706d3233f5f1">ELLIPSE_OVERSCAN</a>&#160;&#160;&#160;4</td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Internal function to draw ellipse or filled ellipse with blending. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">renderer</td><td>The renderer to draw on. </td></tr>
+    <tr><td class="paramname">x</td><td>X coordinate of the center of the ellipse. </td></tr>
+    <tr><td class="paramname">y</td><td>Y coordinate of the center of the ellipse. </td></tr>
+    <tr><td class="paramname">rx</td><td>Horizontal radius in pixels of the ellipse. </td></tr>
+    <tr><td class="paramname">ry</td><td>Vertical radius in pixels of the ellipse. </td></tr>
+    <tr><td class="paramname">r</td><td>The red value of the ellipse to draw. </td></tr>
+    <tr><td class="paramname">g</td><td>The green value of the ellipse to draw. </td></tr>
+    <tr><td class="paramname">b</td><td>The blue value of the ellipse to draw. </td></tr>
+    <tr><td class="paramname">a</td><td>The alpha value of the ellipse to draw. </td></tr>
+    <tr><td class="paramname">f</td><td>Flag indicating if the ellipse should be filled (1) or not (0).</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
+
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01527">1527</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -291,7 +331,7 @@ Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l04099">4099</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03977">3977</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -388,7 +428,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00867">867</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00882">882</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -449,7 +489,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03837">3837</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03715">3715</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -478,7 +518,151 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, 1 if last point was reached, 2 if moving past end-of-line, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03899">3899</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03777">3777</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a765df02367c97642d0d79fc873e08bf6"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int <a class="el" href="_s_d_l2__gfx_primitives_8c.html#a765df02367c97642d0d79fc873e08bf6">_drawQuadrants</a> </td>
+          <td>(</td>
+          <td class="paramtype">SDL_Renderer *&#160;</td>
+          <td class="paramname"><em>renderer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Sint16&#160;</td>
+          <td class="paramname"><em>x</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Sint16&#160;</td>
+          <td class="paramname"><em>y</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Sint16&#160;</td>
+          <td class="paramname"><em>dx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Sint16&#160;</td>
+          <td class="paramname"><em>dy</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Sint32&#160;</td>
+          <td class="paramname"><em>f</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Internal function to draw pixels or lines in 4 quadrants. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">renderer</td><td>The renderer to draw on. </td></tr>
+    <tr><td class="paramname">x</td><td>X coordinate of the center of the quadrant. </td></tr>
+    <tr><td class="paramname">y</td><td>Y coordinate of the center of the quadrant. </td></tr>
+    <tr><td class="paramname">dx</td><td>X offset in pixels of the corners of the quadrant. </td></tr>
+    <tr><td class="paramname">dy</td><td>Y offset in pixels of the corners of the quadrant. </td></tr>
+    <tr><td class="paramname">f</td><td>Flag indicating if the quadrant should be filled (1) or not (0).</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
+
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01473">1473</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a230b510a8e7f09c8c31ffcfac53e0a5d"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int <a class="el" href="_s_d_l2__gfx_primitives_8c.html#a230b510a8e7f09c8c31ffcfac53e0a5d">_ellipseRGBA</a> </td>
+          <td>(</td>
+          <td class="paramtype">SDL_Renderer *&#160;</td>
+          <td class="paramname"><em>renderer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Sint16&#160;</td>
+          <td class="paramname"><em>x</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Sint16&#160;</td>
+          <td class="paramname"><em>y</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Sint16&#160;</td>
+          <td class="paramname"><em>rx</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Sint16&#160;</td>
+          <td class="paramname"><em>ry</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Uint8&#160;</td>
+          <td class="paramname"><em>r</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Uint8&#160;</td>
+          <td class="paramname"><em>g</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Uint8&#160;</td>
+          <td class="paramname"><em>b</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Uint8&#160;</td>
+          <td class="paramname"><em>a</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Sint32&#160;</td>
+          <td class="paramname"><em>f</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01528">1528</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -524,7 +708,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Interpolated value at position t, value[0] when t&lt;0, value[n-1] when t&gt;n. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03670">3670</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03548">3548</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -563,7 +747,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 if a==b, a negative number if a&lt;b or a positive number if a&gt;b. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02794">2794</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02672">2672</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -651,7 +835,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03041">3041</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02919">2919</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -745,7 +929,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03992">3992</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03870">3870</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -797,7 +981,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03942">3942</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03820">3820</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -871,7 +1055,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l04115">4115</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03993">3993</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -974,7 +1158,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02175">2175</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02053">2053</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -1034,7 +1218,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01416">1416</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01431">1431</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -1115,7 +1299,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01436">1436</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01451">1451</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -1182,7 +1366,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01793">1793</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01789">1789</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -1270,7 +1454,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01814">1814</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01810">1810</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -1337,7 +1521,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01081">1081</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01096">1096</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -1425,7 +1609,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01102">1102</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01117">1117</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -1485,7 +1669,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02716">2716</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02594">2594</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -1566,7 +1750,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02736">2736</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02614">2614</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -1648,7 +1832,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02444">2444</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02322">2322</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -1750,7 +1934,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02476">2476</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02354">2354</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -1824,7 +2008,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01160">1160</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01175">1175</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -1919,7 +2103,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01183">1183</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01198">1198</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -1986,7 +2170,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03729">3729</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03607">3607</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -2074,7 +2258,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03750">3750</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03628">3628</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -2141,7 +2325,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00695">695</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00710">710</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -2229,7 +2413,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00716">716</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00731">731</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -2289,7 +2473,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03588">3588</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03466">3466</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -2370,7 +2554,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03466">3466</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03344">3344</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -2430,7 +2614,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01120">1120</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01135">1135</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -2511,7 +2695,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01140">1140</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01155">1155</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -2578,7 +2762,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01577">1577</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01670">1670</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -2666,7 +2850,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01598">1598</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01691">1691</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -2726,7 +2910,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01457">1457</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01709">1709</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -2807,7 +2991,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01477">1477</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l01729">1729</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -2874,7 +3058,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02007">2007</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02005">2005</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -2962,7 +3146,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02028">2028</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02026">2026</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -3036,7 +3220,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02332">2332</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02210">2210</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -3131,7 +3315,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02354">2354</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02232">2232</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -3191,7 +3375,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02999">2999</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02877">2877</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -3272,7 +3456,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03019">3019</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02897">2897</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -3368,7 +3552,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02831">2831</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02709">2709</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -3450,7 +3634,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02510">2510</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02388">2388</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -3553,7 +3737,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02544">2544</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02422">2422</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -3599,7 +3783,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03374">3374</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03252">3252</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -3627,7 +3811,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03420">3420</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03298">3298</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -3881,7 +4065,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00786">786</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00801">801</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -3948,7 +4132,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00806">806</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00821">821</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -4036,7 +4220,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00827">827</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00842">842</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -4110,7 +4294,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02290">2290</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02168">2168</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -4205,7 +4389,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02313">2313</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02191">2191</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -4512,7 +4696,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02589">2589</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02467">2467</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -4572,7 +4756,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02573">2573</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02451">2451</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -4653,7 +4837,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02655">2655</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02533">2533</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -4720,7 +4904,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00260">260</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00275">275</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -4808,7 +4992,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00281">281</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00296">296</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -4882,7 +5066,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00498">498</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00513">513</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -4977,7 +5161,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00520">520</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00535">535</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -5051,7 +5235,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00353">353</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00368">368</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -5146,7 +5330,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00375">375</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00390">390</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -5207,7 +5391,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03609">3609</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03487">3487</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -5288,7 +5472,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03629">3629</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03507">3507</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -5363,7 +5547,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03306">3306</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03184">3184</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -5451,7 +5635,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03140">3140</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l03018">3018</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -5525,7 +5709,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l04301">4301</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l04179">4179</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -5620,7 +5804,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l04323">4323</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l04201">4201</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -5702,7 +5886,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02378">2378</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02256">2256</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -5804,7 +5988,60 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02410">2410</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l02288">2288</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a72ae51d6540b149b76e8b01db6f06b07"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int <a class="el" href="_s_d_l2__gfx_primitives_8c.html#a72ae51d6540b149b76e8b01db6f06b07">vline</a> </td>
+          <td>(</td>
+          <td class="paramtype">SDL_Renderer *&#160;</td>
+          <td class="paramname"><em>renderer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Sint16&#160;</td>
+          <td class="paramname"><em>x</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Sint16&#160;</td>
+          <td class="paramname"><em>y1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Sint16&#160;</td>
+          <td class="paramname"><em>y2</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Draw vertical line in currently set color. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">renderer</td><td>The renderer to draw on. </td></tr>
+    <tr><td class="paramname">x</td><td>X coordinate of points of the line. </td></tr>
+    <tr><td class="paramname">y1</td><td>Y coordinate of the first point (i.e. top) of the line. </td></tr>
+    <tr><td class="paramname">y2</td><td>Y coordinate of the second point (i.e. bottom) of the line.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
+
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00216">216</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -5864,7 +6101,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00217">217</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00232">232</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>
@@ -5945,7 +6182,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns:</dt><dd>Returns 0 on success, -1 on failure. </dd></dl>
 
-<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00237">237</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
+<p>Definition at line <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html#l00252">252</a> of file <a class="el" href="_s_d_l2__gfx_primitives_8c_source.html">SDL2_gfxPrimitives.c</a>.</p>
 
 </div>
 </div>

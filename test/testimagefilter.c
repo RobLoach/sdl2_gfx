@@ -2,7 +2,7 @@
 
 TestImageFilter.c: test program for MMX filter routines
 
-(C) A. Schiffler, 2006, zlib license
+(C) A. Schiffler, 2006-2014, zlib license
 (C) Sylvain Beucler, 2013, zlib license
 
 */
