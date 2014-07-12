@@ -55,7 +55,7 @@ void RotatePicture (SDL_Surface *picture, int rotate, int flip, int smooth, int 
 	SDL_Texture *rotozoom_texture;
 	SDL_Rect dest;
 	int framecount, framemax, frameinc;
-	double angle, zoomf, zoomfx, zoomfy;
+	double angle = 0.0, zoomf = 1.0, zoomfx = 1.0, zoomfy = 1.0;
 	SDL_Renderer *renderer = state->renderers[0];
 	SDL_Event event;
 
@@ -71,20 +71,23 @@ void RotatePicture (SDL_Surface *picture, int rotate, int flip, int smooth, int 
 		SDL_RenderClear(renderer);
 		zoomf=(float)(framecount+2*360)/(float)framemax;
 		zoomf=1.5*zoomf*zoomf;
+		
+		/* Flip X factor */
+		if (flip & 1) {
+			zoomfx=-zoomf;
+		} else {
+			zoomfx=zoomf;
+		}
+		
+		/* Flip Y factor */
+		if (flip & 2) {
+			zoomfy=-zoomf;
+		} else {
+			zoomfy=zoomf;
+		}
+
 		/* Are we in flipping mode? */
 		if (flip) {
-			/* Flip X factor */
-			if (flip & 1) {
-				zoomfx=-zoomf;
-			} else {
-				zoomfx=zoomf;
-			}
-			/* Flip Y factor */
-			if (flip & 2) {
-				zoomfy=-zoomf;
-			} else {
-				zoomfy=zoomf;
-			}
 			angle=framecount*rotate;
 			if (((framecount % 120)==0) || (delay>0)) {
 				SDL_Log("  Frame: %i   Rotate: angle=%.2f  Zoom: x=%.2f y=%.2f\n",framecount,angle,zoomfx,zoomfy);

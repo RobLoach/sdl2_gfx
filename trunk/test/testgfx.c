@@ -1308,7 +1308,7 @@ int TestThickLine(SDL_Renderer *renderer)
 	int i;
 	char r,g,b;
 	int step = 6;
-
+	
 	/* Draw A=255 */
 	SetViewport(renderer,0,60,WIDTH/2,60+(HEIGHT-80)/2);
 	for (i=0; i<NUM_RANDOM; i += step) {
@@ -1344,8 +1344,9 @@ int TestThickLine(SDL_Renderer *renderer)
 	ClearViewport(renderer);
 
 	/* Accuracy test */
-	ClearCenter(renderer, "14px t3 line");
-	thickLineRGBA(renderer, WIDTH/2, HEIGHT/2, WIDTH/2 + 10, HEIGHT/2 + 10, 3, 255, 255, 255, 255);
+	ClearCenter(renderer, "18px w2w3 line");
+	thickLineRGBA(renderer, WIDTH/2 - 10, HEIGHT/2 - 5, WIDTH/2, HEIGHT/2 + 10, 2, 255, 255, 255, 255);
+	thickLineRGBA(renderer, WIDTH/2, HEIGHT/2 - 5, WIDTH/2 + 10, HEIGHT/2 + 10, 3, 255, 255, 255, 255);
 
 	return (4 * NUM_RANDOM) / step;
 }

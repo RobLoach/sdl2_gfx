@@ -101,6 +101,11 @@ Documentation</h2>
 Change Log</h2>
 <div class="fragment"><pre class="fragment">SDL2_gfx ChangeLog
 
+Fri, Jul 11, 2014  7:33:12 PM
+- rewrote thick line algorithm using polygon drawing (much less
+  code and faster than original Murphy-Bresenham algorithm)
+- update TestThickLine accuracy test in TestGfx
+
 Fri, Jul 04, 2014  4:00:21 PM
 - rewrote ellipse algorithm used by non-AA line/filled circle/ellipse functions:
   integer midpoint algorithm with 4x overscan for visual accuracy

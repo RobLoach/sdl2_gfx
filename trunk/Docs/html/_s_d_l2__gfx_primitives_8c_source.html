@@ -59,7 +59,7 @@
 <a name="l00002"></a>00002 <span class="comment"></span>
 <a name="l00003"></a>00003 <span class="comment">SDL2_gfxPrimitives.c: graphics primitives for SDL2 renderers</span>
 <a name="l00004"></a>00004 <span class="comment"></span>
-<a name="l00005"></a>00005 <span class="comment">Copyright (C) 2012  Andreas Schiffler</span>
+<a name="l00005"></a>00005 <span class="comment">Copyright (C) 2012-2014  Andreas Schiffler</span>
 <a name="l00006"></a>00006 <span class="comment"></span>
 <a name="l00007"></a>00007 <span class="comment">This software is provided &#39;as-is&#39;, without any express or implied</span>
 <a name="l00008"></a>00008 <span class="comment">warranty. In no event will the authors be held liable for any damages</span>
@@ -1116,7 +1116,7 @@
 <a name="l01460"></a>01460 
 <a name="l01473"></a><a class="code" href="_s_d_l2__gfx_primitives_8c.html#a765df02367c97642d0d79fc873e08bf6">01473</a> <span class="keywordtype">int</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a765df02367c97642d0d79fc873e08bf6" title="Internal function to draw pixels or lines in 4 quadrants.">_drawQuadrants</a>(SDL_Renderer * renderer,  Sint16 x, Sint16 y, Sint16 dx, Sint16 dy, Sint32 f)
 <a name="l01474"></a>01474 {
-<a name="l01475"></a>01475         <span class="keywordtype">int</span> result;
+<a name="l01475"></a>01475         <span class="keywordtype">int</span> result = 0;
 <a name="l01476"></a>01476         Sint16 xpdx, xmdx;
 <a name="l01477"></a>01477         Sint16 ypdy, ymdy;
 <a name="l01478"></a>01478 
@@ -1792,7 +1792,7 @@
 <a name="l02469"></a>02469         <span class="comment">/*</span>
 <a name="l02470"></a>02470 <span class="comment">        * Draw </span>
 <a name="l02471"></a>02471 <span class="comment">        */</span>
-<a name="l02472"></a>02472         <span class="keywordtype">int</span> result;
+<a name="l02472"></a>02472         <span class="keywordtype">int</span> result = 0;
 <a name="l02473"></a>02473         <span class="keywordtype">int</span> i, nn;
 <a name="l02474"></a>02474         SDL_Point* points;
 <a name="l02475"></a>02475 
@@ -2219,966 +2219,581 @@
 <a name="l03027"></a>03027         <span class="keywordtype">int</span> ind1, ind2;
 <a name="l03028"></a>03028         <span class="keywordtype">int</span> ints;
 <a name="l03029"></a>03029         <span class="keywordtype">int</span> *gfxPrimitivesPolyInts = NULL;
-<a name="l03030"></a>03030         <span class="keywordtype">int</span> gfxPrimitivesPolyAllocated = 0;
-<a name="l03031"></a>03031         SDL_Texture *textureAsTexture = NULL;
-<a name="l03032"></a>03032 
-<a name="l03033"></a>03033         <span class="comment">/*</span>
-<a name="l03034"></a>03034 <span class="comment">        * Sanity check number of edges</span>
-<a name="l03035"></a>03035 <span class="comment">        */</span>
-<a name="l03036"></a>03036         <span class="keywordflow">if</span> (n &lt; 3) {
-<a name="l03037"></a>03037                 <span class="keywordflow">return</span> -1;
-<a name="l03038"></a>03038         }
-<a name="l03039"></a>03039 
-<a name="l03040"></a>03040         <span class="comment">/*</span>
-<a name="l03041"></a>03041 <span class="comment">        * Map polygon cache  </span>
-<a name="l03042"></a>03042 <span class="comment">        */</span>
-<a name="l03043"></a>03043         <span class="keywordflow">if</span> ((polyInts==NULL) || (polyAllocated==NULL)) {
-<a name="l03044"></a>03044                 <span class="comment">/* Use global cache */</span>
-<a name="l03045"></a>03045                 gfxPrimitivesPolyInts = gfxPrimitivesPolyIntsGlobal;
-<a name="l03046"></a>03046                 gfxPrimitivesPolyAllocated = gfxPrimitivesPolyAllocatedGlobal;
-<a name="l03047"></a>03047         } <span class="keywordflow">else</span> {
-<a name="l03048"></a>03048                 <span class="comment">/* Use local cache */</span>
-<a name="l03049"></a>03049                 gfxPrimitivesPolyInts = *polyInts;
-<a name="l03050"></a>03050                 gfxPrimitivesPolyAllocated = *polyAllocated;
-<a name="l03051"></a>03051         }
-<a name="l03052"></a>03052 
-<a name="l03053"></a>03053         <span class="comment">/*</span>
-<a name="l03054"></a>03054 <span class="comment">        * Allocate temp array, only grow array </span>
-<a name="l03055"></a>03055 <span class="comment">        */</span>
-<a name="l03056"></a>03056         <span class="keywordflow">if</span> (!gfxPrimitivesPolyAllocated) {
-<a name="l03057"></a>03057                 gfxPrimitivesPolyInts = (<span class="keywordtype">int</span> *) malloc(<span class="keyword">sizeof</span>(<span class="keywordtype">int</span>) * n);
-<a name="l03058"></a>03058                 gfxPrimitivesPolyAllocated = n;
-<a name="l03059"></a>03059         } <span class="keywordflow">else</span> {
-<a name="l03060"></a>03060                 <span class="keywordflow">if</span> (gfxPrimitivesPolyAllocated &lt; n) {
-<a name="l03061"></a>03061                         gfxPrimitivesPolyInts = (<span class="keywordtype">int</span> *) realloc(gfxPrimitivesPolyInts, <span class="keyword">sizeof</span>(<span class="keywordtype">int</span>) * n);
-<a name="l03062"></a>03062                         gfxPrimitivesPolyAllocated = n;
-<a name="l03063"></a>03063                 }
-<a name="l03064"></a>03064         }
-<a name="l03065"></a>03065 
-<a name="l03066"></a>03066         <span class="comment">/*</span>
-<a name="l03067"></a>03067 <span class="comment">        * Check temp array</span>
-<a name="l03068"></a>03068 <span class="comment">        */</span>
-<a name="l03069"></a>03069         <span class="keywordflow">if</span> (gfxPrimitivesPolyInts==NULL) {        
-<a name="l03070"></a>03070                 gfxPrimitivesPolyAllocated = 0;
-<a name="l03071"></a>03071         }
-<a name="l03072"></a>03072 
-<a name="l03073"></a>03073         <span class="comment">/*</span>
-<a name="l03074"></a>03074 <span class="comment">        * Update cache variables</span>
-<a name="l03075"></a>03075 <span class="comment">        */</span>
-<a name="l03076"></a>03076         <span class="keywordflow">if</span> ((polyInts==NULL) || (polyAllocated==NULL)) { 
-<a name="l03077"></a>03077                 gfxPrimitivesPolyIntsGlobal =  gfxPrimitivesPolyInts;
-<a name="l03078"></a>03078                 gfxPrimitivesPolyAllocatedGlobal = gfxPrimitivesPolyAllocated;
-<a name="l03079"></a>03079         } <span class="keywordflow">else</span> {
-<a name="l03080"></a>03080                 *polyInts = gfxPrimitivesPolyInts;
-<a name="l03081"></a>03081                 *polyAllocated = gfxPrimitivesPolyAllocated;
-<a name="l03082"></a>03082         }
-<a name="l03083"></a>03083 
-<a name="l03084"></a>03084         <span class="comment">/*</span>
-<a name="l03085"></a>03085 <span class="comment">        * Check temp array again</span>
-<a name="l03086"></a>03086 <span class="comment">        */</span>
-<a name="l03087"></a>03087         <span class="keywordflow">if</span> (gfxPrimitivesPolyInts==NULL) {        
-<a name="l03088"></a>03088                 <span class="keywordflow">return</span>(-1);
-<a name="l03089"></a>03089         }
-<a name="l03090"></a>03090 
-<a name="l03091"></a>03091         <span class="comment">/*</span>
-<a name="l03092"></a>03092 <span class="comment">        * Determine X,Y minima,maxima </span>
-<a name="l03093"></a>03093 <span class="comment">        */</span>
-<a name="l03094"></a>03094         miny = vy[0];
-<a name="l03095"></a>03095         maxy = vy[0];
-<a name="l03096"></a>03096         minx = vx[0];
-<a name="l03097"></a>03097         maxx = vx[0];
-<a name="l03098"></a>03098         <span class="keywordflow">for</span> (i = 1; (i &lt; n); i++) {
-<a name="l03099"></a>03099                 <span class="keywordflow">if</span> (vy[i] &lt; miny) {
-<a name="l03100"></a>03100                         miny = vy[i];
-<a name="l03101"></a>03101                 } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (vy[i] &gt; maxy) {
-<a name="l03102"></a>03102                         maxy = vy[i];
-<a name="l03103"></a>03103                 }
-<a name="l03104"></a>03104                 <span class="keywordflow">if</span> (vx[i] &lt; minx) {
-<a name="l03105"></a>03105                         minx = vx[i];
-<a name="l03106"></a>03106                 } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (vx[i] &gt; maxx) {
-<a name="l03107"></a>03107                         maxx = vx[i];
-<a name="l03108"></a>03108                 }
-<a name="l03109"></a>03109         }
-<a name="l03110"></a>03110 
-<a name="l03111"></a>03111     <span class="comment">/* Create texture for drawing */</span>
-<a name="l03112"></a>03112         textureAsTexture = SDL_CreateTextureFromSurface(renderer, texture);
-<a name="l03113"></a>03113         <span class="keywordflow">if</span> (textureAsTexture == NULL)
-<a name="l03114"></a>03114         {
-<a name="l03115"></a>03115                 <span class="keywordflow">return</span> -1;
-<a name="l03116"></a>03116         }
-<a name="l03117"></a>03117         SDL_SetTextureBlendMode(textureAsTexture, SDL_BLENDMODE_BLEND);
-<a name="l03118"></a>03118         
-<a name="l03119"></a>03119         <span class="comment">/*</span>
-<a name="l03120"></a>03120 <span class="comment">        * Draw, scanning y </span>
-<a name="l03121"></a>03121 <span class="comment">        */</span>
-<a name="l03122"></a>03122         result = 0;
-<a name="l03123"></a>03123         <span class="keywordflow">for</span> (y = miny; (y &lt;= maxy); y++) {
-<a name="l03124"></a>03124                 ints = 0;
-<a name="l03125"></a>03125                 <span class="keywordflow">for</span> (i = 0; (i &lt; n); i++) {
-<a name="l03126"></a>03126                         <span class="keywordflow">if</span> (!i) {
-<a name="l03127"></a>03127                                 ind1 = n - 1;
-<a name="l03128"></a>03128                                 ind2 = 0;
-<a name="l03129"></a>03129                         } <span class="keywordflow">else</span> {
-<a name="l03130"></a>03130                                 ind1 = i - 1;
-<a name="l03131"></a>03131                                 ind2 = i;
-<a name="l03132"></a>03132                         }
-<a name="l03133"></a>03133                         y1 = vy[ind1];
-<a name="l03134"></a>03134                         y2 = vy[ind2];
-<a name="l03135"></a>03135                         <span class="keywordflow">if</span> (y1 &lt; y2) {
-<a name="l03136"></a>03136                                 x1 = vx[ind1];
-<a name="l03137"></a>03137                                 x2 = vx[ind2];
-<a name="l03138"></a>03138                         } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (y1 &gt; y2) {
-<a name="l03139"></a>03139                                 y2 = vy[ind1];
-<a name="l03140"></a>03140                                 y1 = vy[ind2];
-<a name="l03141"></a>03141                                 x2 = vx[ind1];
-<a name="l03142"></a>03142                                 x1 = vx[ind2];
-<a name="l03143"></a>03143                         } <span class="keywordflow">else</span> {
-<a name="l03144"></a>03144                                 <span class="keywordflow">continue</span>;
-<a name="l03145"></a>03145                         }
-<a name="l03146"></a>03146                         <span class="keywordflow">if</span> ( ((y &gt;= y1) &amp;&amp; (y &lt; y2)) || ((y == maxy) &amp;&amp; (y &gt; y1) &amp;&amp; (y &lt;= y2)) ) {
-<a name="l03147"></a>03147                                 gfxPrimitivesPolyInts[ints++] = ((65536 * (y - y1)) / (y2 - y1)) * (x2 - x1) + (65536 * x1);
-<a name="l03148"></a>03148                         } 
-<a name="l03149"></a>03149                 }
-<a name="l03150"></a>03150 
-<a name="l03151"></a>03151                 qsort(gfxPrimitivesPolyInts, ints, <span class="keyword">sizeof</span>(<span class="keywordtype">int</span>), <a class="code" href="_s_d_l2__gfx_primitives_8c.html#aeba347cfe2561fdb7f86d995a941ff1a" title="Internal helper qsort callback functions used in filled polygon drawing.">_gfxPrimitivesCompareInt</a>);
-<a name="l03152"></a>03152 
-<a name="l03153"></a>03153                 <span class="keywordflow">for</span> (i = 0; (i &lt; ints); i += 2) {
-<a name="l03154"></a>03154                         xa = gfxPrimitivesPolyInts[i] + 1;
-<a name="l03155"></a>03155                         xa = (xa &gt;&gt; 16) + ((xa &amp; 32768) &gt;&gt; 15);
-<a name="l03156"></a>03156                         xb = gfxPrimitivesPolyInts[i+1] - 1;
-<a name="l03157"></a>03157                         xb = (xb &gt;&gt; 16) + ((xb &amp; 32768) &gt;&gt; 15);
-<a name="l03158"></a>03158                         result |= <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a80bfea9271bbcf9e9655858bb58931c6" title="Internal function to draw a textured horizontal line.">_HLineTextured</a>(renderer, xa, xb, y, textureAsTexture, texture-&gt;w, texture-&gt;h, texture_dx, texture_dy);
-<a name="l03159"></a>03159                 }
-<a name="l03160"></a>03160         }
-<a name="l03161"></a>03161 
-<a name="l03162"></a>03162         SDL_RenderPresent(renderer);
-<a name="l03163"></a>03163         SDL_DestroyTexture(textureAsTexture);
-<a name="l03164"></a>03164 
-<a name="l03165"></a>03165         <span class="keywordflow">return</span> (result);
-<a name="l03166"></a>03166 }
+<a name="l03030"></a>03030         <span class="keywordtype">int</span> *gfxPrimitivesPolyIntsTemp = NULL;
+<a name="l03031"></a>03031         <span class="keywordtype">int</span> gfxPrimitivesPolyAllocated = 0;
+<a name="l03032"></a>03032         SDL_Texture *textureAsTexture = NULL;
+<a name="l03033"></a>03033 
+<a name="l03034"></a>03034         <span class="comment">/*</span>
+<a name="l03035"></a>03035 <span class="comment">        * Sanity check number of edges</span>
+<a name="l03036"></a>03036 <span class="comment">        */</span>
+<a name="l03037"></a>03037         <span class="keywordflow">if</span> (n &lt; 3) {
+<a name="l03038"></a>03038                 <span class="keywordflow">return</span> -1;
+<a name="l03039"></a>03039         }
+<a name="l03040"></a>03040 
+<a name="l03041"></a>03041         <span class="comment">/*</span>
+<a name="l03042"></a>03042 <span class="comment">        * Map polygon cache  </span>
+<a name="l03043"></a>03043 <span class="comment">        */</span>
+<a name="l03044"></a>03044         <span class="keywordflow">if</span> ((polyInts==NULL) || (polyAllocated==NULL)) {
+<a name="l03045"></a>03045                 <span class="comment">/* Use global cache */</span>
+<a name="l03046"></a>03046                 gfxPrimitivesPolyInts = gfxPrimitivesPolyIntsGlobal;
+<a name="l03047"></a>03047                 gfxPrimitivesPolyAllocated = gfxPrimitivesPolyAllocatedGlobal;
+<a name="l03048"></a>03048         } <span class="keywordflow">else</span> {
+<a name="l03049"></a>03049                 <span class="comment">/* Use local cache */</span>
+<a name="l03050"></a>03050                 gfxPrimitivesPolyInts = *polyInts;
+<a name="l03051"></a>03051                 gfxPrimitivesPolyAllocated = *polyAllocated;
+<a name="l03052"></a>03052         }
+<a name="l03053"></a>03053 
+<a name="l03054"></a>03054         <span class="comment">/*</span>
+<a name="l03055"></a>03055 <span class="comment">        * Allocate temp array, only grow array </span>
+<a name="l03056"></a>03056 <span class="comment">        */</span>
+<a name="l03057"></a>03057         <span class="keywordflow">if</span> (!gfxPrimitivesPolyAllocated) {
+<a name="l03058"></a>03058                 gfxPrimitivesPolyInts = (<span class="keywordtype">int</span> *) malloc(<span class="keyword">sizeof</span>(<span class="keywordtype">int</span>) * n);
+<a name="l03059"></a>03059                 gfxPrimitivesPolyAllocated = n;
+<a name="l03060"></a>03060         } <span class="keywordflow">else</span> {
+<a name="l03061"></a>03061                 <span class="keywordflow">if</span> (gfxPrimitivesPolyAllocated &lt; n) {
+<a name="l03062"></a>03062                         gfxPrimitivesPolyIntsTemp = (<span class="keywordtype">int</span> *) realloc(gfxPrimitivesPolyInts, <span class="keyword">sizeof</span>(<span class="keywordtype">int</span>) * n);
+<a name="l03063"></a>03063                         <span class="keywordflow">if</span> (gfxPrimitivesPolyIntsTemp == NULL) {
+<a name="l03064"></a>03064                                 <span class="comment">/* Realloc failed - keeps original memory block, but fails this operation */</span>
+<a name="l03065"></a>03065                                 <span class="keywordflow">return</span>(-1);
+<a name="l03066"></a>03066                         }
+<a name="l03067"></a>03067                         gfxPrimitivesPolyInts = gfxPrimitivesPolyIntsTemp;
+<a name="l03068"></a>03068                         gfxPrimitivesPolyAllocated = n;
+<a name="l03069"></a>03069                 }
+<a name="l03070"></a>03070         }
+<a name="l03071"></a>03071 
+<a name="l03072"></a>03072         <span class="comment">/*</span>
+<a name="l03073"></a>03073 <span class="comment">        * Check temp array</span>
+<a name="l03074"></a>03074 <span class="comment">        */</span>
+<a name="l03075"></a>03075         <span class="keywordflow">if</span> (gfxPrimitivesPolyInts==NULL) {        
+<a name="l03076"></a>03076                 gfxPrimitivesPolyAllocated = 0;
+<a name="l03077"></a>03077         }
+<a name="l03078"></a>03078 
+<a name="l03079"></a>03079         <span class="comment">/*</span>
+<a name="l03080"></a>03080 <span class="comment">        * Update cache variables</span>
+<a name="l03081"></a>03081 <span class="comment">        */</span>
+<a name="l03082"></a>03082         <span class="keywordflow">if</span> ((polyInts==NULL) || (polyAllocated==NULL)) { 
+<a name="l03083"></a>03083                 gfxPrimitivesPolyIntsGlobal =  gfxPrimitivesPolyInts;
+<a name="l03084"></a>03084                 gfxPrimitivesPolyAllocatedGlobal = gfxPrimitivesPolyAllocated;
+<a name="l03085"></a>03085         } <span class="keywordflow">else</span> {
+<a name="l03086"></a>03086                 *polyInts = gfxPrimitivesPolyInts;
+<a name="l03087"></a>03087                 *polyAllocated = gfxPrimitivesPolyAllocated;
+<a name="l03088"></a>03088         }
+<a name="l03089"></a>03089 
+<a name="l03090"></a>03090         <span class="comment">/*</span>
+<a name="l03091"></a>03091 <span class="comment">        * Check temp array again</span>
+<a name="l03092"></a>03092 <span class="comment">        */</span>
+<a name="l03093"></a>03093         <span class="keywordflow">if</span> (gfxPrimitivesPolyInts==NULL) {        
+<a name="l03094"></a>03094                 <span class="keywordflow">return</span>(-1);
+<a name="l03095"></a>03095         }
+<a name="l03096"></a>03096 
+<a name="l03097"></a>03097         <span class="comment">/*</span>
+<a name="l03098"></a>03098 <span class="comment">        * Determine X,Y minima,maxima </span>
+<a name="l03099"></a>03099 <span class="comment">        */</span>
+<a name="l03100"></a>03100         miny = vy[0];
+<a name="l03101"></a>03101         maxy = vy[0];
+<a name="l03102"></a>03102         minx = vx[0];
+<a name="l03103"></a>03103         maxx = vx[0];
+<a name="l03104"></a>03104         <span class="keywordflow">for</span> (i = 1; (i &lt; n); i++) {
+<a name="l03105"></a>03105                 <span class="keywordflow">if</span> (vy[i] &lt; miny) {
+<a name="l03106"></a>03106                         miny = vy[i];
+<a name="l03107"></a>03107                 } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (vy[i] &gt; maxy) {
+<a name="l03108"></a>03108                         maxy = vy[i];
+<a name="l03109"></a>03109                 }
+<a name="l03110"></a>03110                 <span class="keywordflow">if</span> (vx[i] &lt; minx) {
+<a name="l03111"></a>03111                         minx = vx[i];
+<a name="l03112"></a>03112                 } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (vx[i] &gt; maxx) {
+<a name="l03113"></a>03113                         maxx = vx[i];
+<a name="l03114"></a>03114                 }
+<a name="l03115"></a>03115         }
+<a name="l03116"></a>03116 
+<a name="l03117"></a>03117     <span class="comment">/* Create texture for drawing */</span>
+<a name="l03118"></a>03118         textureAsTexture = SDL_CreateTextureFromSurface(renderer, texture);
+<a name="l03119"></a>03119         <span class="keywordflow">if</span> (textureAsTexture == NULL)
+<a name="l03120"></a>03120         {
+<a name="l03121"></a>03121                 <span class="keywordflow">return</span> -1;
+<a name="l03122"></a>03122         }
+<a name="l03123"></a>03123         SDL_SetTextureBlendMode(textureAsTexture, SDL_BLENDMODE_BLEND);
+<a name="l03124"></a>03124         
+<a name="l03125"></a>03125         <span class="comment">/*</span>
+<a name="l03126"></a>03126 <span class="comment">        * Draw, scanning y </span>
+<a name="l03127"></a>03127 <span class="comment">        */</span>
+<a name="l03128"></a>03128         result = 0;
+<a name="l03129"></a>03129         <span class="keywordflow">for</span> (y = miny; (y &lt;= maxy); y++) {
+<a name="l03130"></a>03130                 ints = 0;
+<a name="l03131"></a>03131                 <span class="keywordflow">for</span> (i = 0; (i &lt; n); i++) {
+<a name="l03132"></a>03132                         <span class="keywordflow">if</span> (!i) {
+<a name="l03133"></a>03133                                 ind1 = n - 1;
+<a name="l03134"></a>03134                                 ind2 = 0;
+<a name="l03135"></a>03135                         } <span class="keywordflow">else</span> {
+<a name="l03136"></a>03136                                 ind1 = i - 1;
+<a name="l03137"></a>03137                                 ind2 = i;
+<a name="l03138"></a>03138                         }
+<a name="l03139"></a>03139                         y1 = vy[ind1];
+<a name="l03140"></a>03140                         y2 = vy[ind2];
+<a name="l03141"></a>03141                         <span class="keywordflow">if</span> (y1 &lt; y2) {
+<a name="l03142"></a>03142                                 x1 = vx[ind1];
+<a name="l03143"></a>03143                                 x2 = vx[ind2];
+<a name="l03144"></a>03144                         } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (y1 &gt; y2) {
+<a name="l03145"></a>03145                                 y2 = vy[ind1];
+<a name="l03146"></a>03146                                 y1 = vy[ind2];
+<a name="l03147"></a>03147                                 x2 = vx[ind1];
+<a name="l03148"></a>03148                                 x1 = vx[ind2];
+<a name="l03149"></a>03149                         } <span class="keywordflow">else</span> {
+<a name="l03150"></a>03150                                 <span class="keywordflow">continue</span>;
+<a name="l03151"></a>03151                         }
+<a name="l03152"></a>03152                         <span class="keywordflow">if</span> ( ((y &gt;= y1) &amp;&amp; (y &lt; y2)) || ((y == maxy) &amp;&amp; (y &gt; y1) &amp;&amp; (y &lt;= y2)) ) {
+<a name="l03153"></a>03153                                 gfxPrimitivesPolyInts[ints++] = ((65536 * (y - y1)) / (y2 - y1)) * (x2 - x1) + (65536 * x1);
+<a name="l03154"></a>03154                         } 
+<a name="l03155"></a>03155                 }
+<a name="l03156"></a>03156 
+<a name="l03157"></a>03157                 qsort(gfxPrimitivesPolyInts, ints, <span class="keyword">sizeof</span>(<span class="keywordtype">int</span>), <a class="code" href="_s_d_l2__gfx_primitives_8c.html#aeba347cfe2561fdb7f86d995a941ff1a" title="Internal helper qsort callback functions used in filled polygon drawing.">_gfxPrimitivesCompareInt</a>);
+<a name="l03158"></a>03158 
+<a name="l03159"></a>03159                 <span class="keywordflow">for</span> (i = 0; (i &lt; ints); i += 2) {
+<a name="l03160"></a>03160                         xa = gfxPrimitivesPolyInts[i] + 1;
+<a name="l03161"></a>03161                         xa = (xa &gt;&gt; 16) + ((xa &amp; 32768) &gt;&gt; 15);
+<a name="l03162"></a>03162                         xb = gfxPrimitivesPolyInts[i+1] - 1;
+<a name="l03163"></a>03163                         xb = (xb &gt;&gt; 16) + ((xb &amp; 32768) &gt;&gt; 15);
+<a name="l03164"></a>03164                         result |= <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a80bfea9271bbcf9e9655858bb58931c6" title="Internal function to draw a textured horizontal line.">_HLineTextured</a>(renderer, xa, xb, y, textureAsTexture, texture-&gt;w, texture-&gt;h, texture_dx, texture_dy);
+<a name="l03165"></a>03165                 }
+<a name="l03166"></a>03166         }
 <a name="l03167"></a>03167 
-<a name="l03184"></a><a class="code" href="_s_d_l2__gfx_primitives_8h.html#a3b4c81592098da506f534d4a81b266f2">03184</a> <span class="keywordtype">int</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a2ca947a90a81d4a2b778a7489edbedee" title="Draws a polygon filled with the given texture.">texturedPolygon</a>(SDL_Renderer *renderer, <span class="keyword">const</span> Sint16 * vx, <span class="keyword">const</span> Sint16 * vy, <span class="keywordtype">int</span> n, SDL_Surface *texture, <span class="keywordtype">int</span> texture_dx, <span class="keywordtype">int</span> texture_dy)
-<a name="l03185"></a>03185 {
-<a name="l03186"></a>03186         <span class="comment">/*</span>
-<a name="l03187"></a>03187 <span class="comment">        * Draw</span>
-<a name="l03188"></a>03188 <span class="comment">        */</span>
-<a name="l03189"></a>03189         <span class="keywordflow">return</span> (<a class="code" href="_s_d_l2__gfx_primitives_8c.html#aa28c0ceafacfeaede97d8ba5597ffe6e" title="Draws a polygon filled with the given texture (Multi-Threading Capable).">texturedPolygonMT</a>(renderer, vx, vy, n, texture, texture_dx, texture_dy, NULL, NULL));
-<a name="l03190"></a>03190 }
-<a name="l03191"></a>03191 
-<a name="l03192"></a>03192 <span class="comment">/* ---- Character */</span>
-<a name="l03193"></a>03193 
-<a name="l03197"></a>03197 <span class="keyword">static</span> SDL_Texture *gfxPrimitivesFont[256];
-<a name="l03198"></a>03198 
-<a name="l03202"></a>03202 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *currentFontdata = gfxPrimitivesFontdata;
-<a name="l03203"></a>03203 
-<a name="l03207"></a>03207 <span class="keyword">static</span> Uint32 charWidth = 8;
-<a name="l03208"></a>03208 
-<a name="l03212"></a>03212 <span class="keyword">static</span> Uint32 charHeight = 8;
-<a name="l03213"></a>03213 
-<a name="l03217"></a>03217 <span class="keyword">static</span> Uint32 charWidthLocal = 8;
-<a name="l03218"></a>03218 
-<a name="l03222"></a>03222 <span class="keyword">static</span> Uint32 charHeightLocal = 8;
-<a name="l03223"></a>03223 
-<a name="l03227"></a>03227 <span class="keyword">static</span> Uint32 charPitch = 1;
-<a name="l03228"></a>03228 
-<a name="l03232"></a>03232 <span class="keyword">static</span> Uint32 charRotation = 0;
-<a name="l03233"></a>03233 
-<a name="l03237"></a>03237 <span class="keyword">static</span> Uint32 charSize = 8;
-<a name="l03238"></a>03238 
-<a name="l03252"></a><a class="code" href="_s_d_l2__gfx_primitives_8h.html#adcbe6b74a9e0fef4165bc7bdb73294ec">03252</a> <span class="keywordtype">void</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#afacd57651ec0e0ccab60753636862cd0" title="Sets or resets the current global font data.">gfxPrimitivesSetFont</a>(<span class="keyword">const</span> <span class="keywordtype">void</span> *fontdata, Uint32 cw, Uint32 ch)
-<a name="l03253"></a>03253 {
-<a name="l03254"></a>03254         <span class="keywordtype">int</span> i;
-<a name="l03255"></a>03255 
-<a name="l03256"></a>03256         <span class="keywordflow">if</span> ((fontdata) &amp;&amp; (cw) &amp;&amp; (ch)) {
-<a name="l03257"></a>03257                 currentFontdata = (<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *)fontdata;
-<a name="l03258"></a>03258                 charWidth = cw;
-<a name="l03259"></a>03259                 charHeight = ch;
-<a name="l03260"></a>03260         } <span class="keywordflow">else</span> {
-<a name="l03261"></a>03261                 currentFontdata = gfxPrimitivesFontdata;
-<a name="l03262"></a>03262                 charWidth = 8;
-<a name="l03263"></a>03263                 charHeight = 8;
-<a name="l03264"></a>03264         }
-<a name="l03265"></a>03265 
-<a name="l03266"></a>03266         charPitch = (charWidth+7)/8;
-<a name="l03267"></a>03267         charSize = charPitch * charHeight;
-<a name="l03268"></a>03268 
-<a name="l03269"></a>03269         <span class="comment">/* Maybe flip width/height for rendering */</span>
-<a name="l03270"></a>03270         <span class="keywordflow">if</span> ((charRotation==1) || (charRotation==3))
-<a name="l03271"></a>03271         {
-<a name="l03272"></a>03272                 charWidthLocal = charHeight;
-<a name="l03273"></a>03273                 charHeightLocal = charWidth;
-<a name="l03274"></a>03274         }
-<a name="l03275"></a>03275         <span class="keywordflow">else</span>
-<a name="l03276"></a>03276         {
-<a name="l03277"></a>03277                 charWidthLocal = charWidth;
-<a name="l03278"></a>03278                 charHeightLocal = charHeight;
-<a name="l03279"></a>03279         }
-<a name="l03280"></a>03280 
-<a name="l03281"></a>03281         <span class="comment">/* Clear character cache */</span>
-<a name="l03282"></a>03282         <span class="keywordflow">for</span> (i = 0; i &lt; 256; i++) {
-<a name="l03283"></a>03283                 <span class="keywordflow">if</span> (gfxPrimitivesFont[i]) {
-<a name="l03284"></a>03284                         SDL_DestroyTexture(gfxPrimitivesFont[i]);
-<a name="l03285"></a>03285                         gfxPrimitivesFont[i] = NULL;
-<a name="l03286"></a>03286                 }
-<a name="l03287"></a>03287         }
-<a name="l03288"></a>03288 }
-<a name="l03289"></a>03289 
-<a name="l03298"></a><a class="code" href="_s_d_l2__gfx_primitives_8h.html#a2349bb02995a364f6b1069c46a09b7ba">03298</a> <span class="keywordtype">void</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#aef6796a883f07d31bbf7c7df6d1153d2" title="Sets current global font character rotation steps.">gfxPrimitivesSetFontRotation</a>(Uint32 rotation)
-<a name="l03299"></a>03299 {
-<a name="l03300"></a>03300         <span class="keywordtype">int</span> i;
-<a name="l03301"></a>03301 
-<a name="l03302"></a>03302         rotation = rotation &amp; 3;
-<a name="l03303"></a>03303         <span class="keywordflow">if</span> (charRotation != rotation)
-<a name="l03304"></a>03304         {
-<a name="l03305"></a>03305                 <span class="comment">/* Store rotation */</span>
-<a name="l03306"></a>03306                 charRotation = rotation;
+<a name="l03168"></a>03168         SDL_RenderPresent(renderer);
+<a name="l03169"></a>03169         SDL_DestroyTexture(textureAsTexture);
+<a name="l03170"></a>03170 
+<a name="l03171"></a>03171         <span class="keywordflow">return</span> (result);
+<a name="l03172"></a>03172 }
+<a name="l03173"></a>03173 
+<a name="l03190"></a><a class="code" href="_s_d_l2__gfx_primitives_8h.html#a3b4c81592098da506f534d4a81b266f2">03190</a> <span class="keywordtype">int</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a2ca947a90a81d4a2b778a7489edbedee" title="Draws a polygon filled with the given texture.">texturedPolygon</a>(SDL_Renderer *renderer, <span class="keyword">const</span> Sint16 * vx, <span class="keyword">const</span> Sint16 * vy, <span class="keywordtype">int</span> n, SDL_Surface *texture, <span class="keywordtype">int</span> texture_dx, <span class="keywordtype">int</span> texture_dy)
+<a name="l03191"></a>03191 {
+<a name="l03192"></a>03192         <span class="comment">/*</span>
+<a name="l03193"></a>03193 <span class="comment">        * Draw</span>
+<a name="l03194"></a>03194 <span class="comment">        */</span>
+<a name="l03195"></a>03195         <span class="keywordflow">return</span> (<a class="code" href="_s_d_l2__gfx_primitives_8c.html#aa28c0ceafacfeaede97d8ba5597ffe6e" title="Draws a polygon filled with the given texture (Multi-Threading Capable).">texturedPolygonMT</a>(renderer, vx, vy, n, texture, texture_dx, texture_dy, NULL, NULL));
+<a name="l03196"></a>03196 }
+<a name="l03197"></a>03197 
+<a name="l03198"></a>03198 <span class="comment">/* ---- Character */</span>
+<a name="l03199"></a>03199 
+<a name="l03203"></a>03203 <span class="keyword">static</span> SDL_Texture *gfxPrimitivesFont[256];
+<a name="l03204"></a>03204 
+<a name="l03208"></a>03208 <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *currentFontdata = gfxPrimitivesFontdata;
+<a name="l03209"></a>03209 
+<a name="l03213"></a>03213 <span class="keyword">static</span> Uint32 charWidth = 8;
+<a name="l03214"></a>03214 
+<a name="l03218"></a>03218 <span class="keyword">static</span> Uint32 charHeight = 8;
+<a name="l03219"></a>03219 
+<a name="l03223"></a>03223 <span class="keyword">static</span> Uint32 charWidthLocal = 8;
+<a name="l03224"></a>03224 
+<a name="l03228"></a>03228 <span class="keyword">static</span> Uint32 charHeightLocal = 8;
+<a name="l03229"></a>03229 
+<a name="l03233"></a>03233 <span class="keyword">static</span> Uint32 charPitch = 1;
+<a name="l03234"></a>03234 
+<a name="l03238"></a>03238 <span class="keyword">static</span> Uint32 charRotation = 0;
+<a name="l03239"></a>03239 
+<a name="l03243"></a>03243 <span class="keyword">static</span> Uint32 charSize = 8;
+<a name="l03244"></a>03244 
+<a name="l03258"></a><a class="code" href="_s_d_l2__gfx_primitives_8h.html#adcbe6b74a9e0fef4165bc7bdb73294ec">03258</a> <span class="keywordtype">void</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#afacd57651ec0e0ccab60753636862cd0" title="Sets or resets the current global font data.">gfxPrimitivesSetFont</a>(<span class="keyword">const</span> <span class="keywordtype">void</span> *fontdata, Uint32 cw, Uint32 ch)
+<a name="l03259"></a>03259 {
+<a name="l03260"></a>03260         <span class="keywordtype">int</span> i;
+<a name="l03261"></a>03261 
+<a name="l03262"></a>03262         <span class="keywordflow">if</span> ((fontdata) &amp;&amp; (cw) &amp;&amp; (ch)) {
+<a name="l03263"></a>03263                 currentFontdata = (<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *)fontdata;
+<a name="l03264"></a>03264                 charWidth = cw;
+<a name="l03265"></a>03265                 charHeight = ch;
+<a name="l03266"></a>03266         } <span class="keywordflow">else</span> {
+<a name="l03267"></a>03267                 currentFontdata = gfxPrimitivesFontdata;
+<a name="l03268"></a>03268                 charWidth = 8;
+<a name="l03269"></a>03269                 charHeight = 8;
+<a name="l03270"></a>03270         }
+<a name="l03271"></a>03271 
+<a name="l03272"></a>03272         charPitch = (charWidth+7)/8;
+<a name="l03273"></a>03273         charSize = charPitch * charHeight;
+<a name="l03274"></a>03274 
+<a name="l03275"></a>03275         <span class="comment">/* Maybe flip width/height for rendering */</span>
+<a name="l03276"></a>03276         <span class="keywordflow">if</span> ((charRotation==1) || (charRotation==3))
+<a name="l03277"></a>03277         {
+<a name="l03278"></a>03278                 charWidthLocal = charHeight;
+<a name="l03279"></a>03279                 charHeightLocal = charWidth;
+<a name="l03280"></a>03280         }
+<a name="l03281"></a>03281         <span class="keywordflow">else</span>
+<a name="l03282"></a>03282         {
+<a name="l03283"></a>03283                 charWidthLocal = charWidth;
+<a name="l03284"></a>03284                 charHeightLocal = charHeight;
+<a name="l03285"></a>03285         }
+<a name="l03286"></a>03286 
+<a name="l03287"></a>03287         <span class="comment">/* Clear character cache */</span>
+<a name="l03288"></a>03288         <span class="keywordflow">for</span> (i = 0; i &lt; 256; i++) {
+<a name="l03289"></a>03289                 <span class="keywordflow">if</span> (gfxPrimitivesFont[i]) {
+<a name="l03290"></a>03290                         SDL_DestroyTexture(gfxPrimitivesFont[i]);
+<a name="l03291"></a>03291                         gfxPrimitivesFont[i] = NULL;
+<a name="l03292"></a>03292                 }
+<a name="l03293"></a>03293         }
+<a name="l03294"></a>03294 }
+<a name="l03295"></a>03295 
+<a name="l03304"></a><a class="code" href="_s_d_l2__gfx_primitives_8h.html#a2349bb02995a364f6b1069c46a09b7ba">03304</a> <span class="keywordtype">void</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#aef6796a883f07d31bbf7c7df6d1153d2" title="Sets current global font character rotation steps.">gfxPrimitivesSetFontRotation</a>(Uint32 rotation)
+<a name="l03305"></a>03305 {
+<a name="l03306"></a>03306         <span class="keywordtype">int</span> i;
 <a name="l03307"></a>03307 
-<a name="l03308"></a>03308                 <span class="comment">/* Maybe flip width/height for rendering */</span>
-<a name="l03309"></a>03309                 <span class="keywordflow">if</span> ((charRotation==1) || (charRotation==3))
-<a name="l03310"></a>03310                 {
-<a name="l03311"></a>03311                         charWidthLocal = charHeight;
-<a name="l03312"></a>03312                         charHeightLocal = charWidth;
-<a name="l03313"></a>03313                 }
-<a name="l03314"></a>03314                 <span class="keywordflow">else</span>
-<a name="l03315"></a>03315                 {
-<a name="l03316"></a>03316                         charWidthLocal = charWidth;
-<a name="l03317"></a>03317                         charHeightLocal = charHeight;
-<a name="l03318"></a>03318                 }
-<a name="l03319"></a>03319 
-<a name="l03320"></a>03320                 <span class="comment">/* Clear character cache */</span>
-<a name="l03321"></a>03321                 <span class="keywordflow">for</span> (i = 0; i &lt; 256; i++) {
-<a name="l03322"></a>03322                         <span class="keywordflow">if</span> (gfxPrimitivesFont[i]) {
-<a name="l03323"></a>03323                                 SDL_DestroyTexture(gfxPrimitivesFont[i]);
-<a name="l03324"></a>03324                                 gfxPrimitivesFont[i] = NULL;
-<a name="l03325"></a>03325                         }
-<a name="l03326"></a>03326                 }
-<a name="l03327"></a>03327         }
-<a name="l03328"></a>03328 }
-<a name="l03329"></a>03329 
-<a name="l03344"></a><a class="code" href="_s_d_l2__gfx_primitives_8h.html#abff6cc81b9a35e9380e0b02da905714f">03344</a> <span class="keywordtype">int</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#aa2edfd8d352bd6483d219ac3c36254f9" title="Draw a character of the currently set font.">characterRGBA</a>(SDL_Renderer *renderer, Sint16 x, Sint16 y, <span class="keywordtype">char</span> c, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
-<a name="l03345"></a>03345 {
-<a name="l03346"></a>03346         SDL_Rect srect;
-<a name="l03347"></a>03347         SDL_Rect drect;
-<a name="l03348"></a>03348         <span class="keywordtype">int</span> result;
-<a name="l03349"></a>03349         Uint32 ix, iy;
-<a name="l03350"></a>03350         <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *charpos;
-<a name="l03351"></a>03351         Uint8 *curpos;
-<a name="l03352"></a>03352         Uint8 patt, mask;
-<a name="l03353"></a>03353         Uint8 *linepos;
-<a name="l03354"></a>03354         Uint32 pitch;
-<a name="l03355"></a>03355         SDL_Surface *character;
-<a name="l03356"></a>03356         SDL_Surface *rotatedCharacter;
-<a name="l03357"></a>03357         Uint32 ci;
-<a name="l03358"></a>03358 
-<a name="l03359"></a>03359         <span class="comment">/*</span>
-<a name="l03360"></a>03360 <span class="comment">        * Setup source rectangle</span>
-<a name="l03361"></a>03361 <span class="comment">        */</span>
-<a name="l03362"></a>03362         srect.x = 0;
-<a name="l03363"></a>03363         srect.y = 0;
-<a name="l03364"></a>03364         srect.w = charWidthLocal;
-<a name="l03365"></a>03365         srect.h = charHeightLocal;
-<a name="l03366"></a>03366 
-<a name="l03367"></a>03367         <span class="comment">/*</span>
-<a name="l03368"></a>03368 <span class="comment">        * Setup destination rectangle</span>
-<a name="l03369"></a>03369 <span class="comment">        */</span>
-<a name="l03370"></a>03370         drect.x = x;
-<a name="l03371"></a>03371         drect.y = y;
-<a name="l03372"></a>03372         drect.w = charWidthLocal;
-<a name="l03373"></a>03373         drect.h = charHeightLocal;
-<a name="l03374"></a>03374 
-<a name="l03375"></a>03375         <span class="comment">/* Character index in cache */</span>
-<a name="l03376"></a>03376         ci = (<span class="keywordtype">unsigned</span> char) c;
-<a name="l03377"></a>03377 
-<a name="l03378"></a>03378         <span class="comment">/*</span>
-<a name="l03379"></a>03379 <span class="comment">        * Create new charWidth x charHeight bitmap surface if not already present.</span>
-<a name="l03380"></a>03380 <span class="comment">        * Might get rotated later.</span>
-<a name="l03381"></a>03381 <span class="comment">        */</span>
-<a name="l03382"></a>03382         <span class="keywordflow">if</span> (gfxPrimitivesFont[ci] == NULL) {
-<a name="l03383"></a>03383                 <span class="comment">/*</span>
-<a name="l03384"></a>03384 <span class="comment">                * Redraw character into surface</span>
-<a name="l03385"></a>03385 <span class="comment">                */</span>
-<a name="l03386"></a>03386                 character =     SDL_CreateRGBSurface(SDL_SWSURFACE,
-<a name="l03387"></a>03387                         charWidth, charHeight, 32,
-<a name="l03388"></a>03388                         0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
-<a name="l03389"></a>03389                 <span class="keywordflow">if</span> (character == NULL) {
-<a name="l03390"></a>03390                         <span class="keywordflow">return</span> (-1);
-<a name="l03391"></a>03391                 }
-<a name="l03392"></a>03392 
-<a name="l03393"></a>03393                 charpos = currentFontdata + ci * charSize;
-<a name="l03394"></a>03394                                 linepos = (Uint8 *)character-&gt;pixels;
-<a name="l03395"></a>03395                 pitch = character-&gt;pitch;
-<a name="l03396"></a>03396 
-<a name="l03397"></a>03397                 <span class="comment">/*</span>
-<a name="l03398"></a>03398 <span class="comment">                * Drawing loop </span>
-<a name="l03399"></a>03399 <span class="comment">                */</span>
-<a name="l03400"></a>03400                 patt = 0;
-<a name="l03401"></a>03401                 for (iy = 0; iy &lt; charHeight; iy++) {
-<a name="l03402"></a>03402                         mask = 0x00;
-<a name="l03403"></a>03403                         curpos = linepos;
-<a name="l03404"></a>03404                         <span class="keywordflow">for</span> (ix = 0; ix &lt; charWidth; ix++) {
-<a name="l03405"></a>03405                                 <span class="keywordflow">if</span> (!(mask &gt;&gt;= 1)) {
-<a name="l03406"></a>03406                                         patt = *charpos++;
-<a name="l03407"></a>03407                                         mask = 0x80;
-<a name="l03408"></a>03408                                 }
-<a name="l03409"></a>03409                                 <span class="keywordflow">if</span> (patt &amp; mask) {
-<a name="l03410"></a>03410                                         *(Uint32 *)curpos = 0xffffffff;
-<a name="l03411"></a>03411                                 } <span class="keywordflow">else</span> {
-<a name="l03412"></a>03412                                         *(Uint32 *)curpos = 0;
-<a name="l03413"></a>03413                                 }
-<a name="l03414"></a>03414                                 curpos += 4;
-<a name="l03415"></a>03415                         }
-<a name="l03416"></a>03416                         linepos += pitch;
-<a name="l03417"></a>03417                 }
-<a name="l03418"></a>03418 
-<a name="l03419"></a>03419                 <span class="comment">/* Maybe rotate and replace cached image */</span>
-<a name="l03420"></a>03420                 <span class="keywordflow">if</span> (charRotation&gt;0)
-<a name="l03421"></a>03421                 {
-<a name="l03422"></a>03422                         rotatedCharacter = <a class="code" href="_s_d_l2__rotozoom_8c.html#a77563d68634cb2624d4f2f0bcdc19e73" title="Rotates a 8/16/24/32 bit surface in increments of 90 degrees.">rotateSurface90Degrees</a>(character, charRotation);
-<a name="l03423"></a>03423                         SDL_FreeSurface(character);
-<a name="l03424"></a>03424                         character = rotatedCharacter;
-<a name="l03425"></a>03425                 }
-<a name="l03426"></a>03426 
-<a name="l03427"></a>03427                 <span class="comment">/* Convert temp surface into texture */</span>
-<a name="l03428"></a>03428                 gfxPrimitivesFont[ci] = SDL_CreateTextureFromSurface(renderer, character);
-<a name="l03429"></a>03429                 SDL_FreeSurface(character);
-<a name="l03430"></a>03430 
-<a name="l03431"></a>03431                 <span class="comment">/*</span>
-<a name="l03432"></a>03432 <span class="comment">                * Check pointer </span>
-<a name="l03433"></a>03433 <span class="comment">                */</span>
-<a name="l03434"></a>03434                 <span class="keywordflow">if</span> (gfxPrimitivesFont[ci] == NULL) {
-<a name="l03435"></a>03435                         <span class="keywordflow">return</span> (-1);
-<a name="l03436"></a>03436                 }
-<a name="l03437"></a>03437         }
-<a name="l03438"></a>03438 
-<a name="l03439"></a>03439         <span class="comment">/*</span>
-<a name="l03440"></a>03440 <span class="comment">        * Set color </span>
-<a name="l03441"></a>03441 <span class="comment">        */</span>
-<a name="l03442"></a>03442         result = 0;
-<a name="l03443"></a>03443         result |= SDL_SetTextureColorMod(gfxPrimitivesFont[ci], r, g, b);
-<a name="l03444"></a>03444         result |= SDL_SetTextureAlphaMod(gfxPrimitivesFont[ci], a);
-<a name="l03445"></a>03445 
-<a name="l03446"></a>03446         <span class="comment">/*</span>
-<a name="l03447"></a>03447 <span class="comment">        * Draw texture onto destination </span>
-<a name="l03448"></a>03448 <span class="comment">        */</span>
-<a name="l03449"></a>03449         result |= SDL_RenderCopy(renderer, gfxPrimitivesFont[ci], &amp;srect, &amp;drect);
-<a name="l03450"></a>03450 
-<a name="l03451"></a>03451         <span class="keywordflow">return</span> (result);
-<a name="l03452"></a>03452 }
-<a name="l03453"></a>03453 
-<a name="l03454"></a>03454 
-<a name="l03466"></a><a class="code" href="_s_d_l2__gfx_primitives_8h.html#aaeed3ccb288e032856cff488bdba381d">03466</a> <span class="keywordtype">int</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a9856e3c1366ebd9749809417786a6ed7" title="Draw a character of the currently set font.">characterColor</a>(SDL_Renderer * renderer, Sint16 x, Sint16 y, <span class="keywordtype">char</span> c, Uint32 color)
-<a name="l03467"></a>03467 {
-<a name="l03468"></a>03468         Uint8 *co = (Uint8 *)&amp;color; 
-<a name="l03469"></a>03469         <span class="keywordflow">return</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#aa2edfd8d352bd6483d219ac3c36254f9" title="Draw a character of the currently set font.">characterRGBA</a>(renderer, x, y, c, co[0], co[1], co[2], co[3]);
-<a name="l03470"></a>03470 }
-<a name="l03471"></a>03471 
-<a name="l03472"></a>03472 
-<a name="l03487"></a><a class="code" href="_s_d_l2__gfx_primitives_8h.html#a329e9c81b07e5af08d73e3b3d6078bf0">03487</a> <span class="keywordtype">int</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a123f0b72cbdc48e4d47c2942043819a9" title="Draw a string in the currently set font.">stringColor</a>(SDL_Renderer * renderer, Sint16 x, Sint16 y, <span class="keyword">const</span> <span class="keywordtype">char</span> *s, Uint32 color)
-<a name="l03488"></a>03488 {
-<a name="l03489"></a>03489         Uint8 *c = (Uint8 *)&amp;color; 
-<a name="l03490"></a>03490         <span class="keywordflow">return</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a22b256fbc6a186b98ec6674c1d781c2f" title="Draw a string in the currently set font.">stringRGBA</a>(renderer, x, y, s, c[0], c[1], c[2], c[3]);
-<a name="l03491"></a>03491 }
-<a name="l03492"></a>03492 
-<a name="l03507"></a><a class="code" href="_s_d_l2__gfx_primitives_8h.html#a744afe14139c1c553204a47cc284e478">03507</a> <span class="keywordtype">int</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a22b256fbc6a186b98ec6674c1d781c2f" title="Draw a string in the currently set font.">stringRGBA</a>(SDL_Renderer * renderer, Sint16 x, Sint16 y, <span class="keyword">const</span> <span class="keywordtype">char</span> *s, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
-<a name="l03508"></a>03508 {
-<a name="l03509"></a>03509         <span class="keywordtype">int</span> result = 0;
-<a name="l03510"></a>03510         Sint16 curx = x;
-<a name="l03511"></a>03511         Sint16 cury = y;
-<a name="l03512"></a>03512         <span class="keyword">const</span> <span class="keywordtype">char</span> *curchar = s;
-<a name="l03513"></a>03513 
-<a name="l03514"></a>03514         <span class="keywordflow">while</span> (*curchar &amp;&amp; !result) {
-<a name="l03515"></a>03515                 result |= <a class="code" href="_s_d_l2__gfx_primitives_8c.html#aa2edfd8d352bd6483d219ac3c36254f9" title="Draw a character of the currently set font.">characterRGBA</a>(renderer, curx, cury, *curchar, r, g, b, a);
-<a name="l03516"></a>03516                 <span class="keywordflow">switch</span> (charRotation)
-<a name="l03517"></a>03517                 {
-<a name="l03518"></a>03518                 <span class="keywordflow">case</span> 0:
-<a name="l03519"></a>03519                         curx += charWidthLocal;
-<a name="l03520"></a>03520                         <span class="keywordflow">break</span>;
-<a name="l03521"></a>03521                 <span class="keywordflow">case</span> 2:
-<a name="l03522"></a>03522                         curx -= charWidthLocal;
-<a name="l03523"></a>03523                         <span class="keywordflow">break</span>;
-<a name="l03524"></a>03524                 <span class="keywordflow">case</span> 1:
-<a name="l03525"></a>03525                         cury += charHeightLocal;
+<a name="l03308"></a>03308         rotation = rotation &amp; 3;
+<a name="l03309"></a>03309         <span class="keywordflow">if</span> (charRotation != rotation)
+<a name="l03310"></a>03310         {
+<a name="l03311"></a>03311                 <span class="comment">/* Store rotation */</span>
+<a name="l03312"></a>03312                 charRotation = rotation;
+<a name="l03313"></a>03313 
+<a name="l03314"></a>03314                 <span class="comment">/* Maybe flip width/height for rendering */</span>
+<a name="l03315"></a>03315                 <span class="keywordflow">if</span> ((charRotation==1) || (charRotation==3))
+<a name="l03316"></a>03316                 {
+<a name="l03317"></a>03317                         charWidthLocal = charHeight;
+<a name="l03318"></a>03318                         charHeightLocal = charWidth;
+<a name="l03319"></a>03319                 }
+<a name="l03320"></a>03320                 <span class="keywordflow">else</span>
+<a name="l03321"></a>03321                 {
+<a name="l03322"></a>03322                         charWidthLocal = charWidth;
+<a name="l03323"></a>03323                         charHeightLocal = charHeight;
+<a name="l03324"></a>03324                 }
+<a name="l03325"></a>03325 
+<a name="l03326"></a>03326                 <span class="comment">/* Clear character cache */</span>
+<a name="l03327"></a>03327                 <span class="keywordflow">for</span> (i = 0; i &lt; 256; i++) {
+<a name="l03328"></a>03328                         <span class="keywordflow">if</span> (gfxPrimitivesFont[i]) {
+<a name="l03329"></a>03329                                 SDL_DestroyTexture(gfxPrimitivesFont[i]);
+<a name="l03330"></a>03330                                 gfxPrimitivesFont[i] = NULL;
+<a name="l03331"></a>03331                         }
+<a name="l03332"></a>03332                 }
+<a name="l03333"></a>03333         }
+<a name="l03334"></a>03334 }
+<a name="l03335"></a>03335 
+<a name="l03350"></a><a class="code" href="_s_d_l2__gfx_primitives_8h.html#abff6cc81b9a35e9380e0b02da905714f">03350</a> <span class="keywordtype">int</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#aa2edfd8d352bd6483d219ac3c36254f9" title="Draw a character of the currently set font.">characterRGBA</a>(SDL_Renderer *renderer, Sint16 x, Sint16 y, <span class="keywordtype">char</span> c, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
+<a name="l03351"></a>03351 {
+<a name="l03352"></a>03352         SDL_Rect srect;
+<a name="l03353"></a>03353         SDL_Rect drect;
+<a name="l03354"></a>03354         <span class="keywordtype">int</span> result;
+<a name="l03355"></a>03355         Uint32 ix, iy;
+<a name="l03356"></a>03356         <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *charpos;
+<a name="l03357"></a>03357         Uint8 *curpos;
+<a name="l03358"></a>03358         Uint8 patt, mask;
+<a name="l03359"></a>03359         Uint8 *linepos;
+<a name="l03360"></a>03360         Uint32 pitch;
+<a name="l03361"></a>03361         SDL_Surface *character;
+<a name="l03362"></a>03362         SDL_Surface *rotatedCharacter;
+<a name="l03363"></a>03363         Uint32 ci;
+<a name="l03364"></a>03364 
+<a name="l03365"></a>03365         <span class="comment">/*</span>
+<a name="l03366"></a>03366 <span class="comment">        * Setup source rectangle</span>
+<a name="l03367"></a>03367 <span class="comment">        */</span>
+<a name="l03368"></a>03368         srect.x = 0;
+<a name="l03369"></a>03369         srect.y = 0;
+<a name="l03370"></a>03370         srect.w = charWidthLocal;
+<a name="l03371"></a>03371         srect.h = charHeightLocal;
+<a name="l03372"></a>03372 
+<a name="l03373"></a>03373         <span class="comment">/*</span>
+<a name="l03374"></a>03374 <span class="comment">        * Setup destination rectangle</span>
+<a name="l03375"></a>03375 <span class="comment">        */</span>
+<a name="l03376"></a>03376         drect.x = x;
+<a name="l03377"></a>03377         drect.y = y;
+<a name="l03378"></a>03378         drect.w = charWidthLocal;
+<a name="l03379"></a>03379         drect.h = charHeightLocal;
+<a name="l03380"></a>03380 
+<a name="l03381"></a>03381         <span class="comment">/* Character index in cache */</span>
+<a name="l03382"></a>03382         ci = (<span class="keywordtype">unsigned</span> char) c;
+<a name="l03383"></a>03383 
+<a name="l03384"></a>03384         <span class="comment">/*</span>
+<a name="l03385"></a>03385 <span class="comment">        * Create new charWidth x charHeight bitmap surface if not already present.</span>
+<a name="l03386"></a>03386 <span class="comment">        * Might get rotated later.</span>
+<a name="l03387"></a>03387 <span class="comment">        */</span>
+<a name="l03388"></a>03388         <span class="keywordflow">if</span> (gfxPrimitivesFont[ci] == NULL) {
+<a name="l03389"></a>03389                 <span class="comment">/*</span>
+<a name="l03390"></a>03390 <span class="comment">                * Redraw character into surface</span>
+<a name="l03391"></a>03391 <span class="comment">                */</span>
+<a name="l03392"></a>03392                 character =     SDL_CreateRGBSurface(SDL_SWSURFACE,
+<a name="l03393"></a>03393                         charWidth, charHeight, 32,
+<a name="l03394"></a>03394                         0xFF000000, 0x00FF0000, 0x0000FF00, 0x000000FF);
+<a name="l03395"></a>03395                 <span class="keywordflow">if</span> (character == NULL) {
+<a name="l03396"></a>03396                         <span class="keywordflow">return</span> (-1);
+<a name="l03397"></a>03397                 }
+<a name="l03398"></a>03398 
+<a name="l03399"></a>03399                 charpos = currentFontdata + ci * charSize;
+<a name="l03400"></a>03400                                 linepos = (Uint8 *)character-&gt;pixels;
+<a name="l03401"></a>03401                 pitch = character-&gt;pitch;
+<a name="l03402"></a>03402 
+<a name="l03403"></a>03403                 <span class="comment">/*</span>
+<a name="l03404"></a>03404 <span class="comment">                * Drawing loop </span>
+<a name="l03405"></a>03405 <span class="comment">                */</span>
+<a name="l03406"></a>03406                 patt = 0;
+<a name="l03407"></a>03407                 for (iy = 0; iy &lt; charHeight; iy++) {
+<a name="l03408"></a>03408                         mask = 0x00;
+<a name="l03409"></a>03409                         curpos = linepos;
+<a name="l03410"></a>03410                         <span class="keywordflow">for</span> (ix = 0; ix &lt; charWidth; ix++) {
+<a name="l03411"></a>03411                                 <span class="keywordflow">if</span> (!(mask &gt;&gt;= 1)) {
+<a name="l03412"></a>03412                                         patt = *charpos++;
+<a name="l03413"></a>03413                                         mask = 0x80;
+<a name="l03414"></a>03414                                 }
+<a name="l03415"></a>03415                                 <span class="keywordflow">if</span> (patt &amp; mask) {
+<a name="l03416"></a>03416                                         *(Uint32 *)curpos = 0xffffffff;
+<a name="l03417"></a>03417                                 } <span class="keywordflow">else</span> {
+<a name="l03418"></a>03418                                         *(Uint32 *)curpos = 0;
+<a name="l03419"></a>03419                                 }
+<a name="l03420"></a>03420                                 curpos += 4;
+<a name="l03421"></a>03421                         }
+<a name="l03422"></a>03422                         linepos += pitch;
+<a name="l03423"></a>03423                 }
+<a name="l03424"></a>03424 
+<a name="l03425"></a>03425                 <span class="comment">/* Maybe rotate and replace cached image */</span>
+<a name="l03426"></a>03426                 <span class="keywordflow">if</span> (charRotation&gt;0)
+<a name="l03427"></a>03427                 {
+<a name="l03428"></a>03428                         rotatedCharacter = <a class="code" href="_s_d_l2__rotozoom_8c.html#a77563d68634cb2624d4f2f0bcdc19e73" title="Rotates a 8/16/24/32 bit surface in increments of 90 degrees.">rotateSurface90Degrees</a>(character, charRotation);
+<a name="l03429"></a>03429                         SDL_FreeSurface(character);
+<a name="l03430"></a>03430                         character = rotatedCharacter;
+<a name="l03431"></a>03431                 }
+<a name="l03432"></a>03432 
+<a name="l03433"></a>03433                 <span class="comment">/* Convert temp surface into texture */</span>
+<a name="l03434"></a>03434                 gfxPrimitivesFont[ci] = SDL_CreateTextureFromSurface(renderer, character);
+<a name="l03435"></a>03435                 SDL_FreeSurface(character);
+<a name="l03436"></a>03436 
+<a name="l03437"></a>03437                 <span class="comment">/*</span>
+<a name="l03438"></a>03438 <span class="comment">                * Check pointer </span>
+<a name="l03439"></a>03439 <span class="comment">                */</span>
+<a name="l03440"></a>03440                 <span class="keywordflow">if</span> (gfxPrimitivesFont[ci] == NULL) {
+<a name="l03441"></a>03441                         <span class="keywordflow">return</span> (-1);
+<a name="l03442"></a>03442                 }
+<a name="l03443"></a>03443         }
+<a name="l03444"></a>03444 
+<a name="l03445"></a>03445         <span class="comment">/*</span>
+<a name="l03446"></a>03446 <span class="comment">        * Set color </span>
+<a name="l03447"></a>03447 <span class="comment">        */</span>
+<a name="l03448"></a>03448         result = 0;
+<a name="l03449"></a>03449         result |= SDL_SetTextureColorMod(gfxPrimitivesFont[ci], r, g, b);
+<a name="l03450"></a>03450         result |= SDL_SetTextureAlphaMod(gfxPrimitivesFont[ci], a);
+<a name="l03451"></a>03451 
+<a name="l03452"></a>03452         <span class="comment">/*</span>
+<a name="l03453"></a>03453 <span class="comment">        * Draw texture onto destination </span>
+<a name="l03454"></a>03454 <span class="comment">        */</span>
+<a name="l03455"></a>03455         result |= SDL_RenderCopy(renderer, gfxPrimitivesFont[ci], &amp;srect, &amp;drect);
+<a name="l03456"></a>03456 
+<a name="l03457"></a>03457         <span class="keywordflow">return</span> (result);
+<a name="l03458"></a>03458 }
+<a name="l03459"></a>03459 
+<a name="l03460"></a>03460 
+<a name="l03472"></a><a class="code" href="_s_d_l2__gfx_primitives_8h.html#aaeed3ccb288e032856cff488bdba381d">03472</a> <span class="keywordtype">int</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a9856e3c1366ebd9749809417786a6ed7" title="Draw a character of the currently set font.">characterColor</a>(SDL_Renderer * renderer, Sint16 x, Sint16 y, <span class="keywordtype">char</span> c, Uint32 color)
+<a name="l03473"></a>03473 {
+<a name="l03474"></a>03474         Uint8 *co = (Uint8 *)&amp;color; 
+<a name="l03475"></a>03475         <span class="keywordflow">return</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#aa2edfd8d352bd6483d219ac3c36254f9" title="Draw a character of the currently set font.">characterRGBA</a>(renderer, x, y, c, co[0], co[1], co[2], co[3]);
+<a name="l03476"></a>03476 }
+<a name="l03477"></a>03477 
+<a name="l03478"></a>03478 
+<a name="l03493"></a><a class="code" href="_s_d_l2__gfx_primitives_8h.html#a329e9c81b07e5af08d73e3b3d6078bf0">03493</a> <span class="keywordtype">int</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a123f0b72cbdc48e4d47c2942043819a9" title="Draw a string in the currently set font.">stringColor</a>(SDL_Renderer * renderer, Sint16 x, Sint16 y, <span class="keyword">const</span> <span class="keywordtype">char</span> *s, Uint32 color)
+<a name="l03494"></a>03494 {
+<a name="l03495"></a>03495         Uint8 *c = (Uint8 *)&amp;color; 
+<a name="l03496"></a>03496         <span class="keywordflow">return</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a22b256fbc6a186b98ec6674c1d781c2f" title="Draw a string in the currently set font.">stringRGBA</a>(renderer, x, y, s, c[0], c[1], c[2], c[3]);
+<a name="l03497"></a>03497 }
+<a name="l03498"></a>03498 
+<a name="l03513"></a><a class="code" href="_s_d_l2__gfx_primitives_8h.html#a744afe14139c1c553204a47cc284e478">03513</a> <span class="keywordtype">int</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a22b256fbc6a186b98ec6674c1d781c2f" title="Draw a string in the currently set font.">stringRGBA</a>(SDL_Renderer * renderer, Sint16 x, Sint16 y, <span class="keyword">const</span> <span class="keywordtype">char</span> *s, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
+<a name="l03514"></a>03514 {
+<a name="l03515"></a>03515         <span class="keywordtype">int</span> result = 0;
+<a name="l03516"></a>03516         Sint16 curx = x;
+<a name="l03517"></a>03517         Sint16 cury = y;
+<a name="l03518"></a>03518         <span class="keyword">const</span> <span class="keywordtype">char</span> *curchar = s;
+<a name="l03519"></a>03519 
+<a name="l03520"></a>03520         <span class="keywordflow">while</span> (*curchar &amp;&amp; !result) {
+<a name="l03521"></a>03521                 result |= <a class="code" href="_s_d_l2__gfx_primitives_8c.html#aa2edfd8d352bd6483d219ac3c36254f9" title="Draw a character of the currently set font.">characterRGBA</a>(renderer, curx, cury, *curchar, r, g, b, a);
+<a name="l03522"></a>03522                 <span class="keywordflow">switch</span> (charRotation)
+<a name="l03523"></a>03523                 {
+<a name="l03524"></a>03524                 <span class="keywordflow">case</span> 0:
+<a name="l03525"></a>03525                         curx += charWidthLocal;
 <a name="l03526"></a>03526                         <span class="keywordflow">break</span>;
-<a name="l03527"></a>03527                 <span class="keywordflow">case</span> 3:
-<a name="l03528"></a>03528                         cury -= charHeightLocal;
+<a name="l03527"></a>03527                 <span class="keywordflow">case</span> 2:
+<a name="l03528"></a>03528                         curx -= charWidthLocal;
 <a name="l03529"></a>03529                         <span class="keywordflow">break</span>;
-<a name="l03530"></a>03530                 }
-<a name="l03531"></a>03531                 curchar++;
-<a name="l03532"></a>03532         }
-<a name="l03533"></a>03533 
-<a name="l03534"></a>03534         <span class="keywordflow">return</span> (result);
-<a name="l03535"></a>03535 }
-<a name="l03536"></a>03536 
-<a name="l03537"></a>03537 <span class="comment">/* ---- Bezier curve */</span>
-<a name="l03538"></a>03538 
-<a name="l03548"></a><a class="code" href="_s_d_l2__gfx_primitives_8c.html#a888411ec724ddb9ff19cf9ba9fc067df">03548</a> <span class="keywordtype">double</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a888411ec724ddb9ff19cf9ba9fc067df" title="Internal function to calculate bezier interpolator of data array with ndata values at position &#39;t&#39;...">_evaluateBezier</a> (<span class="keywordtype">double</span> *data, <span class="keywordtype">int</span> ndata, <span class="keywordtype">double</span> t) 
-<a name="l03549"></a>03549 {
-<a name="l03550"></a>03550         <span class="keywordtype">double</span> mu, result;
-<a name="l03551"></a>03551         <span class="keywordtype">int</span> n,k,kn,nn,nkn;
-<a name="l03552"></a>03552         <span class="keywordtype">double</span> blend,muk,munk;
-<a name="l03553"></a>03553 
-<a name="l03554"></a>03554         <span class="comment">/* Sanity check bounds */</span>
-<a name="l03555"></a>03555         <span class="keywordflow">if</span> (t&lt;0.0) {
-<a name="l03556"></a>03556                 <span class="keywordflow">return</span>(data[0]);
-<a name="l03557"></a>03557         }
-<a name="l03558"></a>03558         <span class="keywordflow">if</span> (t&gt;=(<span class="keywordtype">double</span>)ndata) {
-<a name="l03559"></a>03559                 <span class="keywordflow">return</span>(data[ndata-1]);
-<a name="l03560"></a>03560         }
-<a name="l03561"></a>03561 
-<a name="l03562"></a>03562         <span class="comment">/* Adjust t to the range 0.0 to 1.0 */</span> 
-<a name="l03563"></a>03563         mu=t/(double)ndata;
-<a name="l03564"></a>03564 
-<a name="l03565"></a>03565         <span class="comment">/* Calculate interpolate */</span>
-<a name="l03566"></a>03566         n=ndata-1;
-<a name="l03567"></a>03567         result=0.0;
-<a name="l03568"></a>03568         muk = 1;
-<a name="l03569"></a>03569         munk = pow(1-mu,(<span class="keywordtype">double</span>)n);
-<a name="l03570"></a>03570         <span class="keywordflow">for</span> (k=0;k&lt;=n;k++) {
-<a name="l03571"></a>03571                 nn = n;
-<a name="l03572"></a>03572                 kn = k;
-<a name="l03573"></a>03573                 nkn = n - k;
-<a name="l03574"></a>03574                 blend = muk * munk;
-<a name="l03575"></a>03575                 muk *= mu;
-<a name="l03576"></a>03576                 munk /= (1-mu);
-<a name="l03577"></a>03577                 <span class="keywordflow">while</span> (nn &gt;= 1) {
-<a name="l03578"></a>03578                         blend *= nn;
-<a name="l03579"></a>03579                         nn--;
-<a name="l03580"></a>03580                         <span class="keywordflow">if</span> (kn &gt; 1) {
-<a name="l03581"></a>03581                                 blend /= (double)kn;
-<a name="l03582"></a>03582                                 kn--;
-<a name="l03583"></a>03583                         }
-<a name="l03584"></a>03584                         <span class="keywordflow">if</span> (nkn &gt; 1) {
-<a name="l03585"></a>03585                                 blend /= (double)nkn;
-<a name="l03586"></a>03586                                 nkn--;
-<a name="l03587"></a>03587                         }
-<a name="l03588"></a>03588                 }
-<a name="l03589"></a>03589                 result += data[k] * blend;
-<a name="l03590"></a>03590         }
-<a name="l03591"></a>03591 
-<a name="l03592"></a>03592         <span class="keywordflow">return</span> (result);
-<a name="l03593"></a>03593 }
-<a name="l03594"></a>03594 
-<a name="l03607"></a><a class="code" href="_s_d_l2__gfx_primitives_8h.html#a74d59d17ba21ce5d8c84697989456bfb">03607</a> <span class="keywordtype">int</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a23bbdcb064bb80db48d4863871b60f3c" title="Draw a bezier curve with alpha blending.">bezierColor</a>(SDL_Renderer * renderer, <span class="keyword">const</span> Sint16 * vx, <span class="keyword">const</span> Sint16 * vy, <span class="keywordtype">int</span> n, <span class="keywordtype">int</span> s, Uint32 color)
-<a name="l03608"></a>03608 {
-<a name="l03609"></a>03609         Uint8 *c = (Uint8 *)&amp;color; 
-<a name="l03610"></a>03610         <span class="keywordflow">return</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#aee708db5f0144ebf4a2fd13db69c6bb1" title="Draw a bezier curve with alpha blending.">bezierRGBA</a>(renderer, vx, vy, n, s, c[0], c[1], c[2], c[3]);
-<a name="l03611"></a>03611 }
-<a name="l03612"></a>03612 
-<a name="l03628"></a><a class="code" href="_s_d_l2__gfx_primitives_8h.html#a6cb082e6eb4253d591927c6bf7eba06f">03628</a> <span class="keywordtype">int</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#aee708db5f0144ebf4a2fd13db69c6bb1" title="Draw a bezier curve with alpha blending.">bezierRGBA</a>(SDL_Renderer * renderer, <span class="keyword">const</span> Sint16 * vx, <span class="keyword">const</span> Sint16 * vy, <span class="keywordtype">int</span> n, <span class="keywordtype">int</span> s, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
-<a name="l03629"></a>03629 {
-<a name="l03630"></a>03630         <span class="keywordtype">int</span> result;
-<a name="l03631"></a>03631         <span class="keywordtype">int</span> i;
-<a name="l03632"></a>03632         <span class="keywordtype">double</span> *x, *y, t, stepsize;
-<a name="l03633"></a>03633         Sint16 x1, y1, x2, y2;
-<a name="l03634"></a>03634 
-<a name="l03635"></a>03635         <span class="comment">/*</span>
-<a name="l03636"></a>03636 <span class="comment">        * Sanity check </span>
-<a name="l03637"></a>03637 <span class="comment">        */</span>
-<a name="l03638"></a>03638         <span class="keywordflow">if</span> (n &lt; 3) {
-<a name="l03639"></a>03639                 <span class="keywordflow">return</span> (-1);
-<a name="l03640"></a>03640         }
-<a name="l03641"></a>03641         <span class="keywordflow">if</span> (s &lt; 2) {
-<a name="l03642"></a>03642                 <span class="keywordflow">return</span> (-1);
-<a name="l03643"></a>03643         }
-<a name="l03644"></a>03644 
-<a name="l03645"></a>03645         <span class="comment">/*</span>
-<a name="l03646"></a>03646 <span class="comment">        * Variable setup </span>
-<a name="l03647"></a>03647 <span class="comment">        */</span>
-<a name="l03648"></a>03648         stepsize=(double)1.0/(<span class="keywordtype">double</span>)s;
-<a name="l03649"></a>03649 
-<a name="l03650"></a>03650         <span class="comment">/* Transfer vertices into float arrays */</span>
-<a name="l03651"></a>03651         <span class="keywordflow">if</span> ((x=(<span class="keywordtype">double</span> *)malloc(<span class="keyword">sizeof</span>(<span class="keywordtype">double</span>)*(n+1)))==NULL) {
-<a name="l03652"></a>03652                 <span class="keywordflow">return</span>(-1);
-<a name="l03653"></a>03653         }
-<a name="l03654"></a>03654         <span class="keywordflow">if</span> ((y=(<span class="keywordtype">double</span> *)malloc(<span class="keyword">sizeof</span>(<span class="keywordtype">double</span>)*(n+1)))==NULL) {
-<a name="l03655"></a>03655                 free(x);
-<a name="l03656"></a>03656                 <span class="keywordflow">return</span>(-1);
-<a name="l03657"></a>03657         }    
-<a name="l03658"></a>03658         <span class="keywordflow">for</span> (i=0; i&lt;n; i++) {
-<a name="l03659"></a>03659                 x[i]=(double)vx[i];
-<a name="l03660"></a>03660                 y[i]=(double)vy[i];
-<a name="l03661"></a>03661         }      
-<a name="l03662"></a>03662         x[n]=(double)vx[0];
-<a name="l03663"></a>03663         y[n]=(double)vy[0];
-<a name="l03664"></a>03664 
-<a name="l03665"></a>03665         <span class="comment">/*</span>
-<a name="l03666"></a>03666 <span class="comment">        * Set color </span>
-<a name="l03667"></a>03667 <span class="comment">        */</span>
-<a name="l03668"></a>03668         result = 0;
-<a name="l03669"></a>03669         result |= SDL_SetRenderDrawBlendMode(renderer, (a == 255) ? SDL_BLENDMODE_NONE : SDL_BLENDMODE_BLEND);
-<a name="l03670"></a>03670         result |= SDL_SetRenderDrawColor(renderer, r, g, b, a);
-<a name="l03671"></a>03671 
-<a name="l03672"></a>03672         <span class="comment">/*</span>
-<a name="l03673"></a>03673 <span class="comment">        * Draw </span>
-<a name="l03674"></a>03674 <span class="comment">        */</span>
-<a name="l03675"></a>03675         t=0.0;
-<a name="l03676"></a>03676         x1=(Sint16)lrint(<a class="code" href="_s_d_l2__gfx_primitives_8c.html#a888411ec724ddb9ff19cf9ba9fc067df" title="Internal function to calculate bezier interpolator of data array with ndata values at position &#39;t&#39;...">_evaluateBezier</a>(x,n+1,t));
-<a name="l03677"></a>03677         y1=(Sint16)lrint(<a class="code" href="_s_d_l2__gfx_primitives_8c.html#a888411ec724ddb9ff19cf9ba9fc067df" title="Internal function to calculate bezier interpolator of data array with ndata values at position &#39;t&#39;...">_evaluateBezier</a>(y,n+1,t));
-<a name="l03678"></a>03678         <span class="keywordflow">for</span> (i = 0; i &lt;= (n*s); i++) {
-<a name="l03679"></a>03679                 t += stepsize;
-<a name="l03680"></a>03680                 x2=(Sint16)<a class="code" href="_s_d_l2__gfx_primitives_8c.html#a888411ec724ddb9ff19cf9ba9fc067df" title="Internal function to calculate bezier interpolator of data array with ndata values at position &#39;t&#39;...">_evaluateBezier</a>(x,n,t);
-<a name="l03681"></a>03681                 y2=(Sint16)<a class="code" href="_s_d_l2__gfx_primitives_8c.html#a888411ec724ddb9ff19cf9ba9fc067df" title="Internal function to calculate bezier interpolator of data array with ndata values at position &#39;t&#39;...">_evaluateBezier</a>(y,n,t);
-<a name="l03682"></a>03682                 result |= <a class="code" href="_s_d_l2__gfx_primitives_8c.html#ac8efb30db084f16211f1f1dd648df618" title="Draw line with alpha blending using the currently set color.">line</a>(renderer, x1, y1, x2, y2);
-<a name="l03683"></a>03683                 x1 = x2;
-<a name="l03684"></a>03684                 y1 = y2;
-<a name="l03685"></a>03685         }
-<a name="l03686"></a>03686 
-<a name="l03687"></a>03687         <span class="comment">/* Clean up temporary array */</span>
-<a name="l03688"></a>03688         free(x);
-<a name="l03689"></a>03689         free(y);
-<a name="l03690"></a>03690 
-<a name="l03691"></a>03691         <span class="keywordflow">return</span> (result);
-<a name="l03692"></a>03692 }
-<a name="l03693"></a>03693 
-<a name="l03694"></a>03694 
-<a name="l03695"></a>03695 <span class="comment">/* ---- Thick Line */</span>
+<a name="l03530"></a>03530                 <span class="keywordflow">case</span> 1:
+<a name="l03531"></a>03531                         cury += charHeightLocal;
+<a name="l03532"></a>03532                         <span class="keywordflow">break</span>;
+<a name="l03533"></a>03533                 <span class="keywordflow">case</span> 3:
+<a name="l03534"></a>03534                         cury -= charHeightLocal;
+<a name="l03535"></a>03535                         <span class="keywordflow">break</span>;
+<a name="l03536"></a>03536                 }
+<a name="l03537"></a>03537                 curchar++;
+<a name="l03538"></a>03538         }
+<a name="l03539"></a>03539 
+<a name="l03540"></a>03540         <span class="keywordflow">return</span> (result);
+<a name="l03541"></a>03541 }
+<a name="l03542"></a>03542 
+<a name="l03543"></a>03543 <span class="comment">/* ---- Bezier curve */</span>
+<a name="l03544"></a>03544 
+<a name="l03554"></a><a class="code" href="_s_d_l2__gfx_primitives_8c.html#a888411ec724ddb9ff19cf9ba9fc067df">03554</a> <span class="keywordtype">double</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a888411ec724ddb9ff19cf9ba9fc067df" title="Internal function to calculate bezier interpolator of data array with ndata values at position &#39;t&#39;...">_evaluateBezier</a> (<span class="keywordtype">double</span> *data, <span class="keywordtype">int</span> ndata, <span class="keywordtype">double</span> t) 
+<a name="l03555"></a>03555 {
+<a name="l03556"></a>03556         <span class="keywordtype">double</span> mu, result;
+<a name="l03557"></a>03557         <span class="keywordtype">int</span> n,k,kn,nn,nkn;
+<a name="l03558"></a>03558         <span class="keywordtype">double</span> blend,muk,munk;
+<a name="l03559"></a>03559 
+<a name="l03560"></a>03560         <span class="comment">/* Sanity check bounds */</span>
+<a name="l03561"></a>03561         <span class="keywordflow">if</span> (t&lt;0.0) {
+<a name="l03562"></a>03562                 <span class="keywordflow">return</span>(data[0]);
+<a name="l03563"></a>03563         }
+<a name="l03564"></a>03564         <span class="keywordflow">if</span> (t&gt;=(<span class="keywordtype">double</span>)ndata) {
+<a name="l03565"></a>03565                 <span class="keywordflow">return</span>(data[ndata-1]);
+<a name="l03566"></a>03566         }
+<a name="l03567"></a>03567 
+<a name="l03568"></a>03568         <span class="comment">/* Adjust t to the range 0.0 to 1.0 */</span> 
+<a name="l03569"></a>03569         mu=t/(double)ndata;
+<a name="l03570"></a>03570 
+<a name="l03571"></a>03571         <span class="comment">/* Calculate interpolate */</span>
+<a name="l03572"></a>03572         n=ndata-1;
+<a name="l03573"></a>03573         result=0.0;
+<a name="l03574"></a>03574         muk = 1;
+<a name="l03575"></a>03575         munk = pow(1-mu,(<span class="keywordtype">double</span>)n);
+<a name="l03576"></a>03576         <span class="keywordflow">for</span> (k=0;k&lt;=n;k++) {
+<a name="l03577"></a>03577                 nn = n;
+<a name="l03578"></a>03578                 kn = k;
+<a name="l03579"></a>03579                 nkn = n - k;
+<a name="l03580"></a>03580                 blend = muk * munk;
+<a name="l03581"></a>03581                 muk *= mu;
+<a name="l03582"></a>03582                 munk /= (1-mu);
+<a name="l03583"></a>03583                 <span class="keywordflow">while</span> (nn &gt;= 1) {
+<a name="l03584"></a>03584                         blend *= nn;
+<a name="l03585"></a>03585                         nn--;
+<a name="l03586"></a>03586                         <span class="keywordflow">if</span> (kn &gt; 1) {
+<a name="l03587"></a>03587                                 blend /= (double)kn;
+<a name="l03588"></a>03588                                 kn--;
+<a name="l03589"></a>03589                         }
+<a name="l03590"></a>03590                         <span class="keywordflow">if</span> (nkn &gt; 1) {
+<a name="l03591"></a>03591                                 blend /= (double)nkn;
+<a name="l03592"></a>03592                                 nkn--;
+<a name="l03593"></a>03593                         }
+<a name="l03594"></a>03594                 }
+<a name="l03595"></a>03595                 result += data[k] * blend;
+<a name="l03596"></a>03596         }
+<a name="l03597"></a>03597 
+<a name="l03598"></a>03598         <span class="keywordflow">return</span> (result);
+<a name="l03599"></a>03599 }
+<a name="l03600"></a>03600 
+<a name="l03613"></a><a class="code" href="_s_d_l2__gfx_primitives_8h.html#a74d59d17ba21ce5d8c84697989456bfb">03613</a> <span class="keywordtype">int</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a23bbdcb064bb80db48d4863871b60f3c" title="Draw a bezier curve with alpha blending.">bezierColor</a>(SDL_Renderer * renderer, <span class="keyword">const</span> Sint16 * vx, <span class="keyword">const</span> Sint16 * vy, <span class="keywordtype">int</span> n, <span class="keywordtype">int</span> s, Uint32 color)
+<a name="l03614"></a>03614 {
+<a name="l03615"></a>03615         Uint8 *c = (Uint8 *)&amp;color; 
+<a name="l03616"></a>03616         <span class="keywordflow">return</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#aee708db5f0144ebf4a2fd13db69c6bb1" title="Draw a bezier curve with alpha blending.">bezierRGBA</a>(renderer, vx, vy, n, s, c[0], c[1], c[2], c[3]);
+<a name="l03617"></a>03617 }
+<a name="l03618"></a>03618 
+<a name="l03634"></a><a class="code" href="_s_d_l2__gfx_primitives_8h.html#a6cb082e6eb4253d591927c6bf7eba06f">03634</a> <span class="keywordtype">int</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#aee708db5f0144ebf4a2fd13db69c6bb1" title="Draw a bezier curve with alpha blending.">bezierRGBA</a>(SDL_Renderer * renderer, <span class="keyword">const</span> Sint16 * vx, <span class="keyword">const</span> Sint16 * vy, <span class="keywordtype">int</span> n, <span class="keywordtype">int</span> s, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
+<a name="l03635"></a>03635 {
+<a name="l03636"></a>03636         <span class="keywordtype">int</span> result;
+<a name="l03637"></a>03637         <span class="keywordtype">int</span> i;
+<a name="l03638"></a>03638         <span class="keywordtype">double</span> *x, *y, t, stepsize;
+<a name="l03639"></a>03639         Sint16 x1, y1, x2, y2;
+<a name="l03640"></a>03640 
+<a name="l03641"></a>03641         <span class="comment">/*</span>
+<a name="l03642"></a>03642 <span class="comment">        * Sanity check </span>
+<a name="l03643"></a>03643 <span class="comment">        */</span>
+<a name="l03644"></a>03644         <span class="keywordflow">if</span> (n &lt; 3) {
+<a name="l03645"></a>03645                 <span class="keywordflow">return</span> (-1);
+<a name="l03646"></a>03646         }
+<a name="l03647"></a>03647         <span class="keywordflow">if</span> (s &lt; 2) {
+<a name="l03648"></a>03648                 <span class="keywordflow">return</span> (-1);
+<a name="l03649"></a>03649         }
+<a name="l03650"></a>03650 
+<a name="l03651"></a>03651         <span class="comment">/*</span>
+<a name="l03652"></a>03652 <span class="comment">        * Variable setup </span>
+<a name="l03653"></a>03653 <span class="comment">        */</span>
+<a name="l03654"></a>03654         stepsize=(double)1.0/(<span class="keywordtype">double</span>)s;
+<a name="l03655"></a>03655 
+<a name="l03656"></a>03656         <span class="comment">/* Transfer vertices into float arrays */</span>
+<a name="l03657"></a>03657         <span class="keywordflow">if</span> ((x=(<span class="keywordtype">double</span> *)malloc(<span class="keyword">sizeof</span>(<span class="keywordtype">double</span>)*(n+1)))==NULL) {
+<a name="l03658"></a>03658                 <span class="keywordflow">return</span>(-1);
+<a name="l03659"></a>03659         }
+<a name="l03660"></a>03660         <span class="keywordflow">if</span> ((y=(<span class="keywordtype">double</span> *)malloc(<span class="keyword">sizeof</span>(<span class="keywordtype">double</span>)*(n+1)))==NULL) {
+<a name="l03661"></a>03661                 free(x);
+<a name="l03662"></a>03662                 <span class="keywordflow">return</span>(-1);
+<a name="l03663"></a>03663         }    
+<a name="l03664"></a>03664         <span class="keywordflow">for</span> (i=0; i&lt;n; i++) {
+<a name="l03665"></a>03665                 x[i]=(double)vx[i];
+<a name="l03666"></a>03666                 y[i]=(double)vy[i];
+<a name="l03667"></a>03667         }      
+<a name="l03668"></a>03668         x[n]=(double)vx[0];
+<a name="l03669"></a>03669         y[n]=(double)vy[0];
+<a name="l03670"></a>03670 
+<a name="l03671"></a>03671         <span class="comment">/*</span>
+<a name="l03672"></a>03672 <span class="comment">        * Set color </span>
+<a name="l03673"></a>03673 <span class="comment">        */</span>
+<a name="l03674"></a>03674         result = 0;
+<a name="l03675"></a>03675         result |= SDL_SetRenderDrawBlendMode(renderer, (a == 255) ? SDL_BLENDMODE_NONE : SDL_BLENDMODE_BLEND);
+<a name="l03676"></a>03676         result |= SDL_SetRenderDrawColor(renderer, r, g, b, a);
+<a name="l03677"></a>03677 
+<a name="l03678"></a>03678         <span class="comment">/*</span>
+<a name="l03679"></a>03679 <span class="comment">        * Draw </span>
+<a name="l03680"></a>03680 <span class="comment">        */</span>
+<a name="l03681"></a>03681         t=0.0;
+<a name="l03682"></a>03682         x1=(Sint16)lrint(<a class="code" href="_s_d_l2__gfx_primitives_8c.html#a888411ec724ddb9ff19cf9ba9fc067df" title="Internal function to calculate bezier interpolator of data array with ndata values at position &#39;t&#39;...">_evaluateBezier</a>(x,n+1,t));
+<a name="l03683"></a>03683         y1=(Sint16)lrint(<a class="code" href="_s_d_l2__gfx_primitives_8c.html#a888411ec724ddb9ff19cf9ba9fc067df" title="Internal function to calculate bezier interpolator of data array with ndata values at position &#39;t&#39;...">_evaluateBezier</a>(y,n+1,t));
+<a name="l03684"></a>03684         <span class="keywordflow">for</span> (i = 0; i &lt;= (n*s); i++) {
+<a name="l03685"></a>03685                 t += stepsize;
+<a name="l03686"></a>03686                 x2=(Sint16)<a class="code" href="_s_d_l2__gfx_primitives_8c.html#a888411ec724ddb9ff19cf9ba9fc067df" title="Internal function to calculate bezier interpolator of data array with ndata values at position &#39;t&#39;...">_evaluateBezier</a>(x,n,t);
+<a name="l03687"></a>03687                 y2=(Sint16)<a class="code" href="_s_d_l2__gfx_primitives_8c.html#a888411ec724ddb9ff19cf9ba9fc067df" title="Internal function to calculate bezier interpolator of data array with ndata values at position &#39;t&#39;...">_evaluateBezier</a>(y,n,t);
+<a name="l03688"></a>03688                 result |= <a class="code" href="_s_d_l2__gfx_primitives_8c.html#ac8efb30db084f16211f1f1dd648df618" title="Draw line with alpha blending using the currently set color.">line</a>(renderer, x1, y1, x2, y2);
+<a name="l03689"></a>03689                 x1 = x2;
+<a name="l03690"></a>03690                 y1 = y2;
+<a name="l03691"></a>03691         }
+<a name="l03692"></a>03692 
+<a name="l03693"></a>03693         <span class="comment">/* Clean up temporary array */</span>
+<a name="l03694"></a>03694         free(x);
+<a name="l03695"></a>03695         free(y);
 <a name="l03696"></a>03696 
-<a name="l03715"></a><a class="code" href="_s_d_l2__gfx_primitives_8c.html#af2731f17a2e4d7d765e47392bdba7d7e">03715</a> <span class="keywordtype">int</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#af2731f17a2e4d7d765e47392bdba7d7e" title="Internal function to initialize the Bresenham line iterator.">_bresenhamInitialize</a>(<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html" title="The structure passed to the internal Bresenham iterator.">SDL2_gfxBresenhamIterator</a> *b, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2)
-<a name="l03716"></a>03716 {
-<a name="l03717"></a>03717         <span class="keywordtype">int</span> temp;
-<a name="l03718"></a>03718 
-<a name="l03719"></a>03719         <span class="keywordflow">if</span> (b==NULL) {
-<a name="l03720"></a>03720                 <span class="keywordflow">return</span>(-1);
-<a name="l03721"></a>03721         }
-<a name="l03722"></a>03722 
-<a name="l03723"></a>03723         b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#ae80d529920f12a3d3eda29b1a29e2e8a">x</a> = x1;
-<a name="l03724"></a>03724         b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a48ddc054175e25d435c217ad4639c3a1">y</a> = y1;
-<a name="l03725"></a>03725 
-<a name="l03726"></a>03726         <span class="comment">/* dx = abs(x2-x1), s1 = sign(x2-x1) */</span>
-<a name="l03727"></a>03727         <span class="keywordflow">if</span> ((b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a6a0d40b2ed6d9e674f93396212f0028f">dx</a> = x2 - x1) != 0) {
-<a name="l03728"></a>03728                 <span class="keywordflow">if</span> (b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a6a0d40b2ed6d9e674f93396212f0028f">dx</a> &lt; 0) {
-<a name="l03729"></a>03729                         b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a6a0d40b2ed6d9e674f93396212f0028f">dx</a> = -b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a6a0d40b2ed6d9e674f93396212f0028f">dx</a>;
-<a name="l03730"></a>03730                         b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#acfb6b9e2b00e34da4313b463c341e597">s1</a> = -1;
-<a name="l03731"></a>03731                 } <span class="keywordflow">else</span> {
-<a name="l03732"></a>03732                         b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#acfb6b9e2b00e34da4313b463c341e597">s1</a> = 1;
-<a name="l03733"></a>03733                 }
-<a name="l03734"></a>03734         } <span class="keywordflow">else</span> {
-<a name="l03735"></a>03735                 b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#acfb6b9e2b00e34da4313b463c341e597">s1</a> = 0;      
-<a name="l03736"></a>03736         }
-<a name="l03737"></a>03737 
-<a name="l03738"></a>03738         <span class="comment">/* dy = abs(y2-y1), s2 = sign(y2-y1)    */</span>
-<a name="l03739"></a>03739         <span class="keywordflow">if</span> ((b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a4817151aee120cc100c400d3076f4b93">dy</a> = y2 - y1) != 0) {
-<a name="l03740"></a>03740                 <span class="keywordflow">if</span> (b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a4817151aee120cc100c400d3076f4b93">dy</a> &lt; 0) {
-<a name="l03741"></a>03741                         b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a4817151aee120cc100c400d3076f4b93">dy</a> = -b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a4817151aee120cc100c400d3076f4b93">dy</a>;
-<a name="l03742"></a>03742                         b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a4c68ffea7c3affb6a0ee6219aba89a69">s2</a> = -1;
-<a name="l03743"></a>03743                 } <span class="keywordflow">else</span> {
-<a name="l03744"></a>03744                         b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a4c68ffea7c3affb6a0ee6219aba89a69">s2</a> = 1;
-<a name="l03745"></a>03745                 }
-<a name="l03746"></a>03746         } <span class="keywordflow">else</span> {
-<a name="l03747"></a>03747                 b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a4c68ffea7c3affb6a0ee6219aba89a69">s2</a> = 0;      
-<a name="l03748"></a>03748         }
-<a name="l03749"></a>03749 
-<a name="l03750"></a>03750         <span class="keywordflow">if</span> (b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a4817151aee120cc100c400d3076f4b93">dy</a> &gt; b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a6a0d40b2ed6d9e674f93396212f0028f">dx</a>) {
-<a name="l03751"></a>03751                 temp = b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a6a0d40b2ed6d9e674f93396212f0028f">dx</a>;
-<a name="l03752"></a>03752                 b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a6a0d40b2ed6d9e674f93396212f0028f">dx</a> = b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a4817151aee120cc100c400d3076f4b93">dy</a>;
-<a name="l03753"></a>03753                 b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a4817151aee120cc100c400d3076f4b93">dy</a> = temp;
-<a name="l03754"></a>03754                 b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#ace147c79e29f2efd14e5744efcb976af">swapdir</a> = 1;
-<a name="l03755"></a>03755         } <span class="keywordflow">else</span> {
-<a name="l03756"></a>03756                 b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#ace147c79e29f2efd14e5744efcb976af">swapdir</a> = 0;
-<a name="l03757"></a>03757         }
-<a name="l03758"></a>03758 
-<a name="l03759"></a>03759         b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a92fcd448f278df155fd5472527a6dc47">count</a> = (b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a6a0d40b2ed6d9e674f93396212f0028f">dx</a>&lt;0) ? 0 : (<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span>)b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a6a0d40b2ed6d9e674f93396212f0028f">dx</a>;
-<a name="l03760"></a>03760         b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a4817151aee120cc100c400d3076f4b93">dy</a> &lt;&lt;= 1;
-<a name="l03761"></a>03761         b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a11614f44ef4d939bdd984953346a7572">error</a> = b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a4817151aee120cc100c400d3076f4b93">dy</a> - b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a6a0d40b2ed6d9e674f93396212f0028f">dx</a>;
-<a name="l03762"></a>03762         b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a6a0d40b2ed6d9e674f93396212f0028f">dx</a> &lt;&lt;= 1;    
-<a name="l03763"></a>03763 
-<a name="l03764"></a>03764         <span class="keywordflow">return</span>(0);
-<a name="l03765"></a>03765 }
-<a name="l03766"></a>03766 
-<a name="l03767"></a>03767 
-<a name="l03777"></a><a class="code" href="_s_d_l2__gfx_primitives_8c.html#ad052c2880dd90acc6846dc050e0acaab">03777</a> <span class="keywordtype">int</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#ad052c2880dd90acc6846dc050e0acaab" title="Internal function to move Bresenham line iterator to the next position.">_bresenhamIterate</a>(<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html" title="The structure passed to the internal Bresenham iterator.">SDL2_gfxBresenhamIterator</a> *b)
-<a name="l03778"></a>03778 {       
-<a name="l03779"></a>03779         <span class="keywordflow">if</span> (b==NULL) {
-<a name="l03780"></a>03780                 <span class="keywordflow">return</span> (-1);
-<a name="l03781"></a>03781         }
-<a name="l03782"></a>03782 
-<a name="l03783"></a>03783         <span class="comment">/* last point check */</span>
-<a name="l03784"></a>03784         <span class="keywordflow">if</span> (b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a92fcd448f278df155fd5472527a6dc47">count</a>==0) {
-<a name="l03785"></a>03785                 <span class="keywordflow">return</span> (2);
-<a name="l03786"></a>03786         }
-<a name="l03787"></a>03787 
-<a name="l03788"></a>03788         <span class="keywordflow">while</span> (b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a11614f44ef4d939bdd984953346a7572">error</a> &gt;= 0) {
-<a name="l03789"></a>03789                 <span class="keywordflow">if</span> (b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#ace147c79e29f2efd14e5744efcb976af">swapdir</a>) {
-<a name="l03790"></a>03790                         b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#ae80d529920f12a3d3eda29b1a29e2e8a">x</a> += b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#acfb6b9e2b00e34da4313b463c341e597">s1</a>;
-<a name="l03791"></a>03791                 } <span class="keywordflow">else</span>  {
-<a name="l03792"></a>03792                         b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a48ddc054175e25d435c217ad4639c3a1">y</a> += b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a4c68ffea7c3affb6a0ee6219aba89a69">s2</a>;
-<a name="l03793"></a>03793                 }
-<a name="l03794"></a>03794 
-<a name="l03795"></a>03795                 b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a11614f44ef4d939bdd984953346a7572">error</a> -= b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a6a0d40b2ed6d9e674f93396212f0028f">dx</a>;
-<a name="l03796"></a>03796         }
-<a name="l03797"></a>03797 
-<a name="l03798"></a>03798         <span class="keywordflow">if</span> (b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#ace147c79e29f2efd14e5744efcb976af">swapdir</a>) {
-<a name="l03799"></a>03799                 b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a48ddc054175e25d435c217ad4639c3a1">y</a> += b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a4c68ffea7c3affb6a0ee6219aba89a69">s2</a>;
-<a name="l03800"></a>03800         } <span class="keywordflow">else</span> {
-<a name="l03801"></a>03801                 b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#ae80d529920f12a3d3eda29b1a29e2e8a">x</a> += b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#acfb6b9e2b00e34da4313b463c341e597">s1</a>;
-<a name="l03802"></a>03802         }
-<a name="l03803"></a>03803 
-<a name="l03804"></a>03804         b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a11614f44ef4d939bdd984953346a7572">error</a> += b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a4817151aee120cc100c400d3076f4b93">dy</a>;      
-<a name="l03805"></a>03805         b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a92fcd448f278df155fd5472527a6dc47">count</a>--;             
-<a name="l03806"></a>03806 
-<a name="l03807"></a>03807         <span class="comment">/* count==0 indicates &quot;end-of-line&quot; */</span>
-<a name="l03808"></a>03808         <span class="keywordflow">return</span> ((b-&gt;<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a92fcd448f278df155fd5472527a6dc47">count</a>) ? 0 : 1);
-<a name="l03809"></a>03809 }
-<a name="l03810"></a>03810 
-<a name="l03811"></a>03811 
-<a name="l03820"></a><a class="code" href="_s_d_l2__gfx_primitives_8c.html#a4aaefb01b776e3b567b8325c701fd507">03820</a> <span class="keywordtype">void</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a4aaefb01b776e3b567b8325c701fd507" title="Internal function to to draw parallel lines with Murphy algorithm.">_murphyParaline</a>(<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html" title="The structure passed to the internal Murphy iterator.">SDL2_gfxMurphyIterator</a> *m, Sint16 x, Sint16 y, <span class="keywordtype">int</span> d1)
-<a name="l03821"></a>03821 {
-<a name="l03822"></a>03822         <span class="keywordtype">int</span> p;
-<a name="l03823"></a>03823         d1 = -d1;
-<a name="l03824"></a>03824 
-<a name="l03825"></a>03825         <span class="keywordflow">for</span> (p = 0; p &lt;= m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a5874b4c2ec2e28321eea4e4871d08222">u</a>; p++) {
-<a name="l03826"></a>03826 
-<a name="l03827"></a>03827                 <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a3ec9c334d5e0786dd27924d210b41bb8" title="Draw pixel in currently set color.">pixel</a>(m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a966da7a60c4ea3ba301e26ccc5efe452">renderer</a>, x, y);
-<a name="l03828"></a>03828 
-<a name="l03829"></a>03829                 <span class="keywordflow">if</span> (d1 &lt;= m-&gt;kt) {
-<a name="l03830"></a>03830                         <span class="keywordflow">if</span> (m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ab9894ea9f5570af0e7fa86e61a3bb60b">oct2</a> == 0) {
-<a name="l03831"></a>03831                                 x++;
-<a name="l03832"></a>03832                         } <span class="keywordflow">else</span> {
-<a name="l03833"></a>03833                                 <span class="keywordflow">if</span> (m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ac65502ab7d0d8cbf739c6e06c35d8edb">quad4</a> == 0) {
-<a name="l03834"></a>03834                                         y++;
-<a name="l03835"></a>03835                                 } <span class="keywordflow">else</span> {
-<a name="l03836"></a>03836                                         y--;
-<a name="l03837"></a>03837                                 }
-<a name="l03838"></a>03838                         }
-<a name="l03839"></a>03839                         d1 += m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#af59597daf52972ab61551495c3d7e6cd">kv</a>;
-<a name="l03840"></a>03840                 } <span class="keywordflow">else</span> {        
-<a name="l03841"></a>03841                         x++;
-<a name="l03842"></a>03842                         <span class="keywordflow">if</span> (m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ac65502ab7d0d8cbf739c6e06c35d8edb">quad4</a> == 0) {
-<a name="l03843"></a>03843                                 y++;
-<a name="l03844"></a>03844                         } <span class="keywordflow">else</span> {
-<a name="l03845"></a>03845                                 y--;
-<a name="l03846"></a>03846                         }
-<a name="l03847"></a>03847                         d1 += m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ade809c6ad2d8ae1dc2f665077951b81a">kd</a>;
-<a name="l03848"></a>03848                 }
-<a name="l03849"></a>03849         }
-<a name="l03850"></a>03850 
-<a name="l03851"></a>03851         m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#af4320e1b2f9da1ee4155b6cfe35c8d7e">tempx</a> = x;
-<a name="l03852"></a>03852         m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a4c3e88fc7abb5715d04e28d96a154e5f">tempy</a> = y;
-<a name="l03853"></a>03853 }
-<a name="l03854"></a>03854 
-<a name="l03870"></a><a class="code" href="_s_d_l2__gfx_primitives_8c.html#a46be62225b445b75ee0a581f6c26fe44">03870</a> <span class="keywordtype">void</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a46be62225b445b75ee0a581f6c26fe44" title="Internal function to to draw one iteration of the Murphy algorithm.">_murphyIteration</a>(<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html" title="The structure passed to the internal Murphy iterator.">SDL2_gfxMurphyIterator</a> *m, Uint8 miter, 
-<a name="l03871"></a>03871         Uint16 ml1bx, Uint16 ml1by, Uint16 ml2bx, Uint16 ml2by, 
-<a name="l03872"></a>03872         Uint16 ml1x, Uint16 ml1y, Uint16 ml2x, Uint16 ml2y)
-<a name="l03873"></a>03873 {
-<a name="l03874"></a>03874         <span class="keywordtype">int</span> atemp1, atemp2;
-<a name="l03875"></a>03875         <span class="keywordtype">int</span> ftmp1, ftmp2;
-<a name="l03876"></a>03876         Uint16 m1x, m1y, m2x, m2y;      
-<a name="l03877"></a>03877         Uint16 fix, fiy, lax, lay, curx, cury;
-<a name="l03878"></a>03878         Sint16 px[4], py[4];
-<a name="l03879"></a>03879         <a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html" title="The structure passed to the internal Bresenham iterator.">SDL2_gfxBresenhamIterator</a> b;
-<a name="l03880"></a>03880 
-<a name="l03881"></a>03881         <span class="keywordflow">if</span> (miter &gt; 1) {
-<a name="l03882"></a>03882                 <span class="keywordflow">if</span> (m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a20a0f29217c4df1896f0b5b2e0db8901">first1x</a> != -32768) {
-<a name="l03883"></a>03883                         fix = (m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a20a0f29217c4df1896f0b5b2e0db8901">first1x</a> + m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a0043c9be4575c0c75cda25d9cec09deb">first2x</a>) / 2;
-<a name="l03884"></a>03884                         fiy = (m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a1e6adb477c4b1db15853adf1b5340760">first1y</a> + m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ac8c0bb60c5be224d8d7fd4d4fd74930c">first2y</a>) / 2;
-<a name="l03885"></a>03885                         lax = (m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#adc37a4a286331a97587fdf4f239fa5e6">last1x</a> + m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a1acb203975c193230a03cee26bbd3f97">last2x</a>) / 2;
-<a name="l03886"></a>03886                         lay = (m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a48dabb55f39ba73ecacc558eba6f5b15">last1y</a> + m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ab85d5d3386d741c19de5bc0a7767d185">last2y</a>) / 2;
-<a name="l03887"></a>03887                         curx = (ml1x + ml2x) / 2;
-<a name="l03888"></a>03888                         cury = (ml1y + ml2y) / 2;
-<a name="l03889"></a>03889 
-<a name="l03890"></a>03890                         atemp1 = (fix - curx);
-<a name="l03891"></a>03891                         atemp2 = (fiy - cury);
-<a name="l03892"></a>03892                         ftmp1 = atemp1 * atemp1 + atemp2 * atemp2;
-<a name="l03893"></a>03893                         atemp1 = (lax - curx);
-<a name="l03894"></a>03894                         atemp2 = (lay - cury);
-<a name="l03895"></a>03895                         ftmp2 = atemp1 * atemp1 + atemp2 * atemp2;
-<a name="l03896"></a>03896 
-<a name="l03897"></a>03897                         <span class="keywordflow">if</span> (ftmp1 &lt;= ftmp2) {
-<a name="l03898"></a>03898                                 m1x = m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a20a0f29217c4df1896f0b5b2e0db8901">first1x</a>;
-<a name="l03899"></a>03899                                 m1y = m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a1e6adb477c4b1db15853adf1b5340760">first1y</a>;
-<a name="l03900"></a>03900                                 m2x = m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a0043c9be4575c0c75cda25d9cec09deb">first2x</a>;
-<a name="l03901"></a>03901                                 m2y = m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ac8c0bb60c5be224d8d7fd4d4fd74930c">first2y</a>;
-<a name="l03902"></a>03902                         } <span class="keywordflow">else</span> {
-<a name="l03903"></a>03903                                 m1x = m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#adc37a4a286331a97587fdf4f239fa5e6">last1x</a>;
-<a name="l03904"></a>03904                                 m1y = m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a48dabb55f39ba73ecacc558eba6f5b15">last1y</a>;
-<a name="l03905"></a>03905                                 m2x = m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a1acb203975c193230a03cee26bbd3f97">last2x</a>;
-<a name="l03906"></a>03906                                 m2y = m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ab85d5d3386d741c19de5bc0a7767d185">last2y</a>;
-<a name="l03907"></a>03907                         }
-<a name="l03908"></a>03908 
-<a name="l03909"></a>03909                         atemp1 = (m2x - ml2x);
-<a name="l03910"></a>03910                         atemp2 = (m2y - ml2y);
-<a name="l03911"></a>03911                         ftmp1 = atemp1 * atemp1 + atemp2 * atemp2;
-<a name="l03912"></a>03912                         atemp1 = (m2x - ml2bx);
-<a name="l03913"></a>03913                         atemp2 = (m2y - ml2by);
-<a name="l03914"></a>03914                         ftmp2 = atemp1 * atemp1 + atemp2 * atemp2;
-<a name="l03915"></a>03915 
-<a name="l03916"></a>03916                         <span class="keywordflow">if</span> (ftmp2 &gt;= ftmp1) {
-<a name="l03917"></a>03917                                 ftmp1 = ml2bx;
-<a name="l03918"></a>03918                                 ftmp2 = ml2by;
-<a name="l03919"></a>03919                                 ml2bx = ml2x;
-<a name="l03920"></a>03920                                 ml2by = ml2y;
-<a name="l03921"></a>03921                                 ml2x = ftmp1;
-<a name="l03922"></a>03922                                 ml2y = ftmp2;
-<a name="l03923"></a>03923                                 ftmp1 = ml1bx;
-<a name="l03924"></a>03924                                 ftmp2 = ml1by;
-<a name="l03925"></a>03925                                 ml1bx = ml1x;
-<a name="l03926"></a>03926                                 ml1by = ml1y;
-<a name="l03927"></a>03927                                 ml1x = ftmp1;
-<a name="l03928"></a>03928                                 ml1y = ftmp2;
-<a name="l03929"></a>03929                         }
-<a name="l03930"></a>03930 
-<a name="l03931"></a>03931                         <span class="comment">/*</span>
-<a name="l03932"></a>03932 <span class="comment">                        * Lock the surface </span>
-<a name="l03933"></a>03933 <span class="comment">                        */</span>
-<a name="l03934"></a>03934                         <a class="code" href="_s_d_l2__gfx_primitives_8c.html#af2731f17a2e4d7d765e47392bdba7d7e" title="Internal function to initialize the Bresenham line iterator.">_bresenhamInitialize</a>(&amp;b, m2x, m2y, m1x, m1y);
-<a name="l03935"></a>03935                         <span class="keywordflow">do</span> {
-<a name="l03936"></a>03936                                 <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a3ec9c334d5e0786dd27924d210b41bb8" title="Draw pixel in currently set color.">pixel</a>(m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a966da7a60c4ea3ba301e26ccc5efe452">renderer</a>, b.<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#ae80d529920f12a3d3eda29b1a29e2e8a">x</a>, b.<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a48ddc054175e25d435c217ad4639c3a1">y</a>);
-<a name="l03937"></a>03937                         } <span class="keywordflow">while</span> (<a class="code" href="_s_d_l2__gfx_primitives_8c.html#ad052c2880dd90acc6846dc050e0acaab" title="Internal function to move Bresenham line iterator to the next position.">_bresenhamIterate</a>(&amp;b)==0);
-<a name="l03938"></a>03938 
-<a name="l03939"></a>03939                         <a class="code" href="_s_d_l2__gfx_primitives_8c.html#af2731f17a2e4d7d765e47392bdba7d7e" title="Internal function to initialize the Bresenham line iterator.">_bresenhamInitialize</a>(&amp;b, m1x, m1y, ml1bx, ml1by);
-<a name="l03940"></a>03940                         <span class="keywordflow">do</span> {
-<a name="l03941"></a>03941                                 <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a3ec9c334d5e0786dd27924d210b41bb8" title="Draw pixel in currently set color.">pixel</a>(m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a966da7a60c4ea3ba301e26ccc5efe452">renderer</a>, b.<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#ae80d529920f12a3d3eda29b1a29e2e8a">x</a>, b.<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a48ddc054175e25d435c217ad4639c3a1">y</a>);
-<a name="l03942"></a>03942                         } <span class="keywordflow">while</span> (<a class="code" href="_s_d_l2__gfx_primitives_8c.html#ad052c2880dd90acc6846dc050e0acaab" title="Internal function to move Bresenham line iterator to the next position.">_bresenhamIterate</a>(&amp;b)==0);
-<a name="l03943"></a>03943 
-<a name="l03944"></a>03944                         <a class="code" href="_s_d_l2__gfx_primitives_8c.html#af2731f17a2e4d7d765e47392bdba7d7e" title="Internal function to initialize the Bresenham line iterator.">_bresenhamInitialize</a>(&amp;b, ml1bx, ml1by, ml2bx, ml2by);
-<a name="l03945"></a>03945                         <span class="keywordflow">do</span> {
-<a name="l03946"></a>03946                                 <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a3ec9c334d5e0786dd27924d210b41bb8" title="Draw pixel in currently set color.">pixel</a>(m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a966da7a60c4ea3ba301e26ccc5efe452">renderer</a>, b.<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#ae80d529920f12a3d3eda29b1a29e2e8a">x</a>, b.<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a48ddc054175e25d435c217ad4639c3a1">y</a>);
-<a name="l03947"></a>03947                         } <span class="keywordflow">while</span> (<a class="code" href="_s_d_l2__gfx_primitives_8c.html#ad052c2880dd90acc6846dc050e0acaab" title="Internal function to move Bresenham line iterator to the next position.">_bresenhamIterate</a>(&amp;b)==0);
-<a name="l03948"></a>03948 
-<a name="l03949"></a>03949                         <a class="code" href="_s_d_l2__gfx_primitives_8c.html#af2731f17a2e4d7d765e47392bdba7d7e" title="Internal function to initialize the Bresenham line iterator.">_bresenhamInitialize</a>(&amp;b, ml2bx, ml2by, m2x, m2y);
-<a name="l03950"></a>03950                         <span class="keywordflow">do</span> {
-<a name="l03951"></a>03951                                 <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a3ec9c334d5e0786dd27924d210b41bb8" title="Draw pixel in currently set color.">pixel</a>(m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a966da7a60c4ea3ba301e26ccc5efe452">renderer</a>, b.<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#ae80d529920f12a3d3eda29b1a29e2e8a">x</a>, b.<a class="code" href="struct_s_d_l2__gfx_bresenham_iterator.html#a48ddc054175e25d435c217ad4639c3a1">y</a>);
-<a name="l03952"></a>03952                         } <span class="keywordflow">while</span> (<a class="code" href="_s_d_l2__gfx_primitives_8c.html#ad052c2880dd90acc6846dc050e0acaab" title="Internal function to move Bresenham line iterator to the next position.">_bresenhamIterate</a>(&amp;b)==0);
-<a name="l03953"></a>03953 
-<a name="l03954"></a>03954                         px[0] = m1x;
-<a name="l03955"></a>03955                         px[1] = m2x;
-<a name="l03956"></a>03956                         px[2] = ml1bx;
-<a name="l03957"></a>03957                         px[3] = ml2bx;
-<a name="l03958"></a>03958                         py[0] = m1y;
-<a name="l03959"></a>03959                         py[1] = m2y;
-<a name="l03960"></a>03960                         py[2] = ml1by;
-<a name="l03961"></a>03961                         py[3] = ml2by;                  
-<a name="l03962"></a>03962                         <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a635ed8b4c7321f75d00938130edf2007" title="Draw polygon with the currently set color and blend mode.">polygon</a>(m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a966da7a60c4ea3ba301e26ccc5efe452">renderer</a>, px, py, 4);                                                
-<a name="l03963"></a>03963                 }
-<a name="l03964"></a>03964         }
-<a name="l03965"></a>03965 
-<a name="l03966"></a>03966         m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#adc37a4a286331a97587fdf4f239fa5e6">last1x</a> = ml1x;
-<a name="l03967"></a>03967         m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a48dabb55f39ba73ecacc558eba6f5b15">last1y</a> = ml1y;
-<a name="l03968"></a>03968         m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a1acb203975c193230a03cee26bbd3f97">last2x</a> = ml2x;
-<a name="l03969"></a>03969         m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ab85d5d3386d741c19de5bc0a7767d185">last2y</a> = ml2y;
-<a name="l03970"></a>03970         m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a20a0f29217c4df1896f0b5b2e0db8901">first1x</a> = ml1bx;
-<a name="l03971"></a>03971         m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a1e6adb477c4b1db15853adf1b5340760">first1y</a> = ml1by;
-<a name="l03972"></a>03972         m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a0043c9be4575c0c75cda25d9cec09deb">first2x</a> = ml2bx;
-<a name="l03973"></a>03973         m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ac8c0bb60c5be224d8d7fd4d4fd74930c">first2y</a> = ml2by;
-<a name="l03974"></a>03974 }
-<a name="l03975"></a>03975 
-<a name="l03976"></a>03976 
-<a name="l03977"></a><a class="code" href="_s_d_l2__gfx_primitives_8c.html#a764ddb925da0921f024fadb4c12d7382">03977</a> <span class="preprocessor">#define HYPOT(x,y) sqrt((double)(x)*(double)(x)+(double)(y)*(double)(y)) </span>
-<a name="l03978"></a>03978 <span class="preprocessor"></span>
-<a name="l03993"></a><a class="code" href="_s_d_l2__gfx_primitives_8c.html#abc1df7ada979012cef99920e741cf559">03993</a> <span class="keywordtype">void</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#abc1df7ada979012cef99920e741cf559" title="Internal function to to draw wide lines with Murphy algorithm.">_murphyWideline</a>(<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html" title="The structure passed to the internal Murphy iterator.">SDL2_gfxMurphyIterator</a> *m, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 width, Uint8 miter)
-<a name="l03994"></a>03994 {       
-<a name="l03995"></a>03995         <span class="keywordtype">float</span> offset = (float)width / 2.f;
-<a name="l03996"></a>03996 
-<a name="l03997"></a>03997         Sint16 temp;
-<a name="l03998"></a>03998         Sint16 ptx, pty, ptxx, ptxy, ml1x, ml1y, ml2x, ml2y, ml1bx, ml1by, ml2bx, ml2by;
-<a name="l03999"></a>03999 
-<a name="l04000"></a>04000         <span class="keywordtype">int</span> d0, d1;             <span class="comment">/* difference terms d0=perpendicular to line, d1=along line */</span>
-<a name="l04001"></a>04001 
-<a name="l04002"></a>04002         <span class="keywordtype">int</span> q;                  <span class="comment">/* pel counter,q=perpendicular to line */</span>
-<a name="l04003"></a>04003         <span class="keywordtype">int</span> tmp;
-<a name="l04004"></a>04004 
-<a name="l04005"></a>04005         <span class="keywordtype">int</span> dd;                 <span class="comment">/* distance along line */</span>
-<a name="l04006"></a>04006         <span class="keywordtype">int</span> tk;                 <span class="comment">/* thickness threshold */</span>
-<a name="l04007"></a>04007         <span class="keywordtype">double</span> ang;             <span class="comment">/* angle for initial point calculation */</span>
-<a name="l04008"></a>04008         <span class="keywordtype">double</span> sang, cang;
-<a name="l04009"></a>04009 
-<a name="l04010"></a>04010         <span class="comment">/* Initialisation */</span>
-<a name="l04011"></a>04011         m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a5874b4c2ec2e28321eea4e4871d08222">u</a> = x2 - x1; <span class="comment">/* delta x */</span>
-<a name="l04012"></a>04012         m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ac8859e8c1ce357c4c8b37bbb1936ba1c">v</a> = y2 - y1; <span class="comment">/* delta y */</span>
-<a name="l04013"></a>04013 
-<a name="l04014"></a>04014         <span class="keywordflow">if</span> (m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a5874b4c2ec2e28321eea4e4871d08222">u</a> &lt; 0) { <span class="comment">/* swap to make sure we are in quadrants 1 or 4 */</span>
-<a name="l04015"></a>04015                 temp = x1;
-<a name="l04016"></a>04016                 x1 = x2;
-<a name="l04017"></a>04017                 x2 = temp;
-<a name="l04018"></a>04018                 temp = y1;
-<a name="l04019"></a>04019                 y1 = y2;
-<a name="l04020"></a>04020                 y2 = temp;              
-<a name="l04021"></a>04021                 m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a5874b4c2ec2e28321eea4e4871d08222">u</a> *= -1;
-<a name="l04022"></a>04022                 m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ac8859e8c1ce357c4c8b37bbb1936ba1c">v</a> *= -1;
-<a name="l04023"></a>04023         }
-<a name="l04024"></a>04024 
-<a name="l04025"></a>04025         <span class="keywordflow">if</span> (m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ac8859e8c1ce357c4c8b37bbb1936ba1c">v</a> &lt; 0) { <span class="comment">/* swap to 1st quadrant and flag */</span>
-<a name="l04026"></a>04026                 m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ac8859e8c1ce357c4c8b37bbb1936ba1c">v</a> *= -1;
-<a name="l04027"></a>04027                 m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ac65502ab7d0d8cbf739c6e06c35d8edb">quad4</a> = 1;
-<a name="l04028"></a>04028         } <span class="keywordflow">else</span> {
-<a name="l04029"></a>04029                 m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ac65502ab7d0d8cbf739c6e06c35d8edb">quad4</a> = 0;
-<a name="l04030"></a>04030         }
-<a name="l04031"></a>04031 
-<a name="l04032"></a>04032         <span class="keywordflow">if</span> (m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ac8859e8c1ce357c4c8b37bbb1936ba1c">v</a> &gt; m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a5874b4c2ec2e28321eea4e4871d08222">u</a>) {      <span class="comment">/* swap things if in 2 octant */</span>
-<a name="l04033"></a>04033                 tmp = m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a5874b4c2ec2e28321eea4e4871d08222">u</a>;
-<a name="l04034"></a>04034                 m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a5874b4c2ec2e28321eea4e4871d08222">u</a> = m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ac8859e8c1ce357c4c8b37bbb1936ba1c">v</a>;
-<a name="l04035"></a>04035                 m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ac8859e8c1ce357c4c8b37bbb1936ba1c">v</a> = tmp;
-<a name="l04036"></a>04036                 m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ab9894ea9f5570af0e7fa86e61a3bb60b">oct2</a> = 1;
-<a name="l04037"></a>04037         } <span class="keywordflow">else</span> {
-<a name="l04038"></a>04038                 m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ab9894ea9f5570af0e7fa86e61a3bb60b">oct2</a> = 0;
-<a name="l04039"></a>04039         }
-<a name="l04040"></a>04040 
-<a name="l04041"></a>04041         m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a2d8fc6210660a003e60ac96216cdd9d1">ku</a> = m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a5874b4c2ec2e28321eea4e4871d08222">u</a> + m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a5874b4c2ec2e28321eea4e4871d08222">u</a>;    <span class="comment">/* change in l for square shift */</span>
-<a name="l04042"></a>04042         m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#af59597daf52972ab61551495c3d7e6cd">kv</a> = m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ac8859e8c1ce357c4c8b37bbb1936ba1c">v</a> + m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ac8859e8c1ce357c4c8b37bbb1936ba1c">v</a>;    <span class="comment">/* change in d for square shift */</span>
-<a name="l04043"></a>04043         m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ade809c6ad2d8ae1dc2f665077951b81a">kd</a> = m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#af59597daf52972ab61551495c3d7e6cd">kv</a> - m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a2d8fc6210660a003e60ac96216cdd9d1">ku</a>;  <span class="comment">/* change in d for diagonal shift */</span>
-<a name="l04044"></a>04044         m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ac77eef4f813ec344cf850b89cc68818d">kt</a> = m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a5874b4c2ec2e28321eea4e4871d08222">u</a> - m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#af59597daf52972ab61551495c3d7e6cd">kv</a>;   <span class="comment">/* diag/square decision threshold */</span>
-<a name="l04045"></a>04045 
-<a name="l04046"></a>04046         d0 = 0;
-<a name="l04047"></a>04047         d1 = 0;
-<a name="l04048"></a>04048         dd = 0;
-<a name="l04049"></a>04049 
-<a name="l04050"></a>04050         ang = atan((<span class="keywordtype">double</span>) m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ac8859e8c1ce357c4c8b37bbb1936ba1c">v</a> / (<span class="keywordtype">double</span>) m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a5874b4c2ec2e28321eea4e4871d08222">u</a>);      <span class="comment">/* calc new initial point - offset both sides of ideal */</span>       
-<a name="l04051"></a>04051         sang = sin(ang);
-<a name="l04052"></a>04052         cang = cos(ang);
-<a name="l04053"></a>04053 
-<a name="l04054"></a>04054         <span class="keywordflow">if</span> (m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ab9894ea9f5570af0e7fa86e61a3bb60b">oct2</a> == 0) {
-<a name="l04055"></a>04055                 ptx = x1 + (Sint16)lrint(offset * sang);
-<a name="l04056"></a>04056                 <span class="keywordflow">if</span> (m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ac65502ab7d0d8cbf739c6e06c35d8edb">quad4</a> == 0) {
-<a name="l04057"></a>04057                         pty = y1 - (Sint16)lrint(offset * cang);
-<a name="l04058"></a>04058                 } <span class="keywordflow">else</span> {
-<a name="l04059"></a>04059                         pty = y1 + (Sint16)lrint(offset * cang);
-<a name="l04060"></a>04060                 }
-<a name="l04061"></a>04061         } <span class="keywordflow">else</span> {
-<a name="l04062"></a>04062                 ptx = x1 - (Sint16)lrint(offset * cang);
-<a name="l04063"></a>04063                 <span class="keywordflow">if</span> (m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ac65502ab7d0d8cbf739c6e06c35d8edb">quad4</a> == 0) {
-<a name="l04064"></a>04064                         pty = y1 + (Sint16)lrint(offset * sang);
-<a name="l04065"></a>04065                 } <span class="keywordflow">else</span> {
-<a name="l04066"></a>04066                         pty = y1 - (Sint16)lrint(offset * sang);
-<a name="l04067"></a>04067                 }
-<a name="l04068"></a>04068         }
-<a name="l04069"></a>04069 
-<a name="l04070"></a>04070         <span class="comment">/* used here for constant thickness line */</span>
-<a name="l04071"></a>04071         tk = (int) (4. * <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a764ddb925da0921f024fadb4c12d7382">HYPOT</a>(ptx - x1, pty - y1) * <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a764ddb925da0921f024fadb4c12d7382">HYPOT</a>(m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a5874b4c2ec2e28321eea4e4871d08222">u</a>, m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ac8859e8c1ce357c4c8b37bbb1936ba1c">v</a>));
-<a name="l04072"></a>04072 
-<a name="l04073"></a>04073         <span class="keywordflow">if</span> (miter == 0) {
-<a name="l04074"></a>04074                 m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a20a0f29217c4df1896f0b5b2e0db8901">first1x</a> = -32768;
-<a name="l04075"></a>04075                 m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a1e6adb477c4b1db15853adf1b5340760">first1y</a> = -32768;
-<a name="l04076"></a>04076                 m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a0043c9be4575c0c75cda25d9cec09deb">first2x</a> = -32768;
-<a name="l04077"></a>04077                 m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ac8c0bb60c5be224d8d7fd4d4fd74930c">first2y</a> = -32768;
-<a name="l04078"></a>04078                 m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#adc37a4a286331a97587fdf4f239fa5e6">last1x</a> = -32768;
-<a name="l04079"></a>04079                 m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a48dabb55f39ba73ecacc558eba6f5b15">last1y</a> = -32768;
-<a name="l04080"></a>04080                 m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a1acb203975c193230a03cee26bbd3f97">last2x</a> = -32768;
-<a name="l04081"></a>04081                 m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ab85d5d3386d741c19de5bc0a7767d185">last2y</a> = -32768;
-<a name="l04082"></a>04082         }
-<a name="l04083"></a>04083         ptxx = ptx;
-<a name="l04084"></a>04084         ptxy = pty;
-<a name="l04085"></a>04085 
-<a name="l04086"></a>04086         <span class="keywordflow">for</span> (q = 0; dd &lt;= tk; q++) {    <span class="comment">/* outer loop, stepping perpendicular to line */</span>
-<a name="l04087"></a>04087 
-<a name="l04088"></a>04088                 <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a4aaefb01b776e3b567b8325c701fd507" title="Internal function to to draw parallel lines with Murphy algorithm.">_murphyParaline</a>(m, ptx, pty, d1);       <span class="comment">/* call to inner loop - right edge */</span>
-<a name="l04089"></a>04089                 <span class="keywordflow">if</span> (q == 0) {
-<a name="l04090"></a>04090                         ml1x = ptx;
-<a name="l04091"></a>04091                         ml1y = pty;
-<a name="l04092"></a>04092                         ml1bx = m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#af4320e1b2f9da1ee4155b6cfe35c8d7e">tempx</a>;
-<a name="l04093"></a>04093                         ml1by = m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a4c3e88fc7abb5715d04e28d96a154e5f">tempy</a>;
-<a name="l04094"></a>04094                 } <span class="keywordflow">else</span> {
-<a name="l04095"></a>04095                         ml2x = ptx;
-<a name="l04096"></a>04096                         ml2y = pty;
-<a name="l04097"></a>04097                         ml2bx = m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#af4320e1b2f9da1ee4155b6cfe35c8d7e">tempx</a>;
-<a name="l04098"></a>04098                         ml2by = m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a4c3e88fc7abb5715d04e28d96a154e5f">tempy</a>;
-<a name="l04099"></a>04099                 }
-<a name="l04100"></a>04100                 <span class="keywordflow">if</span> (d0 &lt; m-&gt;kt) {       <span class="comment">/* square move */</span>
-<a name="l04101"></a>04101                         <span class="keywordflow">if</span> (m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ab9894ea9f5570af0e7fa86e61a3bb60b">oct2</a> == 0) {
-<a name="l04102"></a>04102                                 <span class="keywordflow">if</span> (m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ac65502ab7d0d8cbf739c6e06c35d8edb">quad4</a> == 0) {
-<a name="l04103"></a>04103                                         pty++;
-<a name="l04104"></a>04104                                 } <span class="keywordflow">else</span> {
-<a name="l04105"></a>04105                                         pty--;
-<a name="l04106"></a>04106                                 }
-<a name="l04107"></a>04107                         } <span class="keywordflow">else</span> {
-<a name="l04108"></a>04108                                 ptx++;
-<a name="l04109"></a>04109                         }
-<a name="l04110"></a>04110                 } <span class="keywordflow">else</span> {        <span class="comment">/* diagonal move */</span>
-<a name="l04111"></a>04111                         dd += m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#af59597daf52972ab61551495c3d7e6cd">kv</a>;
-<a name="l04112"></a>04112                         d0 -= m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a2d8fc6210660a003e60ac96216cdd9d1">ku</a>;
-<a name="l04113"></a>04113                         <span class="keywordflow">if</span> (d1 &lt; m-&gt;kt) {       <span class="comment">/* normal diagonal */</span>
-<a name="l04114"></a>04114                                 <span class="keywordflow">if</span> (m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ab9894ea9f5570af0e7fa86e61a3bb60b">oct2</a> == 0) {
-<a name="l04115"></a>04115                                         ptx--;
-<a name="l04116"></a>04116                                         <span class="keywordflow">if</span> (m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ac65502ab7d0d8cbf739c6e06c35d8edb">quad4</a> == 0) {
-<a name="l04117"></a>04117                                                 pty++;
-<a name="l04118"></a>04118                                         } <span class="keywordflow">else</span> {
-<a name="l04119"></a>04119                                                 pty--;
-<a name="l04120"></a>04120                                         }
-<a name="l04121"></a>04121                                 } <span class="keywordflow">else</span> {
-<a name="l04122"></a>04122                                         ptx++;
-<a name="l04123"></a>04123                                         <span class="keywordflow">if</span> (m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ac65502ab7d0d8cbf739c6e06c35d8edb">quad4</a> == 0) {
-<a name="l04124"></a>04124                                                 pty--;
-<a name="l04125"></a>04125                                         } <span class="keywordflow">else</span> {
-<a name="l04126"></a>04126                                                 pty++;
-<a name="l04127"></a>04127                                         }
-<a name="l04128"></a>04128                                 }
-<a name="l04129"></a>04129                                 d1 += m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#af59597daf52972ab61551495c3d7e6cd">kv</a>;
-<a name="l04130"></a>04130                         } <span class="keywordflow">else</span> {        <span class="comment">/* double square move, extra parallel line */</span>
-<a name="l04131"></a>04131                                 <span class="keywordflow">if</span> (m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ab9894ea9f5570af0e7fa86e61a3bb60b">oct2</a> == 0) {
-<a name="l04132"></a>04132                                         ptx--;
-<a name="l04133"></a>04133                                 } <span class="keywordflow">else</span> {
-<a name="l04134"></a>04134                                         <span class="keywordflow">if</span> (m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ac65502ab7d0d8cbf739c6e06c35d8edb">quad4</a> == 0) {
-<a name="l04135"></a>04135                                                 pty--;
-<a name="l04136"></a>04136                                         } <span class="keywordflow">else</span> {
-<a name="l04137"></a>04137                                                 pty++;
-<a name="l04138"></a>04138                                         }
-<a name="l04139"></a>04139                                 }
-<a name="l04140"></a>04140                                 d1 += m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ade809c6ad2d8ae1dc2f665077951b81a">kd</a>;
-<a name="l04141"></a>04141                                 <span class="keywordflow">if</span> (dd &gt; tk) {
-<a name="l04142"></a>04142                                         <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a46be62225b445b75ee0a581f6c26fe44" title="Internal function to to draw one iteration of the Murphy algorithm.">_murphyIteration</a>(m, miter, ml1bx, ml1by, ml2bx, ml2by, ml1x, ml1y, ml2x, ml2y);
-<a name="l04143"></a>04143                                         <span class="keywordflow">return</span>; <span class="comment">/* breakout on the extra line */</span>
-<a name="l04144"></a>04144                                 }
-<a name="l04145"></a>04145                                 <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a4aaefb01b776e3b567b8325c701fd507" title="Internal function to to draw parallel lines with Murphy algorithm.">_murphyParaline</a>(m, ptx, pty, d1);
-<a name="l04146"></a>04146                                 <span class="keywordflow">if</span> (m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ab9894ea9f5570af0e7fa86e61a3bb60b">oct2</a> == 0) {
-<a name="l04147"></a>04147                                         <span class="keywordflow">if</span> (m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#ac65502ab7d0d8cbf739c6e06c35d8edb">quad4</a> == 0) {
-<a name="l04148"></a>04148                                                 pty++;
-<a name="l04149"></a>04149                                         } <span class="keywordflow">else</span> {
-<a name="l04150"></a>04150 
-<a name="l04151"></a>04151                                                 pty--;
-<a name="l04152"></a>04152                                         }
-<a name="l04153"></a>04153                                 } <span class="keywordflow">else</span> {
-<a name="l04154"></a>04154                                         ptx++;
-<a name="l04155"></a>04155                                 }
-<a name="l04156"></a>04156                         }
-<a name="l04157"></a>04157                 }
-<a name="l04158"></a>04158                 dd += m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a2d8fc6210660a003e60ac96216cdd9d1">ku</a>;
-<a name="l04159"></a>04159                 d0 += m-&gt;<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#af59597daf52972ab61551495c3d7e6cd">kv</a>;
-<a name="l04160"></a>04160         }
-<a name="l04161"></a>04161 
-<a name="l04162"></a>04162         <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a46be62225b445b75ee0a581f6c26fe44" title="Internal function to to draw one iteration of the Murphy algorithm.">_murphyIteration</a>(m, miter, ml1bx, ml1by, ml2bx, ml2by, ml1x, ml1y, ml2x, ml2y);
-<a name="l04163"></a>04163 }
-<a name="l04164"></a>04164 
-<a name="l04165"></a>04165 
-<a name="l04179"></a><a class="code" href="_s_d_l2__gfx_primitives_8h.html#a613c16293c3571b695cc0c60358bb862">04179</a> <span class="keywordtype">int</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a65c3119156482e660d4f4a3e084eb2ab" title="Draw a thick line with alpha blending.">thickLineColor</a>(SDL_Renderer *renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 width, Uint32 color)
-<a name="l04180"></a>04180 {       
-<a name="l04181"></a>04181         Uint8 *c = (Uint8 *)&amp;color; 
-<a name="l04182"></a>04182         <span class="keywordflow">return</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a20297b17afd1e3686589bf74ebd17482" title="Draw a thick line with alpha blending.">thickLineRGBA</a>(renderer, x1, y1, x2, y2, width, c[0], c[1], c[2], c[3]);
-<a name="l04183"></a>04183 }
-<a name="l04184"></a>04184 
-<a name="l04201"></a><a class="code" href="_s_d_l2__gfx_primitives_8h.html#a247136a562abec2649718d38f5819b44">04201</a> <span class="keywordtype">int</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a20297b17afd1e3686589bf74ebd17482" title="Draw a thick line with alpha blending.">thickLineRGBA</a>(SDL_Renderer *renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 width, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
-<a name="l04202"></a>04202 {
-<a name="l04203"></a>04203         <span class="keywordtype">int</span> result;
-<a name="l04204"></a>04204         <span class="keywordtype">int</span> wh;
-<a name="l04205"></a>04205         <a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html" title="The structure passed to the internal Murphy iterator.">SDL2_gfxMurphyIterator</a> m;
-<a name="l04206"></a>04206 
-<a name="l04207"></a>04207         <span class="keywordflow">if</span> (renderer == NULL) {
-<a name="l04208"></a>04208                 <span class="keywordflow">return</span> -1;
-<a name="l04209"></a>04209         }
-<a name="l04210"></a>04210         <span class="keywordflow">if</span> (width &lt; 1) {
-<a name="l04211"></a>04211                 <span class="keywordflow">return</span> -1;
-<a name="l04212"></a>04212         }
-<a name="l04213"></a>04213 
-<a name="l04214"></a>04214         <span class="comment">/* Special case: thick &quot;point&quot; */</span>
-<a name="l04215"></a>04215         <span class="keywordflow">if</span> ((x1 == x2) &amp;&amp; (y1 == y2)) {
-<a name="l04216"></a>04216                 wh = width / 2;
-<a name="l04217"></a>04217                 <span class="keywordflow">return</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a6c26ea8c03d1092f917665a182b91963" title="Draw box (filled rectangle) with blending.">boxRGBA</a>(renderer, x1 - wh, y1 - wh, x2 + width, y2 + width, r, g, b, a);         
-<a name="l04218"></a>04218         }
-<a name="l04219"></a>04219 
-<a name="l04220"></a>04220         <span class="comment">/*</span>
-<a name="l04221"></a>04221 <span class="comment">        * Set color</span>
-<a name="l04222"></a>04222 <span class="comment">        */</span>
-<a name="l04223"></a>04223         result = 0;
-<a name="l04224"></a>04224         result |= SDL_SetRenderDrawBlendMode(renderer, (a == 255) ? SDL_BLENDMODE_NONE : SDL_BLENDMODE_BLEND);
-<a name="l04225"></a>04225         result |= SDL_SetRenderDrawColor(renderer, r, g, b, a);
-<a name="l04226"></a>04226 
-<a name="l04227"></a>04227         <span class="comment">/* </span>
-<a name="l04228"></a>04228 <span class="comment">        * Draw</span>
-<a name="l04229"></a>04229 <span class="comment">        */</span>
-<a name="l04230"></a>04230         m.<a class="code" href="struct_s_d_l2__gfx_murphy_iterator.html#a966da7a60c4ea3ba301e26ccc5efe452">renderer</a> = renderer;
-<a name="l04231"></a>04231         <a class="code" href="_s_d_l2__gfx_primitives_8c.html#abc1df7ada979012cef99920e741cf559" title="Internal function to to draw wide lines with Murphy algorithm.">_murphyWideline</a>(&amp;m, x1, y1, x2, y2, width, 0);
-<a name="l04232"></a>04232         <a class="code" href="_s_d_l2__gfx_primitives_8c.html#abc1df7ada979012cef99920e741cf559" title="Internal function to to draw wide lines with Murphy algorithm.">_murphyWideline</a>(&amp;m, x1, y1, x2, y2, width, 1);
-<a name="l04233"></a>04233 
-<a name="l04234"></a>04234         <span class="keywordflow">return</span>(0);
-<a name="l04235"></a>04235 }
+<a name="l03697"></a>03697         <span class="keywordflow">return</span> (result);
+<a name="l03698"></a>03698 }
+<a name="l03699"></a>03699 
+<a name="l03700"></a>03700 
+<a name="l03714"></a><a class="code" href="_s_d_l2__gfx_primitives_8h.html#a613c16293c3571b695cc0c60358bb862">03714</a> <span class="keywordtype">int</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a65c3119156482e660d4f4a3e084eb2ab" title="Draw a thick line with alpha blending.">thickLineColor</a>(SDL_Renderer *renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 width, Uint32 color)
+<a name="l03715"></a>03715 {       
+<a name="l03716"></a>03716         Uint8 *c = (Uint8 *)&amp;color; 
+<a name="l03717"></a>03717         <span class="keywordflow">return</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a20297b17afd1e3686589bf74ebd17482" title="Draw a thick line with alpha blending.">thickLineRGBA</a>(renderer, x1, y1, x2, y2, width, c[0], c[1], c[2], c[3]);
+<a name="l03718"></a>03718 }
+<a name="l03719"></a>03719 
+<a name="l03736"></a><a class="code" href="_s_d_l2__gfx_primitives_8h.html#a247136a562abec2649718d38f5819b44">03736</a> <span class="keywordtype">int</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a20297b17afd1e3686589bf74ebd17482" title="Draw a thick line with alpha blending.">thickLineRGBA</a>(SDL_Renderer *renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sint16 y2, Uint8 width, Uint8 r, Uint8 g, Uint8 b, Uint8 a)
+<a name="l03737"></a>03737 {
+<a name="l03738"></a>03738         <span class="keywordtype">int</span> wh;
+<a name="l03739"></a>03739         <span class="keywordtype">double</span> dx, dy, dx1, dy1, dx2, dy2;
+<a name="l03740"></a>03740         <span class="keywordtype">double</span> l, wl2, nx, ny;
+<a name="l03741"></a>03741         Sint16 px[4], py[4];
+<a name="l03742"></a>03742 
+<a name="l03743"></a>03743         <span class="keywordflow">if</span> (renderer == NULL) {
+<a name="l03744"></a>03744                 <span class="keywordflow">return</span> -1;
+<a name="l03745"></a>03745         }
+<a name="l03746"></a>03746 
+<a name="l03747"></a>03747         <span class="keywordflow">if</span> (width &lt; 1) {
+<a name="l03748"></a>03748                 <span class="keywordflow">return</span> -1;
+<a name="l03749"></a>03749         }
+<a name="l03750"></a>03750 
+<a name="l03751"></a>03751         <span class="comment">/* Special case: thick &quot;point&quot; */</span>
+<a name="l03752"></a>03752         <span class="keywordflow">if</span> ((x1 == x2) &amp;&amp; (y1 == y2)) {
+<a name="l03753"></a>03753                 wh = width / 2;
+<a name="l03754"></a>03754                 <span class="keywordflow">return</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a6c26ea8c03d1092f917665a182b91963" title="Draw box (filled rectangle) with blending.">boxRGBA</a>(renderer, x1 - wh, y1 - wh, x2 + width, y2 + width, r, g, b, a);         
+<a name="l03755"></a>03755         }
+<a name="l03756"></a>03756 
+<a name="l03757"></a>03757         <span class="comment">/* Special case: width == 1 */</span>
+<a name="l03758"></a>03758         <span class="keywordflow">if</span> (width == 1) {
+<a name="l03759"></a>03759                 <span class="keywordflow">return</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a82d13b4ab3057ebebb7706e451090712" title="Draw line with alpha blending.">lineRGBA</a>(renderer, x1, y1, x2, y2, r, g, b, a);          
+<a name="l03760"></a>03760         }
+<a name="l03761"></a>03761 
+<a name="l03762"></a>03762         <span class="comment">// Calculate offsets for sides</span>
+<a name="l03763"></a>03763         dx = (double)(x2 - x1);
+<a name="l03764"></a>03764         dy = (double)(y2 - y1);
+<a name="l03765"></a>03765         l = SDL_sqrt(dx*dx + dy*dy);
+<a name="l03766"></a>03766         wl2 = (double)width/(2.0 * l);
+<a name="l03767"></a>03767         nx = dx * wl2;
+<a name="l03768"></a>03768         ny = dy * wl2;
+<a name="l03769"></a>03769 
+<a name="l03770"></a>03770         <span class="comment">// Build polygon</span>
+<a name="l03771"></a>03771         dx1 = (double)x1;
+<a name="l03772"></a>03772         dy1 = (double)y1;
+<a name="l03773"></a>03773         dx2 = (double)x2;
+<a name="l03774"></a>03774         dy2 = (double)y2;
+<a name="l03775"></a>03775         px[0] = (Sint16)(dx1 + ny);
+<a name="l03776"></a>03776         px[1] = (Sint16)(dx1 - ny);
+<a name="l03777"></a>03777         px[2] = (Sint16)(dx2 - ny);
+<a name="l03778"></a>03778         px[3] = (Sint16)(dx2 + ny);
+<a name="l03779"></a>03779         py[0] = (Sint16)(dy1 - nx);
+<a name="l03780"></a>03780         py[1] = (Sint16)(dy1 + nx);
+<a name="l03781"></a>03781         py[2] = (Sint16)(dy2 + nx);
+<a name="l03782"></a>03782         py[3] = (Sint16)(dy2 - nx);
+<a name="l03783"></a>03783 
+<a name="l03784"></a>03784         <span class="comment">// Draw polygon</span>
+<a name="l03785"></a>03785         <span class="keywordflow">return</span> <a class="code" href="_s_d_l2__gfx_primitives_8c.html#a31ee2c3d19bd0e9ca5545b81269575a6" title="Draw filled polygon with alpha blending.">filledPolygonRGBA</a>(renderer, px, py, 4, r, g, b, a);
+<a name="l03786"></a>03786 }
 </pre></div></div><!-- contents -->
 
 
