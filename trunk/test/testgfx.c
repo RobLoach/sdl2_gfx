@@ -1351,6 +1351,57 @@ int TestThickLine(SDL_Renderer *renderer)
 	return (4 * NUM_RANDOM) / step;
 }
 
+int TestThickLineAccuracy(SDL_Renderer *renderer)
+{
+	int i;
+	int w;
+	int cx, cy;
+	int dx, dy, width;
+	int astep = 24;
+	int wstep = 3;
+	double a;
+	char localMessage[128];
+
+	cx = WIDTH/4;
+	cy = (HEIGHT-140)/4;
+
+	/* Test 4 different width */
+	for (w = 0; w < 4; w++) {
+		switch (w) {
+			case 0:
+				SetViewport(renderer,0,60,WIDTH/2,60+(HEIGHT-80)/2);
+				break;
+			case 1:
+				SetViewport(renderer,WIDTH/2,60,WIDTH,60+(HEIGHT-80)/2);
+				break;
+			case 2:
+				SetViewport(renderer,WIDTH/2,80+(HEIGHT-80)/2,WIDTH,HEIGHT);
+				break;
+			case 3:
+				SetViewport(renderer,0,80+(HEIGHT-80)/2,WIDTH/2,HEIGHT);
+				break;
+		}
+
+		/* Accuracy test #2 */
+		for (i = 0; i <= 360; i += astep) {
+			a = 2.0 * M_PI * (double)i / 360.0;
+			dx = (int)(84.0 * SDL_sin(a));
+			dy = (int)(84.0 * SDL_cos(a));
+			width = wstep * (w + 1);
+			thickLineRGBA(renderer, cx, cy, cx + dx, cy + dy, width, 255, 255, 255, 255);
+		}
+
+		/* Display current width */
+		SDL_snprintf(localMessage, 128, "w = %d", width);
+		stringRGBA(renderer, 8, 8, localMessage, 255, 255, 255, 255);
+	}
+
+	/* Clear viewport */
+	ClearViewport(renderer);
+
+	return 4 * 360/astep;
+}
+
 
 int TestTexturedPolygon(SDL_Renderer *renderer)
 {
@@ -1367,7 +1418,7 @@ int TestTexturedPolygon(SDL_Renderer *renderer)
 	Uint32 rmask = 0x000000ff;
 #endif
 	int i;
-	int step = 6;
+	int step = 24;
 	char *bmpfile;
 	SDL_Surface *picture, *picture_again;
 
@@ -1379,7 +1430,7 @@ int TestTexturedPolygon(SDL_Renderer *renderer)
 		return -1; 
 	}
 
-	// Convert 24bit image into 32bit RGBA surface
+	/* Convert 24bit image into 32bit RGBA surface */
 	picture_again = SDL_CreateRGBSurface(SDL_SWSURFACE, picture->w, picture->h, 32, rmask, gmask, bmask, amask);
 	if (picture_again == NULL) {
 		SDL_FreeSurface(picture);
@@ -1539,7 +1590,7 @@ int main(int argc, char *argv[])
 
 		if (!drawn) {
 			/* Set test range */
-			numTests = 23;
+			numTests = 24;
 			if (test < 0) { 
 				test = (numTests - 1); 
 			} else {
@@ -1648,6 +1699,10 @@ int main(int argc, char *argv[])
 					}
 					case 23: {
 						ExecuteTest(renderer, TestRoundedBox, test, "RoundedBox");
+						break;
+					}					
+					case 24: {
+						ExecuteTest(renderer, TestThickLineAccuracy, test, "ThickLine (Accuracy)");
 						break;
 					}					
 					default: {
