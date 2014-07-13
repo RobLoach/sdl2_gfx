@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestImageFilter", "test\Tes
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestRotozoom", "test\TestRotozoom.vcxproj", "{AE22EFD3-CCCA-48C0-AF3D-EF190406BEDC}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestFramerate", "test\TestFramerate.vcxproj", "{AE22EFD3-6F6D-21C0-AF2D-EF190406BEDC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -31,6 +33,10 @@ Global
 		{AE22EFD3-CCCA-48C0-AF3D-EF190406BEDC}.Debug|Win32.Build.0 = Debug|Win32
 		{AE22EFD3-CCCA-48C0-AF3D-EF190406BEDC}.Release|Win32.ActiveCfg = Release|Win32
 		{AE22EFD3-CCCA-48C0-AF3D-EF190406BEDC}.Release|Win32.Build.0 = Release|Win32
+		{AE22EFD3-6F6D-21C0-AF2D-EF190406BEDC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AE22EFD3-6F6D-21C0-AF2D-EF190406BEDC}.Debug|Win32.Build.0 = Debug|Win32
+		{AE22EFD3-6F6D-21C0-AF2D-EF190406BEDC}.Release|Win32.ActiveCfg = Release|Win32
+		{AE22EFD3-6F6D-21C0-AF2D-EF190406BEDC}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

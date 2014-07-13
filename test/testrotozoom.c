@@ -1,4 +1,7 @@
 /*
+
+TestRotozoom.c: test/sample program for SDL_Surface rotozoom functions 
+
 Copyright (C) 2012-2014 Andreas Schiffler
 
 This software is provided 'as-is', without any express or implied
@@ -9,7 +12,6 @@ Permission is granted to anyone to use this software for any purpose,
 including commercial applications, and to alter it and redistribute it
 freely.
 */
-
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -27,9 +29,6 @@ static SDLTest_CommonState *state;
 /* Screen size */
 #define WIDTH	DEFAULT_WINDOW_WIDTH
 #define HEIGHT	DEFAULT_WINDOW_HEIGHT
-
-/* Pause flag */
-int pause = 0;
 
 /* Done flag */
 int done = 0;
@@ -834,6 +833,9 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+    SDL_Log("SDL2_gfx %i.%i.%i: testrotozoom", SDL2_GFXPRIMITIVES_MAJOR, SDL2_GFXPRIMITIVES_MINOR, SDL2_GFXPRIMITIVES_MICRO);
+    SDL_Log("Platform: %s", SDL_GetPlatform());
+
 	for (i = 1; i < argc;) {
 		int consumed;
 
@@ -901,8 +903,6 @@ int main(int argc, char *argv[])
                 Draw(testStart, testEnd);
 	}
 
-	SDLTest_CommonQuit(state);
-
 	/* Print out some timing information */
 	now = SDL_GetTicks();
 	if (now > then) {
@@ -910,9 +910,13 @@ int main(int argc, char *argv[])
 		SDL_Log("%2.2f frames per second\n", fps);
 	}
 
+	/* Free common message buffer */
 	if (messageText) {
 		free(messageText);
 	}
+
+	/* Shutdown SDL */
+	SDLTest_CommonQuit(state);
 
 	return 0;
 }
