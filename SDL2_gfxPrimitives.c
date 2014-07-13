@@ -1223,22 +1223,24 @@ int arcRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, Sint16 star
 		return (pixelRGBA(renderer, x, y, r, g, b, a));
 	}
 
-	// Octant labelling
-	//      
-	//  \ 5 | 6 /
-	//   \  |  /
-	//  4 \ | / 7
-	//     \|/
-	//------+------ +x
-	//     /|\
-	//  3 / | \ 0
-	//   /  |  \
-	//  / 2 | 1 \
-	//      +y
+	/*
+	 Octant labeling
+	      
+	  \ 5 | 6 /
+	   \  |  /
+	  4 \ | / 7
+	     \|/
+	------+------ +x
+	     /|\
+	  3 / | \ 0
+	   /  |  \
+	  / 2 | 1 \
+	      +y
 
-	// Initially reset bitmask to 0x00000000
-	// the set whether or not to keep drawing a given octant.
-	// For example: 0x00111100 means we're drawing in octants 2-5
+	 Initially reset bitmask to 0x00000000
+	 the set whether or not to keep drawing a given octant.
+	 For example: 0x00111100 means we're drawing in octants 2-5
+	*/
 	drawoct = 0; 
 
 	/*
@@ -1246,24 +1248,23 @@ int arcRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, Sint16 star
 	*/
 	start %= 360;
 	end %= 360;
-	// 0 <= start & end < 360; note that sometimes start > end - if so, arc goes back through 0.
+	/* 0 <= start & end < 360; note that sometimes start > end - if so, arc goes back through 0. */
 	while (start < 0) start += 360;
 	while (end < 0) end += 360;
 	start %= 360;
 	end %= 360;
 
-	// now, we find which octants we're drawing in.
+	/* now, we find which octants we're drawing in. */
 	startoct = start / 45;
 	endoct = end / 45;
-	oct = startoct - 1; // we increment as first step in loop
+	oct = startoct - 1;
 
-	// stopval_start, stopval_end; 
-	// what values of cx to stop at.
+	/* stopval_start, stopval_end; what values of cx to stop at. */
 	do {
 		oct = (oct + 1) % 8;
 
 		if (oct == startoct) {
-			// need to compute stopval_start for this octant.  Look at picture above if this is unclear
+			/* need to compute stopval_start for this octant.  Look at picture above if this is unclear */
 			dstart = (double)start;
 			switch (oct) 
 			{
@@ -1285,18 +1286,19 @@ int arcRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, Sint16 star
 				break;
 			}
 			temp *= rad;
-			stopval_start = (int)temp; // always round down
+			stopval_start = (int)temp;
 
-			// This isn't arbitrary, but requires graph paper to explain well.
-			// The basic idea is that we're always changing drawoct after we draw, so we
-			// stop immediately after we render the last sensible pixel at x = ((int)temp).
-
-			// and whether to draw in this octant initially
-			if (oct % 2) drawoct |= (1 << oct); // this is basically like saying drawoct[oct] = true, if drawoct were a bool array
-			else		 drawoct &= 255 - (1 << oct); // this is basically like saying drawoct[oct] = false
+			/* 
+			This isn't arbitrary, but requires graph paper to explain well.
+			The basic idea is that we're always changing drawoct after we draw, so we
+			stop immediately after we render the last sensible pixel at x = ((int)temp).
+			and whether to draw in this octant initially
+			*/
+			if (oct % 2) drawoct |= (1 << oct);			/* this is basically like saying drawoct[oct] = true, if drawoct were a bool array */
+			else		 drawoct &= 255 - (1 << oct);	/* this is basically like saying drawoct[oct] = false */
 		}
 		if (oct == endoct) {
-			// need to compute stopval_end for this octant
+			/* need to compute stopval_end for this octant */
 			dend = (double)end;
 			switch (oct)
 			{
@@ -1320,13 +1322,13 @@ int arcRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, Sint16 star
 			temp *= rad;
 			stopval_end = (int)temp;
 
-			// and whether to draw in this octant initially
+			/* and whether to draw in this octant initially */
 			if (startoct == endoct)	{
-				// note:      we start drawing, stop, then start again in this case
-				// otherwise: we only draw in this octant, so initialize it to false, it will get set back to true
+				/* note:      we start drawing, stop, then start again in this case */
+				/* otherwise: we only draw in this octant, so initialize it to false, it will get set back to true */
 				if (start > end) {
-					// unfortunately, if we're in the same octant and need to draw over the whole circle, 
-					// we need to set the rest to true, because the while loop will end at the bottom.
+					/* unfortunately, if we're in the same octant and need to draw over the whole circle, */
+					/* we need to set the rest to true, because the while loop will end at the bottom. */
 					drawoct = 255;
 				} else {
 					drawoct &= 255 - (1 << oct);
@@ -1334,12 +1336,12 @@ int arcRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, Sint16 star
 			} 
 			else if (oct % 2) drawoct &= 255 - (1 << oct);
 			else			  drawoct |= (1 << oct);
-		} else if (oct != startoct) { // already verified that it's != endoct
-			drawoct |= (1 << oct); // draw this entire segment
+		} else if (oct != startoct) { /* already verified that it's != endoct */
+			drawoct |= (1 << oct); /* draw this entire segment */
 		}
 	} while (oct != endoct);
 
-	// so now we have what octants to draw and when to draw them. all that's left is the actual raster code.
+	/* so now we have what octants to draw and when to draw them. all that's left is the actual raster code. */
 
 	/*
 	* Set color 
@@ -1358,7 +1360,7 @@ int arcRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, Sint16 star
 			xpcx = x + cx;
 			xmcx = x - cx;
 
-			// always check if we're drawing a certain octant before adding a pixel to that octant.
+			/* always check if we're drawing a certain octant before adding a pixel to that octant. */
 			if (drawoct & 4)  result |= pixel(renderer, xmcx, ypcy);
 			if (drawoct & 2)  result |= pixel(renderer, xpcx, ypcy);
 			if (drawoct & 32) result |= pixel(renderer, xmcx, ymcy);
@@ -1386,8 +1388,8 @@ int arcRGBA(SDL_Renderer * renderer, Sint16 x, Sint16 y, Sint16 rad, Sint16 star
 		* Update whether we're drawing an octant
 		*/
 		if (stopval_start == cx) {
-			// works like an on-off switch.  
-			// This is just in case start & end are in the same octant.
+			/* works like an on-off switch. */  
+			/* This is just in case start & end are in the same octant. */
 			if (drawoct & (1 << startoct)) drawoct &= 255 - (1 << startoct);		
 			else						   drawoct |= (1 << startoct);
 		}
@@ -2953,17 +2955,17 @@ int _HLineTextured(SDL_Renderer *renderer, Sint16 x1, Sint16 x2, Sint16 y, SDL_T
 		texture_y_start = texture_h + texture_y_start;
 	}
 
-	// setup the source rectangle; we are only drawing one horizontal line
+	/* setup the source rectangle; we are only drawing one horizontal line */
 	source_rect.y = texture_y_start;
 	source_rect.x = texture_x_walker;
 	source_rect.h = 1;
 
-	// we will draw to the current y
+	/* we will draw to the current y */
 	dst_rect.y = y;
 	dst_rect.h = 1;
 
-	// if there are enough pixels left in the current row of the texture
-	// draw it all at once
+	/* if there are enough pixels left in the current row of the texture */
+	/* draw it all at once */
 	if (w <= texture_w -texture_x_walker){
 		source_rect.w = w;
 		source_rect.x = texture_x_walker;
@@ -2971,8 +2973,8 @@ int _HLineTextured(SDL_Renderer *renderer, Sint16 x1, Sint16 x2, Sint16 y, SDL_T
 		dst_rect.w = source_rect.w;
 		result = (SDL_RenderCopy(renderer, texture, &source_rect, &dst_rect) == 0);
 	} else { 
-		// we need to draw multiple times
-		// draw the first segment
+		/* we need to draw multiple times */
+		/* draw the first segment */
 		pixels_written = texture_w  - texture_x_walker;
 		source_rect.w = pixels_written;
 		source_rect.x = texture_x_walker;
@@ -2981,8 +2983,8 @@ int _HLineTextured(SDL_Renderer *renderer, Sint16 x1, Sint16 x2, Sint16 y, SDL_T
 		result |= (SDL_RenderCopy(renderer, texture, &source_rect, &dst_rect) == 0);
 		write_width = texture_w;
 
-		// now draw the rest
-		// set the source x to 0
+		/* now draw the rest */
+		/* set the source x to 0 */
 		source_rect.x = 0;
 		while (pixels_written < w){
 			if (write_width >= w - pixels_written) {
@@ -3737,7 +3739,7 @@ int thickLineRGBA(SDL_Renderer *renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sint1
 {
 	int wh;
 	double dx, dy, dx1, dy1, dx2, dy2;
-	double l, wl2, nx, ny;
+	double l, wl2, nx, ny, ang, adj;
 	Sint16 px[4], py[4];
 
 	if (renderer == NULL) {
@@ -3759,15 +3761,17 @@ int thickLineRGBA(SDL_Renderer *renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sint1
 		return lineRGBA(renderer, x1, y1, x2, y2, r, g, b, a);		
 	}
 
-	// Calculate offsets for sides
+	/* Calculate offsets for sides */
 	dx = (double)(x2 - x1);
 	dy = (double)(y2 - y1);
 	l = SDL_sqrt(dx*dx + dy*dy);
-	wl2 = (double)width/(2.0 * l);
+	ang = SDL_atan2(dx, dy);
+	adj = 0.1 + 0.9 * SDL_fabs(SDL_cos(2.0 * ang));
+	wl2 = ((double)width - adj)/(2.0 * l);
 	nx = dx * wl2;
 	ny = dy * wl2;
 
-	// Build polygon
+	/* Build polygon */
 	dx1 = (double)x1;
 	dy1 = (double)y1;
 	dx2 = (double)x2;
@@ -3781,6 +3785,6 @@ int thickLineRGBA(SDL_Renderer *renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sint1
 	py[2] = (Sint16)(dy2 + nx);
 	py[3] = (Sint16)(dy2 - nx);
 
-	// Draw polygon
+	/* Draw polygon */
 	return filledPolygonRGBA(renderer, px, py, 4, r, g, b, a);
 }
