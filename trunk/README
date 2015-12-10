@@ -55,9 +55,19 @@ To build without MMX code enabled (i.e. ARM, PPC, AMD64 architectures):
         make install
 \endverbatim
 
-\subsection visualstudio Windows (VC10, VS2012)
+\subsection visualstudio Windows (VS2012, VS2013)
 
-Open SDL_gfx_VS2010.sln solution file and review README.
+Open the SDL2_gfx.sln solution file, right click on the solution and choose 'Rebuild'.
+
+The SDL2 Visual Studio solution must be placed in a directory alongside SDL2_gfx and build in the same configuration, i.e. Debug or Release, beforehand so the referenced SDL2.lib file can be found.
+
+\subsection platformosx Mac OSX 
+
+The usual autotools build chain should be used. MacPorts or fink may be required.
+
+Xcode is supported via templates. See Xcode.zip - this template only supports SDL2_gfx 
+and not the tests. For this template, the Deployment Target (the lowest version to run on) 
+is set to 10.11 and expects the SDL2.framework preinstalled in the default location: /Library/Frameworks.
 
 \section test_sec Test Programs
 
