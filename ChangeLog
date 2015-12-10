@@ -1,5 +1,8 @@
 SDL2_gfx ChangeLog
 
+Thu, Dec 10, 2015  8:11:26 AM
+- added XCode.zip (thanks Matthias for contributing)
+
 Sun, Jul 13, 2014  9:21:00 AM
 - added TestFramerate
 
